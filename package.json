@@ -38,7 +38,8 @@
           "./**/__tests__/*.js"
         ],
         "env": {
-          "jest": true
+          "jest": true,
+          "jsx": true
         }
       }
     ],
@@ -57,5 +58,9 @@
     "lint-staged": "^10.5.4",
     "parcel": "^2.0.0-beta.1",
     "prettier": "^2.2.1"
+  },
+  "dependencies": {
+    "react": "^17.0.1",
+    "react-dom": "^17.0.1"
   }
 }
