@@ -29,6 +29,7 @@
     "trailingComma": "all"
   },
   "eslintConfig": {
+    "parser": "@typescript-eslint/parser",
     "settings": {
       "react": {
         "version": "detect"
@@ -47,6 +48,9 @@
         ],
         "env": {
           "jest": true
+        },
+        "rules": {
+          "@typescript-eslint/no-explicit-any": "off"
         }
       }
     ],
@@ -56,14 +60,18 @@
     },
     "extends": [
       "eslint:recommended",
-      "plugin:react/recommended"
-    ]
+      "plugin:react/recommended",
+      "plugin:@typescript-eslint/recommended"
+    ],
+    "rules": {
+      "@typescript-eslint/explicit-module-boundary-types": "off"
+    }
   },
   "jest": {
     "preset": "ts-jest",
-    "testEnvironment": "node",
+    "testEnvironment": "jsdom",
     "setupFiles": [
-      "./src/setup-tests.tsx"
+      "./src/testing/setup.tsx"
     ]
   },
   "devDependencies": {
@@ -74,6 +82,9 @@
     "@types/react-dom": "^17.0.1",
     "@types/react-redux": "^7.1.16",
     "@types/styled-components": "^5.1.7",
+    "@types/uuid": "^8.3.0",
+    "@typescript-eslint/eslint-plugin": "^4.15.2",
+    "@typescript-eslint/parser": "^4.15.2",
     "enzyme": "^3.11.0",
     "enzyme-adapter-react-16": "^1.15.6",
     "eslint": "^7.20.0",
@@ -87,11 +98,13 @@
     "typescript": "^4.1.5"
   },
   "dependencies": {
+    "media-devices": "^0.2.0",
     "react": "^17.0.1",
     "react-dom": "^17.0.1",
     "react-redux": "^7.2.2",
     "redux": "^4.0.5",
     "retreon": "^0.6.1",
-    "styled-components": "^5.2.1"
+    "styled-components": "^5.2.1",
+    "uuid": "^8.3.2"
   }
 }
