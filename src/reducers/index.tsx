@@ -1,4 +1,2 @@
-import { createReducer } from 'retreon';
-import initialState from './initial-state';
-
-export const hello = createReducer(initialState.hello, () => []);
+export { default as participants } from './participants';
+export { default as tracks } from './tracks';

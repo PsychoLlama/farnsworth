@@ -33,6 +33,8 @@ export class MockMediaStream extends EventEmitter implements MediaStream {
 export class MockMediaStreamTrack
   extends EventEmitter
   implements MediaStreamTrack {
+  _deviceId = uuid();
+
   // --- implemented ---
   id = uuid();
   enabled = true;
@@ -45,12 +47,17 @@ export class MockMediaStreamTrack
   stop = jest.fn();
   label = '';
 
+  getSettings = jest.fn(() => ({
+    deviceId: this._deviceId,
+    width: 640,
+    height: 480,
+  }));
+
   // --- unimplemented ---
   clone = jest.fn();
   applyConstraints = jest.fn();
   getConstraints = jest.fn();
   getCapabilities = jest.fn();
-  getSettings = jest.fn();
   dispatchEvent = jest.fn();
   onended = null;
   onmute = null;
