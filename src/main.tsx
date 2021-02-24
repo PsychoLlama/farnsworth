@@ -3,6 +3,7 @@ import React from 'react';
 import styled from 'styled-components';
 import { Provider as ReduxProvider } from 'react-redux';
 import createStore from './utils/create-store';
+import App from './components/app';
 
 /**
  * First, let me say that yes, I'm insane. But the insanity has reason.
@@ -28,7 +29,7 @@ DOM.render(
   <React.StrictMode>
     <ReduxProvider store={createStore()}>
       <Viewport>
-        <h1>Hello, world</h1>
+        <App />
       </Viewport>
     </ReduxProvider>
   </React.StrictMode>,
