@@ -5,8 +5,12 @@ import Participant from './participant';
 import { MY_PARTICIPANT_ID } from '../utils/constants';
 
 export class App extends React.Component<Props> {
-  componentDidMount() {
+  async componentDidMount() {
     this.props.requestMediaDevices();
+
+    // Opens a connection to the relay server.
+    const signaling = await import('../conferencing/signaling');
+    await signaling.init();
   }
 
   render() {
