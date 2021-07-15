@@ -1,4 +1,4 @@
-interface Theme {
+export interface Theme {
   background: string;
   foreground: string;
   text: string;
@@ -40,6 +40,7 @@ export const OneLight: Theme = {
   white: '#a0a1a7',
 };
 
+// Variable names must stay in sync with `css.color(...)` utility.
 export function exportToCss(theme: Theme) {
   return `
     --color-background: ${theme.background};
