@@ -3,6 +3,7 @@ import React from 'react';
 import styled from 'styled-components';
 import { Provider as ReduxProvider } from 'react-redux';
 import createStore from './utils/create-store';
+import { exportToCss, OneDark, OneLight } from './utils/themes';
 import App from './components/app';
 
 /**
@@ -23,6 +24,16 @@ const Viewport = styled.div`
   left: 0;
   right: 0;
   bottom: 0;
+
+  // App-wide theme settings.
+  ${exportToCss(OneDark)}
+
+  @media (prefers-color-scheme: light) {
+    ${exportToCss(OneLight)}
+  }
+
+  background-color: var(--color-background);
+  color: var(--color-text);
 `;
 
 DOM.render(
