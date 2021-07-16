@@ -1,10 +1,8 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import * as actions from '../actions';
-import Participant from './media/participant';
-import Sidebar from './sidebar';
-import { MY_PARTICIPANT_ID } from '../utils/constants';
 import styled from 'styled-components';
+import SelfPreview from './media/self-preview';
 
 export class App extends React.Component<Props> {
   async componentDidMount() {
@@ -18,8 +16,7 @@ export class App extends React.Component<Props> {
   render() {
     return (
       <Container>
-        <Participant id={MY_PARTICIPANT_ID} />
-        <Sidebar />
+        <SelfPreview />
       </Container>
     );
   }
@@ -27,6 +24,7 @@ export class App extends React.Component<Props> {
 
 const Container = styled.div`
   display: flex;
+  flex-grow: 1;
 `;
 
 interface Props {

@@ -42,7 +42,9 @@ export default class MediaView extends React.Component<Props> {
 }
 
 const VideoStream = styled.video`
-  // TODO
+  object-fit: cover;
+  object-position: center;
+  flex-grow: 1;
 `;
 
 interface Props {
