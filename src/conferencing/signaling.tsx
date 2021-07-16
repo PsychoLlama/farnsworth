@@ -36,8 +36,6 @@ async function initNetworkingModule() {
 export async function init() {
   const p2p = await initNetworkingModule();
   await p2p.start();
-
-  await p2p.dialProtocol(SERVER_ADDRESS, '/disco/v1');
 }
 
 const ModuleId = {
