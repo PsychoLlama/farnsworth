@@ -4,13 +4,18 @@ import invariant from 'invariant';
 import { State } from '../../reducers/initial-state';
 import { TrackKind } from '../../utils/constants';
 import MediaView from './media-view';
+import { MY_PARTICIPANT_ID } from '../../utils/constants';
 
 export class Participant extends React.Component<Props> {
   render() {
     const { audioTrackId, videoTrackId } = this.props;
 
     return (
-      <MediaView audioTrackId={audioTrackId} videoTrackId={videoTrackId} />
+      <MediaView
+        isLocal={this.props.id === MY_PARTICIPANT_ID}
+        audioTrackId={audioTrackId}
+        videoTrackId={videoTrackId}
+      />
     );
   }
 }

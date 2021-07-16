@@ -16,7 +16,11 @@ export default class MediaView extends React.Component<Props> {
 
   render() {
     return (
-      <VideoStream ref={this.attachMediaStream} data-test-id="video-stream" />
+      <VideoStream
+        data-local={this.props.isLocal}
+        ref={this.attachMediaStream}
+        data-test-id="video-stream"
+      />
     );
   }
 
@@ -29,7 +33,7 @@ export default class MediaView extends React.Component<Props> {
   // those tracks. Any extras will be removed.
   syncTracksToMediaStream = () => {
     const { audioTrackId, videoTrackId } = this.props;
-    const trackIds = [audioTrackId, videoTrackId].filter(Boolean);
+    const trackIds = [audioTrackId, videoTrackId].filter(this.supportsTrack);
     const tracks = trackIds.map((trackId) => context.tracks.get(trackId));
     tracks.forEach((track) => this.stream.addTrack(track));
 
@@ -39,15 +43,31 @@ export default class MediaView extends React.Component<Props> {
 
     if (this.videoRef) this.videoRef.play();
   };
+
+  supportsTrack = (trackId: string) => {
+    const { isLocal, audioTrackId } = this.props;
+
+    if (!trackId) return false;
+
+    // Filter out your own audio track from local streams. It's distracting.
+    return isLocal ? trackId !== audioTrackId : true;
+  };
+}
+
+interface Props {
+  audioTrackId: null | string;
+  videoTrackId: null | string;
+  isLocal: boolean;
 }
 
 const VideoStream = styled.video`
   object-fit: cover;
   object-position: center;
   flex-grow: 1;
-`;
 
-interface Props {
-  audioTrackId: null | string;
-  videoTrackId: null | string;
-}
+  // People are used to seeing their own faces in a mirror. Replicate the
+  // effect for local video streams.
+  &[data-local='true'] {
+    transform: rotateY(180deg);
+  }
+`;

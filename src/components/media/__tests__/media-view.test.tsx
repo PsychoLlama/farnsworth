@@ -7,6 +7,7 @@ describe('MediaView', () => {
     getDefaultProps: () => ({
       audioTrackId: null,
       videoTrackId: null,
+      isLocal: false,
     }),
   });
 
@@ -66,5 +67,21 @@ describe('MediaView', () => {
 
     expect(ref.srcObject.getTracks()).toHaveLength(1);
     expect(ref.play).toHaveBeenCalled();
+  });
+
+  it('only adds audio tracks to remote streams', () => {
+    const audioTrack = new MediaStreamTrack();
+    context.tracks.set('a-id', audioTrack);
+    context.tracks.set('v-id', new MediaStreamTrack());
+
+    const { output } = setup({
+      audioTrackId: 'a-id',
+      videoTrackId: 'v-id',
+      isLocal: true,
+    });
+
+    const ref = setVideoRef(output);
+
+    expect(ref.srcObject.getTracks()).not.toContain(audioTrack);
   });
 });

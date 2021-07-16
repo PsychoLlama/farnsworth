@@ -26,6 +26,14 @@ describe('Participant', () => {
     });
   });
 
+  it('indicates if the media stream is your own', () => {
+    const { output: me } = setup({ id: MY_PARTICIPANT_ID });
+    const { output: other } = setup({ id: 'other-participant' });
+
+    expect(me.find(MediaView).prop('isLocal')).toBe(true);
+    expect(other.find(MediaView).prop('isLocal')).toBe(false);
+  });
+
   describe('Connect(Participant)', () => {
     function setup(patchState: (state: State) => void) {
       const state = produce(initialState, patchState);
