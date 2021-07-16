@@ -12,3 +12,6 @@ import { Theme } from './themes';
 export function color(id: keyof Theme): string {
   return `var(--color-${id})`;
 }
+
+// Use a consistent border radius.
+export const radius = '3px';
