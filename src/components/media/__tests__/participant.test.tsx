@@ -1,8 +1,8 @@
 import { produce } from 'immer';
-import renderer from '../../testing/renderer';
+import renderer from '../../../testing/renderer';
 import { Participant, mapStateToProps } from '../participant';
-import { MY_PARTICIPANT_ID, TrackKind } from '../../utils/constants';
-import initialState, { State } from '../../reducers/initial-state';
+import { MY_PARTICIPANT_ID, TrackKind } from '../../../utils/constants';
+import initialState, { State } from '../../../reducers/initial-state';
 import MediaView from '../media-view';
 
 describe('Participant', () => {

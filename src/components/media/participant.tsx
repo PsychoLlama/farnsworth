@@ -1,8 +1,8 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import invariant from 'invariant';
-import { State } from '../reducers/initial-state';
-import { TrackKind } from '../utils/constants';
+import { State } from '../../reducers/initial-state';
+import { TrackKind } from '../../utils/constants';
 import MediaView from './media-view';
 
 export class Participant extends React.Component<Props> {

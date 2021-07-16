@@ -1,7 +1,7 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import * as actions from '../actions';
-import Participant from './participant';
+import Participant from './media/participant';
 import Sidebar from './sidebar';
 import { MY_PARTICIPANT_ID } from '../utils/constants';
 import styled from 'styled-components';

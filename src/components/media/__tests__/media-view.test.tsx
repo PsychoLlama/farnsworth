@@ -1,6 +1,6 @@
-import renderer from '../../testing/renderer';
+import renderer from '../../../testing/renderer';
 import MediaView from '../media-view';
-import context from '../../conferencing/global-context';
+import context from '../../../conferencing/global-context';
 
 describe('MediaView', () => {
   const setup = renderer(MediaView, {

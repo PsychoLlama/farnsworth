@@ -1,6 +1,6 @@
 import React from 'react';
 import styled from 'styled-components';
-import context from '../conferencing/global-context';
+import context from '../../conferencing/global-context';
 
 export default class MediaView extends React.Component<Props> {
   stream = new MediaStream();
