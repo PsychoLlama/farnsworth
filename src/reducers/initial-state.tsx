@@ -7,6 +7,21 @@ import { TrackKind, MY_PARTICIPANT_ID } from '../utils/constants';
  * See: ../conferencing/global-context
  */
 export interface State {
+  relay: null | {
+    /**
+     * References the libp2p peer ID. These IDs are used to distinguish
+     * different users, including yourself. Your own participant object is
+     * indexed by `state.localId`.
+     *
+     * The value is added asynchronously because generating IDs depends on
+     * computationally intensive cryptographic APIs.
+     */
+    localId: string;
+
+    // The current relay server's multiaddr.
+    server: string;
+  };
+
   participants: {
     [participantId: string]: {
       isMe: boolean;
@@ -24,6 +39,7 @@ export interface State {
 }
 
 const initialState: State = {
+  relay: null,
   participants: {
     [MY_PARTICIPANT_ID]: {
       isMe: true,

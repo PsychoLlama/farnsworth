@@ -3,13 +3,14 @@ import { connect } from 'react-redux';
 import * as actions from '../actions';
 import styled from 'styled-components';
 import SelfPreview from './media/self-preview';
+import { SERVER_ADDRESS } from '../utils/constants';
 
 export class App extends React.Component<Props> {
   async componentDidMount() {
     this.props.requestMediaDevices();
 
     // Opens a connection to the relay server.
-    this.props.connectToServer();
+    this.props.connectToServer(SERVER_ADDRESS);
   }
 
   render() {
