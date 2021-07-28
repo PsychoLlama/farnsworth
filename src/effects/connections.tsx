@@ -4,6 +4,8 @@ import MPLEX from 'libp2p-mplex';
 import Websockets from 'libp2p-websockets';
 import * as filters from 'libp2p-websockets/src/filters';
 
+// This decides the libp2p relay server. Make sure it exists in your `.env`
+// file.
 const SERVER_ADDRESS = process.env.RELAY_SERVER_ADDRESS;
 
 /**
@@ -11,10 +13,10 @@ const SERVER_ADDRESS = process.env.RELAY_SERVER_ADDRESS;
  * tell them who we're looking for. Second, the relay server tells us when
  * that peer joins and we establish a relayed connection to them.
  */
-async function initNetworkingModule() {
+async function initNetworkingModule(addr: string) {
   const p2p = await P2P.create({
     addresses: {
-      listen: [`${SERVER_ADDRESS}/p2p-circuit`],
+      listen: [`${addr}/p2p-circuit`],
     },
     modules: {
       transport: [Websockets],
@@ -33,9 +35,13 @@ async function initNetworkingModule() {
   return p2p;
 }
 
-export async function init() {
-  const p2p = await initNetworkingModule();
+export async function listen(addr = SERVER_ADDRESS) {
+  const p2p = await initNetworkingModule(addr);
   await p2p.start();
+
+  return {
+    id: p2p.peerId.toB58String(),
+  };
 }
 
 const ModuleId = {

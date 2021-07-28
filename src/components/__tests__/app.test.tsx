@@ -5,6 +5,7 @@ describe('App', () => {
   const setup = renderer(App, {
     getDefaultProps: () => ({
       requestMediaDevices: jest.fn(),
+      connectToServer: jest.fn(),
     }),
   });
 
@@ -12,5 +13,11 @@ describe('App', () => {
     const { props } = setup();
 
     expect(props.requestMediaDevices).toHaveBeenCalled();
+  });
+
+  it('connects to the server on mount', () => {
+    const { props } = setup();
+
+    expect(props.connectToServer).toHaveBeenCalled();
   });
 });

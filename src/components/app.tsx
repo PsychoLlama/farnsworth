@@ -9,8 +9,7 @@ export class App extends React.Component<Props> {
     this.props.requestMediaDevices();
 
     // Opens a connection to the relay server.
-    const signaling = await import('../conferencing/signaling');
-    await signaling.init();
+    this.props.connectToServer();
   }
 
   render() {
@@ -29,10 +28,12 @@ const Container = styled.div`
 
 interface Props {
   requestMediaDevices: typeof actions.devices.requestMediaDevices;
+  connectToServer: typeof actions.connections.listen;
 }
 
 const mapDispatchToProps = {
   requestMediaDevices: actions.devices.requestMediaDevices,
+  connectToServer: actions.connections.listen,
 };
 
 export default connect(null, mapDispatchToProps)(App);
