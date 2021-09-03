@@ -9,9 +9,7 @@ export default class SelfPreview extends React.Component {
     return (
       <FullScreen>
         <Participant id={MY_PARTICIPANT_ID} />
-        <ControlsOverlay>
-          <Controls />
-        </ControlsOverlay>
+        <Controls />
       </FullScreen>
     );
   }
@@ -19,18 +17,8 @@ export default class SelfPreview extends React.Component {
 
 const FullScreen = styled.div`
   max-height: 100vh;
+  max-width: 100%;
   display: flex;
   flex-grow: 1;
-`;
-
-const ControlsOverlay = styled.div`
-  position: absolute;
-  top: 0;
-  bottom: 0;
-  left: 0;
-  right: 0;
-  display: flex;
-  justify-content: center;
-  align-items: flex-end;
-  padding: 2rem;
+  flex-direction: column;
 `;

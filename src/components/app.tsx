@@ -3,7 +3,6 @@ import { connect } from 'react-redux';
 import * as actions from '../actions';
 import styled from 'styled-components';
 import SelfPreview from './media/self-preview';
-import Sidebar from './sidebar';
 import { SERVER_ADDRESS } from '../utils/constants';
 
 export class App extends React.Component<Props> {
@@ -18,7 +17,6 @@ export class App extends React.Component<Props> {
     return (
       <Container>
         <SelfPreview />
-        <Sidebar />
       </Container>
     );
   }

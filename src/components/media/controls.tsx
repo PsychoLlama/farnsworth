@@ -25,8 +25,9 @@ export default class Controls extends React.Component {
 
 const Container = styled.div`
   background-color: ${css.color('background')};
-  border-radius: ${css.radius};
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+  display: flex;
+  justify-content: center;
 `;
 
 const Control = styled.button`
@@ -38,15 +39,6 @@ const Control = styled.button`
   margin: 0;
   font-size: 1.5rem;
   padding: 1rem;
-
-  :first-child {
-    border-radius: ${css.radius} 0 0 ${css.radius};
-  }
-
-  :last-child {
-    margin-right: 0;
-    border-radius: 0 ${css.radius} ${css.radius} 0;
-  }
 
   :hover,
   :focus {
