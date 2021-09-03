@@ -1,12 +1,16 @@
 import React from 'react';
 import styled from 'styled-components';
-import { FiMic, FiVideo, FiMenu } from 'react-icons/fi';
+import { FiMic, FiVideo, FiUsers, FiSliders } from 'react-icons/fi';
 import * as css from '../../utils/css';
 
 export default class Controls extends React.Component {
   render() {
     return (
       <Container>
+        <Control>
+          <FiSliders />
+        </Control>
+
         <Control>
           <FiMic />
         </Control>
@@ -16,7 +20,7 @@ export default class Controls extends React.Component {
         </Control>
 
         <Control>
-          <FiMenu />
+          <FiUsers />
         </Control>
       </Container>
     );
@@ -33,7 +37,7 @@ const Container = styled.div`
 const Control = styled.button`
   appearance: none;
   border: none;
-  color: ${css.color('primary')};
+  color: ${css.color('text')};
   background-color: transparent;
   padding: 0;
   margin: 0;
