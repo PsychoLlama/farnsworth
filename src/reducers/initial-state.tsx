@@ -36,6 +36,11 @@ export interface State {
       kind: TrackKind;
     };
   };
+
+  // Manages calling and frequent contacts.
+  phonebook: {
+    open: boolean;
+  };
 }
 
 const initialState: State = {
@@ -47,6 +52,9 @@ const initialState: State = {
     },
   },
   tracks: {},
+  phonebook: {
+    open: false,
+  },
 };
 
 export default initialState;

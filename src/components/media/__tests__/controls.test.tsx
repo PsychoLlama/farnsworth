@@ -1,12 +1,18 @@
 import renderer from '../../../testing/renderer';
-import Controls from '../controls';
+import { Controls } from '../controls';
 
 describe('Controls', () => {
   const setup = renderer(Controls, {
-    getDefaultProps: () => ({}),
+    getDefaultProps: () => ({
+      togglePhonebook: jest.fn(),
+    }),
   });
 
-  it('renders', () => {
-    expect(setup).not.toThrow();
+  it('opens the phonebook when the control is clicked', () => {
+    const { output, props } = setup();
+
+    output.find('[data-test="toggle-phonebook"]').simulate('click');
+
+    expect(props.togglePhonebook).toHaveBeenCalled();
   });
 });

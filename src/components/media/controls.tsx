@@ -1,10 +1,14 @@
 import React from 'react';
 import styled from 'styled-components';
 import { FiMic, FiVideo, FiUsers, FiSliders } from 'react-icons/fi';
+import { connect } from 'react-redux';
 import * as css from '../../utils/css';
+import * as actions from '../../actions';
 
-export default class Controls extends React.Component {
+export class Controls extends React.Component<Props> {
   render() {
+    const { togglePhonebook } = this.props;
+
     return (
       <Container>
         <Control>
@@ -19,12 +23,16 @@ export default class Controls extends React.Component {
           <FiVideo />
         </Control>
 
-        <Control>
+        <Control data-test="toggle-phonebook" onClick={togglePhonebook}>
           <FiUsers />
         </Control>
       </Container>
     );
   }
+}
+
+interface Props {
+  togglePhonebook: typeof actions.phonebook.toggle;
 }
 
 const Container = styled.div`
@@ -55,3 +63,9 @@ const Control = styled.button`
     color: ${css.color('text')};
   }
 `;
+
+const mapDispatchToProps = {
+  togglePhonebook: actions.phonebook.toggle,
+};
+
+export default connect(null, mapDispatchToProps)(Controls);
