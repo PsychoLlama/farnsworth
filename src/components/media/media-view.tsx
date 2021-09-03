@@ -1,6 +1,7 @@
 import React from 'react';
 import styled from 'styled-components';
 import context from '../../conferencing/global-context';
+import * as Overlays from './video-overlays';
 
 export default class MediaView extends React.Component<Props> {
   stream = new MediaStream();
@@ -16,13 +17,22 @@ export default class MediaView extends React.Component<Props> {
 
   render() {
     return (
-      <VideoStream
-        data-local={this.props.isLocal}
-        ref={this.attachMediaStream}
-        data-test-id="video-stream"
-      />
+      <Container>
+        <VideoStream
+          data-local={this.props.isLocal}
+          ref={this.attachMediaStream}
+          data-test-id="video-stream"
+        />
+        {this.renderOverlay()}
+      </Container>
     );
   }
+
+  renderOverlay = () => {
+    const { videoTrackId } = this.props;
+
+    return <Overlay>{videoTrackId ? null : <Overlays.NoVideoTrack />}</Overlay>;
+  };
 
   attachMediaStream = (video: null | HTMLVideoElement) => {
     if (video) video.srcObject = this.stream;
@@ -59,6 +69,25 @@ interface Props {
   videoTrackId: null | string;
   isLocal: boolean;
 }
+
+const Container = styled.div`
+  display: flex;
+  flex-grow: 1;
+  position: relative;
+  max-height: 100%;
+  overflow: hidden;
+  background-color: black;
+`;
+
+const Overlay = styled.div`
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  display: flex;
+  flex-grow: 1;
+`;
 
 const VideoStream = styled.video`
   object-fit: cover;

@@ -1,6 +1,7 @@
 import renderer from '../../../testing/renderer';
 import MediaView from '../media-view';
 import context from '../../../conferencing/global-context';
+import * as Overlays from '../video-overlays';
 
 describe('MediaView', () => {
   const setup = renderer(MediaView, {
@@ -83,5 +84,13 @@ describe('MediaView', () => {
     const ref = setVideoRef(output);
 
     expect(ref.srcObject.getTracks()).not.toContain(audioTrack);
+  });
+
+  it('shows a placeholder without a video track', () => {
+    const { output: without } = setup();
+    const { output: withVideo } = setup({ videoTrackId: 'v-id' });
+
+    expect(without.find(Overlays.NoVideoTrack).exists()).toBe(true);
+    expect(withVideo.find(Overlays.NoVideoTrack).exists()).toBe(false);
   });
 });
