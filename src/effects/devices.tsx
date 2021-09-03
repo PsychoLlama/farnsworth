@@ -5,7 +5,12 @@ import { TrackKind } from '../utils/constants';
 export const requestMediaDevices = async () => {
   const stream = await MediaDevices.getUserMedia({
     audio: true,
-    video: true,
+
+    // Prefer videos in 16:9 aspect ratio.
+    video: {
+      height: { ideal: 720 },
+      width: { ideal: 1280 },
+    },
   });
 
   stream.getTracks().forEach((track) => {
