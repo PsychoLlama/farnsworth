@@ -1,5 +1,5 @@
-import Libp2pMessenger from '../libp2p-messenger';
-import { Stream } from '../../testing/mocks/libp2p';
+import Libp2pMessenger from '../../libp2p-messenger';
+import { Stream } from '../../../testing/mocks/libp2p';
 
 describe('Libp2p Signaling Messenger', () => {
   describe('send', () => {
