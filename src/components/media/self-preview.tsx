@@ -3,17 +3,17 @@ import styled from 'styled-components';
 import Participant from './participant';
 import { MY_PARTICIPANT_ID } from '../../utils/constants';
 import Controls from './controls';
-import Phonebook from '../phonebook';
+import Sidebar from '../sidebar';
 
 export default class SelfPreview extends React.Component {
   render() {
     return (
       <FullScreen>
+        <Controls />
         <Row>
           <Participant id={MY_PARTICIPANT_ID} />
-          <Phonebook />
+          <Sidebar />
         </Row>
-        <Controls />
       </FullScreen>
     );
   }
@@ -24,7 +24,7 @@ const FullScreen = styled.main.attrs({ role: 'main' })`
   max-width: 100%;
   display: flex;
   flex-grow: 1;
-  flex-direction: column;
+  flex-direction: column-reverse;
 `;
 
 const Row = styled.div`

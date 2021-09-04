@@ -22,6 +22,7 @@ export default class MediaView extends React.Component<Props> {
           data-local={this.props.isLocal}
           ref={this.attachMediaStream}
           data-test-id="video-stream"
+          tabIndex={-1}
         />
         {this.renderOverlay()}
       </Container>
