@@ -8,7 +8,8 @@ describe('Libp2p Signaling Messenger', () => {
       const messenger = Libp2pMessenger.from(stream);
 
       const msg = { arbitrary: 'payload' };
-      await messenger.send(msg);
+      messenger.send(msg);
+      await messenger.drain();
 
       expect(stream.observer).toHaveBeenCalledTimes(1);
       expect(stream.observer).toHaveBeenCalledWith(JSON.stringify(msg));

@@ -1,5 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import pipe from 'it-pipe';
+import AsyncQueue from './async-queue';
 
 /**
  * Provides a simple JSON messenger interface over libp2p streams.
@@ -10,15 +11,29 @@ export default class Libp2pMessenger<Stream> {
   }
 
   private stream: Stream;
+  private messageQueue = new AsyncQueue();
+  private connectionClosePromise: Promise<void>;
 
   private constructor(stream: Stream) {
     this.stream = stream;
+    this.connectionClosePromise = pipe(
+      this.messageQueue,
+      json.encode,
+      this.stream,
+    );
   }
 
+  /**
+   * Send arbitrary JSON to the other side.
+   */
   async send<Stream>(data: Stream) {
-    await pipe([data], json.encode, this.stream);
+    this.messageQueue.append(data);
   }
 
+  /**
+   * Invokes the callback for every new message.
+   * WARNING: Don't subscribe more than once.
+   */
   subscribe<Callback extends (msg: any) => any>(callback: Callback) {
     return pipe(
       this.stream,
@@ -29,6 +44,14 @@ export default class Libp2pMessenger<Stream> {
         }
       },
     );
+  }
+
+  /**
+   * Close the message queue and wait for the pipes to drain.
+   */
+  drain() {
+    this.messageQueue.end();
+    return this.connectionClosePromise;
   }
 }
 
