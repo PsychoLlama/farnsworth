@@ -2,6 +2,7 @@ import React from 'react';
 import styled from 'styled-components';
 import { connect } from 'react-redux';
 import { State } from '../reducers/initial-state';
+import InviteLink from './invite-link';
 
 export class Phonebook extends React.Component<Props> {
   render() {
@@ -9,7 +10,11 @@ export class Phonebook extends React.Component<Props> {
       return null;
     }
 
-    return <Container>TODO: copy invite link</Container>;
+    return (
+      <Container>
+        <InviteLink />
+      </Container>
+    );
   }
 }
 

@@ -1,10 +1,10 @@
 import renderer from '../../testing/renderer';
-import { Statusbar, mapStateToProps } from '../statusbar';
+import { InviteLink, mapStateToProps } from '../invite-link';
 import createStore from '../../utils/create-store';
 import * as actions from '../../actions';
 
-describe('Statusbar', () => {
-  const setup = renderer(Statusbar, {
+describe('InviteLink', () => {
+  const setup = renderer(InviteLink, {
     getDefaultProps: () => ({
       dialAddress: '/bluetooth/5/p2p/hash',
       connected: true,

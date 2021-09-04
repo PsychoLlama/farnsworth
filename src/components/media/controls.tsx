@@ -4,6 +4,7 @@ import { FiMic, FiVideo, FiUsers, FiSliders } from 'react-icons/fi';
 import { connect } from 'react-redux';
 import * as css from '../../utils/css';
 import * as actions from '../../actions';
+import { Button } from '../core';
 
 export class Controls extends React.Component<Props> {
   render() {
@@ -42,25 +43,18 @@ const Container = styled.div`
   justify-content: center;
 `;
 
-const Control = styled.button`
-  appearance: none;
-  border: none;
-  color: ${css.color('text')};
-  background-color: transparent;
-  padding: 0;
-  margin: 0;
+const Control = styled(Button.Base)`
   font-size: 1.5rem;
   padding: 1rem;
 
   :hover,
   :focus {
-    background-color: ${css.color('primary')};
+    background-color: ${css.color('foreground')};
     color: ${css.color('background')};
   }
 
   :active {
-    background-color: ${css.color('background')};
-    color: ${css.color('text')};
+    filter: brightness(70%);
   }
 `;
 
