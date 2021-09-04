@@ -1,25 +1,25 @@
 import React from 'react';
 import styled from 'styled-components';
 import { FiPhoneOutgoing } from 'react-icons/fi';
-import InviteLink from './invite-link';
+import InviteCode from './invite-code';
 import { Button, Input } from './core';
 
 export class Phonebook extends React.Component<Record<string, never>, State> {
   state = {
-    inviteLink: '',
+    inviteCode: '',
   };
 
   render() {
     return (
       <Container>
-        <InviteLink />
+        <InviteCode />
 
-        <CallingForm data-test="invite-link-form" onSubmit={this.call}>
+        <CallingForm data-test="invite-code-form" onSubmit={this.call}>
           <InviteInput
-            data-test="invite-link-input"
-            placeholder="Invite link"
-            value={this.state.inviteLink}
-            onChange={this.updateInviteLink}
+            data-test="invite-code-input"
+            placeholder="Invite code"
+            value={this.state.inviteCode}
+            onChange={this.updateInviteCode}
           />
 
           <Button.Primary type="submit">
@@ -39,16 +39,16 @@ export class Phonebook extends React.Component<Record<string, never>, State> {
   };
 
   clearInput = () => {
-    this.setState({ inviteLink: '' });
+    this.setState({ inviteCode: '' });
   };
 
-  updateInviteLink = (inviteLink: string) => {
-    this.setState({ inviteLink });
+  updateInviteCode = (inviteCode: string) => {
+    this.setState({ inviteCode });
   };
 }
 
 interface State {
-  inviteLink: string;
+  inviteCode: string;
 }
 
 const Container = styled.div`

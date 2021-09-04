@@ -4,7 +4,7 @@ import { Button } from './core';
 import { State as ReduxState } from '../reducers/initial-state';
 import debounce from '../utils/debounce';
 
-export class InviteLink extends React.Component<Props, State> {
+export class InviteCode extends React.Component<Props, State> {
   state = {
     showCopySuccessMessage: false,
   };
@@ -13,8 +13,8 @@ export class InviteLink extends React.Component<Props, State> {
     const { showCopySuccessMessage } = this.state;
 
     return (
-      <Button.Primary data-test="copy-invite" onClick={this.copy}>
-        {showCopySuccessMessage ? 'Copied!' : 'Copy Invite Link'}
+      <Button.Primary data-test="copy-code" onClick={this.copy}>
+        {showCopySuccessMessage ? 'Copied!' : 'Copy Invite Code'}
       </Button.Primary>
     );
   }
@@ -49,4 +49,4 @@ export function mapStateToProps({ relay }: ReduxState) {
   };
 }
 
-export default connect(mapStateToProps)(InviteLink);
+export default connect(mapStateToProps)(InviteCode);

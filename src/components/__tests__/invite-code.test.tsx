@@ -1,8 +1,7 @@
 import renderer from '../../testing/renderer';
-import { InviteLink, mapStateToProps } from '../invite-link';
+import { InviteCode, mapStateToProps } from '../invite-code';
 import createStore from '../../utils/create-store';
 import * as actions from '../../actions';
-import { Button } from '../core';
 
 (navigator as any).clipboard = {
   writeText: jest.fn(),
@@ -10,8 +9,8 @@ import { Button } from '../core';
 
 jest.useFakeTimers();
 
-describe('InviteLink', () => {
-  const setup = renderer(InviteLink, {
+describe('InviteCode', () => {
+  const setup = renderer(InviteCode, {
     getDefaultProps: () => ({
       dialAddress: '/bluetooth/5/p2p/hash',
       connected: true,
@@ -22,28 +21,28 @@ describe('InviteLink', () => {
     (navigator as any).clipboard.writeText.mockClear();
   });
 
-  it('copies the link to the clipboard', async () => {
-    const { output, props } = setup();
-    const { onClick } = output.find(Button.Primary).props();
+  it('copies the code to the clipboard', async () => {
+    const { findByTestId, output, props } = setup();
+    const { onClick } = findByTestId('copy-code').props();
 
     await onClick();
     output.update();
 
-    expect(output.find(Button.Primary).text()).toBe('Copied!');
+    expect(findByTestId('copy-code').text()).toBe('Copied!');
     expect(navigator.clipboard.writeText).toHaveBeenCalledWith(
       props.dialAddress,
     );
   });
 
   it('dismisses the copied notice after a short time', async () => {
-    const { output } = setup();
-    const { onClick } = output.find(Button.Primary).props();
+    const { findByTestId, output } = setup();
+    const { onClick } = findByTestId('copy-code').props();
 
     await onClick();
     output.update();
     jest.runAllTimers();
 
-    expect(output.find(Button.Primary).text()).not.toBe('Copied!');
+    expect(findByTestId('copy-code').text()).not.toBe('Copied!');
   });
 
   describe('mapStateToProps', () => {
