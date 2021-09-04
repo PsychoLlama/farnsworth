@@ -112,6 +112,7 @@
   "dependencies": {
     "freeform-input": "^0.2.0",
     "invariant": "^2.2.4",
+    "it-pipe": "^1.1.0",
     "libp2p": "^0.30.9",
     "libp2p-mplex": "^0.10.2",
     "libp2p-noise": "^2.0.5",

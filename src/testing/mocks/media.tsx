@@ -1,6 +1,6 @@
 import { v4 as uuid } from 'uuid';
 import EventEmitter from 'events';
-import { TrackKind } from '../utils/constants';
+import { TrackKind } from '../../utils/constants';
 
 export class MockMediaStream extends EventEmitter implements MediaStream {
   _tracks: Set<MockMediaStreamTrack> = new Set();
