@@ -37,7 +37,14 @@ export default function renderer<Props>(
     };
 
     const output = shallow(<Cmp {...props} />);
-    return { output, props };
+
+    return {
+      output,
+      props,
+      findByTestId(testId: string) {
+        return output.find({ 'data-test': testId });
+      },
+    };
   };
 }
 

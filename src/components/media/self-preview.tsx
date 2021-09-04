@@ -9,11 +9,11 @@ export default class SelfPreview extends React.Component {
   render() {
     return (
       <FullScreen>
-        <Controls />
-        <Row>
+        <Column>
           <Participant id={MY_PARTICIPANT_ID} />
-          <Sidebar />
-        </Row>
+          <Controls />
+        </Column>
+        <Sidebar />
       </FullScreen>
     );
   }
@@ -24,11 +24,11 @@ const FullScreen = styled.main.attrs({ role: 'main' })`
   max-width: 100%;
   display: flex;
   flex-grow: 1;
-  flex-direction: column-reverse;
 `;
 
-const Row = styled.div`
+const Column = styled.div`
   display: flex;
   flex-grow: 1;
   overflow: hidden;
+  flex-direction: column;
 `;

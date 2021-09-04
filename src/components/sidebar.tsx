@@ -34,6 +34,7 @@ const Container = styled.aside.attrs({ role: 'complementary' })`
   display: flex;
   flex-direction: column;
   max-width: 20rem;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
 `;
 
 export enum View {

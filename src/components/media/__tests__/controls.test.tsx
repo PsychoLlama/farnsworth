@@ -9,9 +9,9 @@ describe('Controls', () => {
   });
 
   it('opens the phonebook when the control is clicked', () => {
-    const { output, props } = setup();
+    const { findByTestId, props } = setup();
 
-    output.find('[data-test="toggle-phonebook"]').simulate('click');
+    findByTestId('toggle-phonebook').simulate('click');
 
     expect(props.togglePhonebook).toHaveBeenCalled();
   });

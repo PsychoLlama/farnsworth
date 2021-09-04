@@ -17,7 +17,6 @@ export const Primary = styled(Base)`
   color: white;
   font-weight: bold;
   padding: 1rem;
-  margin: 1rem;
 
   :focus,
   :hover {

@@ -4665,6 +4665,11 @@ fragment-cache@^0.2.1:
   dependencies:
     map-cache "^0.2.2"
 
+freeform-input@^0.2.0:
+  version "0.2.0"
+  resolved "https://registry.yarnpkg.com/freeform-input/-/freeform-input-0.2.0.tgz#10442b97a19ebc56df048e3826fffa10d3525860"
+  integrity sha512-bB+4cOywn7Kv5bOdq+wvTp9Evy+ZVTaLhzYPx3GwPZkdQsraS2YWH9aolHEox+yYnh/MCY8dbWZErZZ2u2AhVw==
+
 fs-extra@^9.0.1:
   version "9.1.0"
   resolved "https://registry.yarnpkg.com/fs-extra/-/fs-extra-9.1.0.tgz#5954460c764a8da2094ba3554bf839e6b9a7c86d"

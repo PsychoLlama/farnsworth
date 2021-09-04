@@ -13,7 +13,7 @@ export class InviteLink extends React.Component<Props, State> {
     const { showCopySuccessMessage } = this.state;
 
     return (
-      <Button.Primary onClick={this.copy}>
+      <Button.Primary data-test="copy-invite" onClick={this.copy}>
         {showCopySuccessMessage ? 'Copied!' : 'Copy Invite Link'}
       </Button.Primary>
     );
