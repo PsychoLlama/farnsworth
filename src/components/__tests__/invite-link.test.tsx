@@ -2,6 +2,13 @@ import renderer from '../../testing/renderer';
 import { InviteLink, mapStateToProps } from '../invite-link';
 import createStore from '../../utils/create-store';
 import * as actions from '../../actions';
+import { Button } from '../core';
+
+(navigator as any).clipboard = {
+  writeText: jest.fn(),
+};
+
+jest.useFakeTimers();
 
 describe('InviteLink', () => {
   const setup = renderer(InviteLink, {
@@ -11,8 +18,32 @@ describe('InviteLink', () => {
     }),
   });
 
-  it('renders', () => {
-    expect(setup).not.toThrow();
+  beforeEach(() => {
+    (navigator as any).clipboard.writeText.mockClear();
+  });
+
+  it('copies the link to the clipboard', async () => {
+    const { output, props } = setup();
+    const { onClick } = output.find(Button.Primary).props();
+
+    await onClick();
+    output.update();
+
+    expect(output.find(Button.Primary).text()).toBe('Copied!');
+    expect(navigator.clipboard.writeText).toHaveBeenCalledWith(
+      props.dialAddress,
+    );
+  });
+
+  it('dismisses the copied notice after a short time', async () => {
+    const { output } = setup();
+    const { onClick } = output.find(Button.Primary).props();
+
+    await onClick();
+    output.update();
+    jest.runAllTimers();
+
+    expect(output.find(Button.Primary).text()).not.toBe('Copied!');
   });
 
   describe('mapStateToProps', () => {
