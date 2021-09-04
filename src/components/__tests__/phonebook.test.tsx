@@ -3,7 +3,9 @@ import { Phonebook } from '../phonebook';
 
 describe('Phonebook', () => {
   const setup = renderer(Phonebook, {
-    getDefaultProps: () => ({}),
+    getDefaultProps: () => ({
+      dial: jest.fn(),
+    }),
   });
 
   it('keeps track of the invite input state', () => {
@@ -13,10 +15,18 @@ describe('Phonebook', () => {
     findByTestId('invite-code-input').simulate('change', value);
     expect(findByTestId('invite-code-input').prop('value')).toBe(value);
 
-    const event = new Event('submit');
-    findByTestId('invite-code-form').simulate('submit', event);
+    findByTestId('invite-code-form').simulate('submit', new Event('submit'));
 
     // Input should be cleared.
     expect(findByTestId('invite-code-input').prop('value')).toBe('');
+  });
+
+  it('dials the remote peer', () => {
+    const { findByTestId, props } = setup();
+
+    findByTestId('invite-code-input').simulate('change', '/remote');
+    findByTestId('invite-code-form').simulate('submit', new Event('submit'));
+
+    expect(props.dial).toHaveBeenCalledWith('/remote');
   });
 });

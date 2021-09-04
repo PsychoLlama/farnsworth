@@ -1,10 +1,12 @@
 import React from 'react';
 import styled from 'styled-components';
 import { FiPhoneOutgoing } from 'react-icons/fi';
+import { connect } from 'react-redux';
 import InviteCode from './invite-code';
 import { Button, Input } from './core';
+import * as actions from '../actions';
 
-export class Phonebook extends React.Component<Record<string, never>, State> {
+export class Phonebook extends React.Component<Props, State> {
   state = {
     inviteCode: '',
   };
@@ -34,8 +36,10 @@ export class Phonebook extends React.Component<Record<string, never>, State> {
     event.stopPropagation();
     event.preventDefault();
 
+    const { inviteCode } = this.state;
     this.clearInput();
-    // TODO: Dial the other peer.
+
+    this.props.dial(inviteCode);
   };
 
   clearInput = () => {
@@ -45,6 +49,10 @@ export class Phonebook extends React.Component<Record<string, never>, State> {
   updateInviteCode = (inviteCode: string) => {
     this.setState({ inviteCode });
   };
+}
+
+interface Props {
+  dial: typeof actions.connections.dial;
 }
 
 interface State {
@@ -68,4 +76,8 @@ const InviteInput = styled(Input)`
   margin-right: 1rem;
 `;
 
-export default Phonebook;
+const mapDispatchToProps = {
+  dial: actions.connections.dial,
+};
+
+export default connect(null, mapDispatchToProps)(Phonebook);

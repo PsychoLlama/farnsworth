@@ -1,3 +1,5 @@
+import Libp2p from 'libp2p';
+
 // Video centric apps deal with a lot of stateful objects. Things like media
 // stream tracks, audio contexts, recorders, etc. None of those can exist in
 // redux (state must be JSON serializable). But it has to go somewhere. So
@@ -17,11 +19,15 @@
 // 4. Only store here what cannot be stored in redux.
 const context: GlobalContext = {
   tracks: new Map(),
+  p2p: null,
 };
 
 interface GlobalContext {
   // Mapping { track.id => Track }
   tracks: Map<string, MediaStreamTrack>;
+
+  // Singleton, asynchronously initialized at startup.
+  p2p: null | Libp2p;
 }
 
 export default context;
