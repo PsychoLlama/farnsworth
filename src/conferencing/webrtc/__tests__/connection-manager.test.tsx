@@ -3,6 +3,10 @@ import Libp2pMessenger from '../../libp2p-messenger';
 import { Stream } from '../../../testing/mocks/libp2p';
 import { MockMediaStreamTrack } from '../../../testing/mocks/media';
 import {
+  RtcDescriptionType,
+  RtcSignalingState,
+} from '../../../utils/constants';
+import {
   MockRTCDataChannel,
   MockRTCPeerConnection,
 } from '../../../testing/mocks/webrtc';
@@ -13,6 +17,7 @@ describe('ConnectionManager', () => {
     const signaler = Libp2pMessenger.from(stream);
 
     jest.spyOn(signaler, 'send');
+    jest.spyOn(signaler, 'subscribe');
 
     const config = {
       localId: 'local',
@@ -31,6 +36,7 @@ describe('ConnectionManager', () => {
       mgr,
       signaler,
       stream,
+      onMessage: (signaler as any).subscribe.mock.calls[0][0],
 
       // Technically private. Sue me.
       pc: (mgr as any).pc as MockRTCPeerConnection,
@@ -66,6 +72,134 @@ describe('ConnectionManager', () => {
       type: MessageType.SessionDescription,
       payload: pc.localDescription,
     });
+  });
+
+  it('sets the remote description for incoming offers', async () => {
+    const { pc, onMessage } = setup();
+    const description = { type: 'answer' };
+
+    await onMessage({
+      type: MessageType.SessionDescription,
+      payload: description,
+    });
+
+    expect(pc.setRemoteDescription).toHaveBeenCalledWith(description);
+  });
+
+  it('adds remote ICE candidates', async () => {
+    const { pc, onMessage } = setup();
+    const candidate = { mock: 'ice-candidate' };
+
+    await onMessage({
+      type: MessageType.IceCandidate,
+      payload: candidate,
+    });
+
+    expect(pc.addIceCandidate).toHaveBeenCalledWith(candidate);
+  });
+
+  it('ignores malformed messages', async () => {
+    const { onMessage } = setup();
+
+    await expect(onMessage(null)).resolves.toBeUndefined();
+    await expect(onMessage({})).resolves.toBeUndefined();
+    await expect(onMessage({ type: '???' })).resolves.toBeUndefined();
+  });
+
+  it('responds to session offers (inbound calls)', async () => {
+    const { onMessage, pc } = setup();
+
+    await onMessage({
+      type: MessageType.SessionDescription,
+      payload: { type: RtcDescriptionType.Offer },
+    });
+
+    expect(pc.setLocalDescription).toHaveBeenCalled();
+  });
+
+  it('ignores remote offers during a conflict if impolite', async () => {
+    const { onMessage, pc } = setup({ localId: 'z', remoteId: 'a' });
+
+    pc.onnegotiationneeded(); // No 'await' - test concurrent conditions.
+    pc.signalingState = RtcSignalingState.HaveLocalOffer;
+
+    await onMessage({
+      type: MessageType.SessionDescription,
+      payload: { type: RtcDescriptionType.Offer },
+    });
+
+    expect(pc.setRemoteDescription).not.toHaveBeenCalled();
+    expect(pc.setLocalDescription).toHaveBeenCalledTimes(1);
+  });
+
+  it('drops local offers during a conflict if polite', async () => {
+    const { onMessage, pc } = setup({ localId: 'a', remoteId: 'z' });
+
+    pc.onnegotiationneeded();
+    pc.signalingState = RtcSignalingState.HaveLocalOffer;
+
+    await onMessage({
+      type: MessageType.SessionDescription,
+      payload: { type: RtcDescriptionType.Offer },
+    });
+
+    expect(pc.setRemoteDescription).toHaveBeenCalled();
+    expect(pc.setLocalDescription).toHaveBeenCalledTimes(2);
+  });
+
+  it('ignores offers while outside a stable state if impolite', async () => {
+    const { onMessage, pc } = setup({ localId: 'z', remoteId: 'a' });
+
+    await pc.onnegotiationneeded();
+    pc.signalingState = RtcSignalingState.HaveLocalOffer;
+
+    await onMessage({
+      type: MessageType.SessionDescription,
+      payload: { type: RtcDescriptionType.Offer },
+    });
+
+    expect(pc.setRemoteDescription).not.toHaveBeenCalled();
+    expect(pc.setLocalDescription).toHaveBeenCalledTimes(1);
+  });
+
+  // If we're the impolite peer and there was a call conflict, expect incoming
+  // ICE candidates that are incompatible. Other parts of the protocol help
+  // the other side figure it out and correct it remotely.
+  it('swallows errors from remote candidates if expecting conflicts', async () => {
+    const { onMessage, pc } = setup({ localId: 'z', remoteId: 'a' });
+
+    pc.onnegotiationneeded();
+    pc.signalingState = RtcSignalingState.HaveLocalOffer;
+
+    await onMessage({
+      type: MessageType.SessionDescription,
+      payload: { type: RtcDescriptionType.Offer },
+    });
+
+    pc.addIceCandidate.mockRejectedValue(new Error('testing call conflicts'));
+    const promise = onMessage({
+      type: MessageType.IceCandidate,
+      payload: { mock: 'ice-candidate' },
+    });
+
+    await expect(promise).resolves.not.toThrow();
+  });
+
+  // "Politeness" only matters when dealing with call conflicts. Say we
+  // started with a conflict, stabilized, then the connection degrates and ICE
+  // needs to restart. We should allow the other side to make calls.
+  it('resets conflict detectors after signaling stabilizes', async () => {
+    const { onMessage, pc } = setup({ localId: 'z', remoteId: 'a' });
+
+    await pc.onnegotiationneeded();
+    pc.signalingState = RtcSignalingState.Stable;
+
+    await onMessage({
+      type: MessageType.SessionDescription,
+      payload: { type: RtcDescriptionType.Offer },
+    });
+
+    expect(pc.setLocalDescription).toHaveBeenCalledTimes(2);
   });
 
   describe('events', () => {

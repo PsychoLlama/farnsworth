@@ -10,3 +10,14 @@ export enum TrackKind {
   Audio = 'audio',
   Video = 'video',
 }
+
+export enum RtcDescriptionType {
+  Offer = 'offer',
+  // ... incomplete ...
+}
+
+export enum RtcSignalingState {
+  Stable = 'stable',
+  HaveLocalOffer = 'have-local-offer',
+  // ... incomplete ...
+}

@@ -1,15 +1,13 @@
-enum SignalingState {
-  Stable = 'stable',
-  // ... incomplete
-}
+import { RtcSignalingState } from '../../utils/constants';
 
 export class MockRTCPeerConnection {
   setRemoteDescription = jest.fn();
   setLocalDescription = jest.fn();
+  addIceCandidate = jest.fn();
   createDataChannel = jest.fn(() => new MockRTCDataChannel());
   addTrack = jest.fn();
 
-  signalingState = SignalingState.Stable;
+  signalingState = RtcSignalingState.Stable;
   localDescription = { mock: 'local-description' };
 
   ontrack = null;
