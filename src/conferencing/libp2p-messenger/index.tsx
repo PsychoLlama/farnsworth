@@ -5,8 +5,8 @@ import AsyncQueue from './async-queue';
 /**
  * Provides a simple JSON messenger interface over libp2p streams.
  */
-export default class Libp2pMessenger<Stream> {
-  static from<Stream>(stream: Stream) {
+export default class Libp2pMessenger {
+  static from(stream: Stream) {
     return new Libp2pMessenger(stream);
   }
 
@@ -26,7 +26,7 @@ export default class Libp2pMessenger<Stream> {
   /**
    * Send arbitrary JSON to the other side.
    */
-  async send<Stream>(data: Stream) {
+  async send(data: unknown) {
     this.messageQueue.append(data);
   }
 
@@ -69,3 +69,8 @@ const json = {
     }
   },
 };
+
+interface Stream {
+  sink(stream: AsyncIterable<unknown>): Promise<void>;
+  source: AsyncGenerator<unknown>;
+}
