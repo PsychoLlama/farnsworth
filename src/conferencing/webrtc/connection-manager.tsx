@@ -15,6 +15,7 @@ export default class ConnectionManager {
   private events: Config['events'];
   private pc: RTCPeerConnection;
   private remoteId: string;
+  channel: RTCDataChannel;
 
   constructor({ localId, remoteId, signaler, events }: Config) {
     this.signaler = signaler;
@@ -26,15 +27,14 @@ export default class ConnectionManager {
 
     this.pc = new RTCPeerConnection(DEFAULT_PC_CONFIG);
     this.pc.ontrack = this.emitTrackEvent;
-  }
+    this.pc.onicecandidate = this.sendIceCandidate;
+    this.pc.onnegotiationneeded = this.negotiateSessionDescription;
 
-  async connect() {
-    const channel = this.pc.createDataChannel('app', {
+    // Side effect: triggers connection setup. Register event handlers first.
+    this.channel = this.pc.createDataChannel('app', {
       negotiated: true,
       id: 0,
     });
-
-    return channel;
   }
 
   /**
@@ -48,6 +48,21 @@ export default class ConnectionManager {
   private emitTrackEvent = ({ track }: RTCTrackEvent) => {
     this.events.onTrack({ track, peerId: this.remoteId });
   };
+
+  private sendIceCandidate = ({ candidate }: RTCPeerConnectionIceEvent) => {
+    this.signaler.send({
+      type: MessageType.IceCandidate,
+      payload: candidate,
+    });
+  };
+
+  private negotiateSessionDescription = async () => {
+    await this.pc.setLocalDescription();
+    this.signaler.send({
+      type: MessageType.SessionDescription,
+      payload: this.pc.localDescription,
+    });
+  };
 }
 
 export interface Config {
@@ -59,7 +74,21 @@ export interface Config {
   };
 }
 
+export enum MessageType {
+  IceCandidate = 'ice-candidate',
+  SessionDescription = 'session-description',
+}
+
 const DEFAULT_PC_CONFIG = {
   // TODO: Make this customizable.
   iceServers: [{ urls: 'stun:stun.l.google.com:19302' }],
 };
+
+declare global {
+  interface RTCPeerConnection {
+    // TypeScript doesn't recognize the implicit form. Without parameters, the
+    // peer connection infers the correct description from the local signaling
+    // state. This is recommended by modern browsers.
+    setLocalDescription(): Promise<void>;
+  }
+}

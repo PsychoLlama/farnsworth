@@ -10,8 +10,11 @@ export class MockRTCPeerConnection {
   addTrack = jest.fn();
 
   signalingState = SignalingState.Stable;
+  localDescription = { mock: 'local-description' };
 
   ontrack = null;
+  onicecandidate = null;
+  onnegotiationneeded = null;
 }
 
 export class MockRTCDataChannel {

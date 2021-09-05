@@ -24,3 +24,21 @@ export class Stream<T> {
     }
   };
 }
+
+export default class MockLibp2p {
+  static create() {
+    return new MockLibp2p();
+  }
+
+  handle = jest.fn();
+  start = jest.fn();
+
+  /* eslint-disable-next-line @typescript-eslint/no-unused-vars */
+  dialProtocol = jest.fn((addr: string, proto: string) => ({
+    stream: new Stream(),
+  }));
+
+  peerId = {
+    toB58String: jest.fn(() => 'mock-peer-id'),
+  };
+}

@@ -1,4 +1,4 @@
-import ConnectionManager, { Config } from '../connection-manager';
+import ConnectionManager, { Config, MessageType } from '../connection-manager';
 import Libp2pMessenger from '../../libp2p-messenger';
 import { Stream } from '../../../testing/mocks/libp2p';
 import { MockMediaStreamTrack } from '../../../testing/mocks/media';
@@ -37,20 +37,42 @@ describe('ConnectionManager', () => {
     };
   }
 
-  it('creates a peer', async () => {
+  it('creates a peer', () => {
     const { mgr } = setup();
 
-    const dc = await mgr.connect();
+    expect(mgr.channel).toBeInstanceOf(MockRTCDataChannel);
+  });
 
-    expect(dc).toBeInstanceOf(MockRTCDataChannel);
+  it('sends ICE candidates to the remote peer', () => {
+    const { pc, signaler } = setup();
+
+    const candidate = { mock: 'ICE-candidate' };
+    pc.onicecandidate({ candidate });
+
+    expect(signaler.send).toHaveBeenCalledWith({
+      type: MessageType.IceCandidate,
+      payload: candidate,
+    });
+  });
+
+  it('negotiates session details when required', async () => {
+    const { pc, signaler } = setup();
+
+    expect(pc.setLocalDescription).not.toHaveBeenCalled();
+    await pc.onnegotiationneeded();
+    expect(pc.setLocalDescription).toHaveBeenCalled();
+
+    expect(signaler.send).toHaveBeenCalledWith({
+      type: MessageType.SessionDescription,
+      payload: pc.localDescription,
+    });
   });
 
   describe('events', () => {
-    it('forwards the track-added event', async () => {
-      const { mgr, pc, config } = setup();
+    it('forwards the track-added event', () => {
+      const { pc, config } = setup();
       const track = new MockMediaStreamTrack();
 
-      await mgr.connect();
       pc.ontrack({ track });
 
       expect(config.events.onTrack).toHaveBeenCalledWith({
