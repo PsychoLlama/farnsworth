@@ -2,7 +2,7 @@ import DOM from 'react-dom';
 import React from 'react';
 import styled from 'styled-components';
 import { Provider as ReduxProvider } from 'react-redux';
-import createStore from './utils/create-store';
+import store from './utils/redux-store';
 import { exportToCss, OneDark, OneLight } from './utils/themes';
 import App from './components/app';
 
@@ -38,7 +38,7 @@ const Viewport = styled.div`
 
 DOM.render(
   <React.StrictMode>
-    <ReduxProvider store={createStore()}>
+    <ReduxProvider store={store}>
       <Viewport>
         <App />
       </Viewport>
