@@ -23,7 +23,6 @@ describe('Track effects', () => {
         remoteId: peerId,
         localId: 'a',
         signaler: Libp2pMessenger.from(new Stream()),
-        events: { onTrack: () => null },
       });
 
       context.connections.set(peerId, mgr);
@@ -54,6 +53,7 @@ describe('Track effects', () => {
         }),
       };
     }
+
     it('sends all local tracks to the remote peer', () => {
       const { mgr, peerId, state, audioTrack, videoTrack } = setup();
 
@@ -61,6 +61,32 @@ describe('Track effects', () => {
 
       expect(mgr.addTrack).toHaveBeenCalledWith(audioTrack);
       expect(mgr.addTrack).toHaveBeenCalledWith(videoTrack);
+    });
+  });
+
+  describe('add', () => {
+    it('adds the new track', () => {
+      const track = new MediaStreamTrack();
+      const peerId = 'remote-peer';
+
+      effects.add({ track, peerId });
+
+      expect(context.tracks.get(track.id)).toBe(track);
+    });
+
+    it('returns track metadata', () => {
+      const track = new MediaStreamTrack();
+      const peerId = 'remote-peer';
+
+      const result = effects.add({ track, peerId });
+
+      expect(result).toEqual({
+        peerId,
+        track: {
+          id: track.id,
+          kind: track.kind,
+        },
+      });
     });
   });
 });

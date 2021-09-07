@@ -10,6 +10,9 @@ import {
   MockRTCDataChannel,
   MockRTCPeerConnection,
 } from '../../../testing/mocks/webrtc';
+import sdk from '../../../utils/sdk';
+
+jest.mock('../../../utils/sdk');
 
 describe('ConnectionManager', () => {
   function setup(override?: Partial<Config>) {
@@ -23,9 +26,6 @@ describe('ConnectionManager', () => {
       localId: 'local',
       remoteId: 'remote',
       signaler,
-      events: {
-        onTrack: jest.fn(),
-      },
       ...override,
     };
 
@@ -211,13 +211,13 @@ describe('ConnectionManager', () => {
   });
 
   describe('events', () => {
-    it('forwards the track-added event', () => {
+    it('notifies redux of the new track', async () => {
       const { pc, config } = setup();
       const track = new MockMediaStreamTrack();
 
-      pc.ontrack({ track });
+      await pc.ontrack({ track });
 
-      expect(config.events.onTrack).toHaveBeenCalledWith({
+      expect(sdk.tracks.add).toHaveBeenCalledWith({
         peerId: config.remoteId,
         track,
       });

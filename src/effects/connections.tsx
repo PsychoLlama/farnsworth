@@ -51,9 +51,6 @@ export async function listen(addr: string) {
       localId: context.p2p.peerId.toB58String(),
       remoteId: connection.remotePeer.toB58String(),
       signaler: Libp2pMessenger.from(stream),
-      events: {
-        onTrack: console.log,
-      },
     });
 
     context.connections.set(mgr.remoteId, mgr);
@@ -80,9 +77,6 @@ export async function dial(addr: string) {
     localId: context.p2p.peerId.toB58String(),
     remoteId: multiaddr(addr).getPeerId(),
     signaler: Libp2pMessenger.from(connection.stream),
-    events: {
-      onTrack: console.log,
-    },
   });
 
   context.connections.set(mgr.remoteId, mgr);

@@ -5,8 +5,7 @@ import Logger from '../../utils/logger';
 const logger = new Logger('ConnectionManager');
 
 /**
- * Manages WebRTC signaling over libp2p channels. Tracks and data channels are
- * emitted as events.
+ * Manages WebRTC signaling over libp2p channels.
  *
  * Signaling follows the Perfect Negotiation pattern which is more robust in
  * the case of reconnect compared to caller/callee assignments. See:
@@ -15,7 +14,6 @@ const logger = new Logger('ConnectionManager');
 export default class ConnectionManager {
   private polite: boolean;
   private signaler: Libp2pMessenger;
-  private events: Config['events'];
   private pc: RTCPeerConnection;
   private makingOffer = false;
   private ignoreIceErrors = false;
@@ -23,9 +21,8 @@ export default class ConnectionManager {
   remoteId: string;
   channel: RTCDataChannel;
 
-  constructor({ localId, remoteId, signaler, events }: Config) {
+  constructor({ localId, remoteId, signaler }: Config) {
     this.signaler = signaler;
-    this.events = events;
     this.remoteId = remoteId;
 
     // 'polite' determines who backs down in a signaling conflict.
@@ -49,7 +46,7 @@ export default class ConnectionManager {
 
   /**
    * Send an audio/video track to the remote peer, received under
-   * `events.onTrack`.
+   * `pc.ontrack`.
    */
   addTrack(track: MediaStreamTrack) {
     logger.debug(`Adding ${track.kind} track`);
@@ -65,9 +62,11 @@ export default class ConnectionManager {
     this.pc.close();
   }
 
-  private emitTrackEvent = ({ track }: RTCTrackEvent) => {
+  private emitTrackEvent = async ({ track }: RTCTrackEvent) => {
     logger.debug(`Incoming remote ${track.kind} track`);
-    this.events.onTrack({ track, peerId: this.remoteId });
+
+    const { default: sdk } = await import('../../utils/sdk');
+    sdk.tracks.add({ track, peerId: this.remoteId });
   };
 
   private sendIceCandidate = ({ candidate }: RTCPeerConnectionIceEvent) => {
@@ -154,9 +153,6 @@ export interface Config {
   localId: string;
   remoteId: string;
   signaler: Libp2pMessenger;
-  events: {
-    onTrack({ track: MediaStreamTrack, peerId: string }): unknown;
-  };
 }
 
 export enum MessageType {

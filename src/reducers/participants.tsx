@@ -25,4 +25,8 @@ export default createReducer(initialState.participants, (handleAction) => [
       };
     },
   ),
+
+  handleAction(actions.tracks.add, (state, { peerId, track }) => {
+    state[peerId].trackIds.push(track.id);
+  }),
 ]);

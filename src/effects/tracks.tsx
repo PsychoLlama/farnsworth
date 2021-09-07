@@ -1,7 +1,7 @@
 import assert from 'assert';
 import { State } from '../reducers/initial-state';
 import context from '../conferencing/global-context';
-import { MY_PARTICIPANT_ID } from '../utils/constants';
+import { MY_PARTICIPANT_ID, TrackKind } from '../utils/constants';
 
 export function sendLocalTracks(peerId: string, state: State) {
   const { trackIds } = state.participants[MY_PARTICIPANT_ID];
@@ -22,4 +22,23 @@ function getConnectionById(peerId: string) {
   assert(conn, `No such connection '${peerId}'`);
 
   return conn;
+}
+
+// Adds a new track to the global context. Used to hold onto remote tracks.
+export function add({
+  track,
+  peerId,
+}: {
+  track: MediaStreamTrack;
+  peerId: string;
+}) {
+  context.tracks.set(track.id, track);
+
+  return {
+    peerId,
+    track: {
+      id: track.id,
+      kind: track.kind as TrackKind,
+    },
+  };
 }

@@ -1,7 +1,7 @@
 import createStore from '../../utils/create-store';
 import * as actions from '../../actions';
 import * as deviceEffects from '../../effects/devices';
-import { TrackKind } from '../../utils/constants';
+import { TrackKind, MY_PARTICIPANT_ID } from '../../utils/constants';
 
 jest.mock('../../effects/devices');
 
@@ -23,7 +23,7 @@ describe('Tracks reducer', () => {
     ]);
   });
 
-  describe('requestMediaDevices()', () => {
+  describe('devices.requestMediaDevices()', () => {
     it('adds the new tracks', async () => {
       const { store } = setup();
       await store.dispatch(actions.devices.requestMediaDevices());
@@ -38,6 +38,24 @@ describe('Tracks reducer', () => {
           },
         }
       `);
+    });
+  });
+
+  describe('tracks.add()', () => {
+    it('indexes the track with the others', () => {
+      const { store } = setup();
+
+      const track = new MediaStreamTrack();
+      store.dispatch(
+        actions.tracks.add({
+          track,
+          peerId: 'peer-id',
+        }),
+      );
+
+      expect(store.getState().tracks).toMatchObject({
+        [track.id]: { kind: track.kind },
+      });
     });
   });
 });

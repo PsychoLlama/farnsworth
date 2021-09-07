@@ -4,7 +4,14 @@ import * as deviceEffects from '../../effects/devices';
 import { TrackKind, MY_PARTICIPANT_ID } from '../../utils/constants';
 
 jest.mock('../../effects/devices');
-jest.mock('../../effects/tracks');
+jest.mock('../../effects/tracks', () => {
+  const actual = jest.requireActual('../../effects/tracks');
+
+  return {
+    ...jest.genMockFromModule('../../effects/tracks'),
+    add: actual.add,
+  };
+});
 
 const mockedEffects: jest.Mocked<typeof deviceEffects> = deviceEffects as any;
 
@@ -67,6 +74,28 @@ describe('Participants reducer', () => {
         [peerId]: {
           trackIds: [],
           isMe: false,
+        },
+      });
+    });
+  });
+
+  describe('tracks.add()', () => {
+    it('adds the tracks to the right participant', () => {
+      const { store } = setup();
+
+      const track = new MediaStreamTrack();
+      store.dispatch(
+        actions.tracks.add({
+          track,
+
+          // Never happens in practice. This is just laziness.
+          peerId: MY_PARTICIPANT_ID,
+        }),
+      );
+
+      expect(store.getState().participants).toMatchObject({
+        [MY_PARTICIPANT_ID]: {
+          trackIds: [track.id],
         },
       });
     });

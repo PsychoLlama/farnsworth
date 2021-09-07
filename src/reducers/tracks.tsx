@@ -10,4 +10,8 @@ export default createReducer(initialState.tracks, (handleAction) => [
       };
     });
   }),
+
+  handleAction(actions.tracks.add, (state, { track }) => {
+    state[track.id] = { kind: track.kind };
+  }),
 ]);
