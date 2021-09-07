@@ -94,6 +94,7 @@ const VideoStream = styled.video`
   object-fit: cover;
   object-position: center;
   flex-grow: 1;
+  overflow: hidden;
 
   // People are used to seeing their own faces in a mirror. Replicate the
   // effect for local video streams.
