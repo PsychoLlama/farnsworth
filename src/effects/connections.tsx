@@ -8,7 +8,6 @@ import { multiaddr } from 'multiaddr';
 import context from '../conferencing/global-context';
 import Libp2pMessenger from '../conferencing/libp2p-messenger';
 import ConnectionManager from '../conferencing/webrtc';
-import { MY_PARTICIPANT_ID } from '../utils/constants';
 
 export const SIGNALING_PROTOCOL = '/webrtc/signal';
 
@@ -92,13 +91,6 @@ export async function dial(addr: string) {
   return {
     peerId: mgr.remoteId,
   };
-}
-
-// Accept an incoming connection and send local media tracks.
-export async function accept(peerId: string) {
-  // TODO: Send local tracks.
-
-  return { peerId };
 }
 
 const ModuleId = {

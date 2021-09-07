@@ -4,6 +4,7 @@ import * as deviceEffects from '../../effects/devices';
 import { TrackKind, MY_PARTICIPANT_ID } from '../../utils/constants';
 
 jest.mock('../../effects/devices');
+jest.mock('../../effects/tracks');
 
 const mockedEffects: jest.Mocked<typeof deviceEffects> = deviceEffects as any;
 
@@ -60,7 +61,7 @@ describe('Participants reducer', () => {
       const { store } = setup();
 
       const peerId = `Qm${Array(44).fill('Y').join('')}`;
-      store.dispatch(actions.connections.accept(peerId));
+      await store.dispatch(actions.connections.accept(peerId));
 
       expect(store.getState().participants).toMatchObject({
         [peerId]: {

@@ -33,9 +33,7 @@ describe('Connection effects', () => {
       );
 
       expect(context.connections.size).toBe(1);
-      expect(sdk.connections.accept).toHaveBeenCalledWith({
-        peerId: 'remote-id',
-      });
+      expect(sdk.connections.accept).toHaveBeenCalledWith('remote-id');
     });
   });
 
@@ -66,18 +64,6 @@ describe('Connection effects', () => {
       );
 
       expect(result).toEqual({ peerId });
-    });
-  });
-
-  describe('accept', () => {
-    it('returns the peer ID', async () => {
-      const peerId = `Qm${Array(44).fill('Y').join('')}`;
-
-      await connections.listen('/server');
-      await connections.dial(`/p2p/${peerId}`);
-      const result = await connections.accept(peerId);
-
-      expect(result).toHaveBeenCalledWith({ peerId: 'peer-id' });
     });
   });
 });
