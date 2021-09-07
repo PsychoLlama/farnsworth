@@ -202,6 +202,14 @@ describe('ConnectionManager', () => {
     expect(pc.setLocalDescription).toHaveBeenCalledTimes(2);
   });
 
+  it('closes the connection when instructed', async () => {
+    const { mgr, pc } = setup();
+
+    mgr.close();
+
+    expect(pc.close).toHaveBeenCalled();
+  });
+
   describe('events', () => {
     it('forwards the track-added event', () => {
       const { pc, config } = setup();

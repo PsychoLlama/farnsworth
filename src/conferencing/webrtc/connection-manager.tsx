@@ -5,19 +5,19 @@ import { RtcDescriptionType, RtcSignalingState } from '../../utils/constants';
  * Manages WebRTC signaling over libp2p channels. Tracks and data channels are
  * emitted as events.
  *
- * Signaling follows the Perfect Negotiation pattern. See:
+ * Signaling follows the Perfect Negotiation pattern which is more robust in
+ * the case of reconnect compared to caller/callee assignments. See:
  * https://developer.mozilla.org/en-US/docs/Web/API/WebRTC_API/Perfect_negotiation
- *
- * TODO: Automatically detect disconnect and restart ICE signaling.
  */
 export default class ConnectionManager {
   private polite: boolean;
   private signaler: Libp2pMessenger;
   private events: Config['events'];
   private pc: RTCPeerConnection;
-  private remoteId: string;
   private makingOffer = false;
   private ignoreIceErrors = false;
+
+  remoteId: string;
   channel: RTCDataChannel;
 
   constructor({ localId, remoteId, signaler, events }: Config) {
@@ -47,6 +47,14 @@ export default class ConnectionManager {
    */
   addTrack(track: MediaStreamTrack) {
     this.pc.addTrack(track);
+  }
+
+  /**
+   * Permanently closes the peer connection. The 'close' event fires on the
+   * remote data channel.
+   */
+  close() {
+    this.pc.close();
   }
 
   private emitTrackEvent = ({ track }: RTCTrackEvent) => {
