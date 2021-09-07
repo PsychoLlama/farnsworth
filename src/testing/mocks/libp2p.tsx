@@ -30,7 +30,10 @@ export default class MockLibp2p {
     return new MockLibp2p();
   }
 
-  handle = jest.fn();
+  handle = jest.fn((proto, handler) => {
+    this.mock.protocols.set(proto, handler);
+  });
+
   start = jest.fn();
 
   /* eslint-disable-next-line @typescript-eslint/no-unused-vars */
@@ -40,5 +43,15 @@ export default class MockLibp2p {
 
   peerId = {
     toB58String: jest.fn(() => 'mock-peer-id'),
+  };
+
+  // Purely used for testing.
+  mock = {
+    protocols: new Map(),
+    simulateRequest: (protocol: string, args: unknown) => {
+      const handler = this.mock.protocols.get(protocol);
+
+      return handler(args);
+    },
   };
 }

@@ -6,6 +6,7 @@ export class MockRTCPeerConnection {
   addIceCandidate = jest.fn();
   createDataChannel = jest.fn(() => new MockRTCDataChannel());
   addTrack = jest.fn();
+  close = jest.fn();
 
   signalingState = RtcSignalingState.Stable;
   localDescription = { mock: 'local-description' };

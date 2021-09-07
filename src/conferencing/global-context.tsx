@@ -1,4 +1,5 @@
 import Libp2p from 'libp2p';
+import ConnectionManager from './webrtc';
 
 // Video centric apps deal with a lot of stateful objects. Things like media
 // stream tracks, audio contexts, recorders, etc. None of those can exist in
@@ -19,6 +20,7 @@ import Libp2p from 'libp2p';
 // 4. Only store here what cannot be stored in redux.
 const context: GlobalContext = {
   tracks: new Map(),
+  connections: new Map(),
   p2p: null,
 };
 
@@ -28,6 +30,9 @@ interface GlobalContext {
 
   // Singleton, asynchronously initialized at startup.
   p2p: null | Libp2p;
+
+  // WebRTC connections to other instances. These are negotiated over libp2p.
+  connections: Map<string, ConnectionManager>;
 }
 
 export default context;

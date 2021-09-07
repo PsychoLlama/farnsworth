@@ -5,8 +5,11 @@ import Websockets from 'libp2p-websockets';
 import * as filters from 'libp2p-websockets/src/filters';
 import assert from 'assert';
 import context from '../conferencing/global-context';
+import Libp2pMessenger from '../conferencing/libp2p-messenger';
+import ConnectionManager from '../conferencing/webrtc';
+import { multiaddr } from 'multiaddr';
 
-export const SIGNALING_PROTOCOL = '/webrtc/negotiate';
+export const SIGNALING_PROTOCOL = '/webrtc/signal';
 
 /**
  * Signaling works in two parts: First, we connect to the relay server and
@@ -43,8 +46,17 @@ async function initNetworkingModule(addr: string) {
 export async function listen(addr: string) {
   const p2p = await initNetworkingModule(addr);
 
-  p2p.handle(SIGNALING_PROTOCOL, ({ connection }) => {
-    console.log('Incoming:', connection);
+  p2p.handle(SIGNALING_PROTOCOL, async ({ connection, stream }) => {
+    const mgr = new ConnectionManager({
+      localId: context.p2p.peerId.toB58String(),
+      remoteId: connection.remotePeer.toB58String(),
+      signaler: Libp2pMessenger.from(stream),
+      events: {
+        onTrack: console.log,
+      },
+    });
+
+    context.connections.set(mgr.remoteId, mgr);
   });
 
   await p2p.start();
@@ -60,8 +72,16 @@ export async function dial(addr: string) {
   assert(context.p2p, 'libp2p is not ready.');
   const connection = await context.p2p.dialProtocol(addr, SIGNALING_PROTOCOL);
 
-  console.log('Connection:', connection);
-  // TODO: Wire up to perfect negotiation.
+  const mgr = new ConnectionManager({
+    localId: context.p2p.peerId.toB58String(),
+    remoteId: multiaddr(addr).getPeerId(),
+    signaler: Libp2pMessenger.from(connection.stream),
+    events: {
+      onTrack: console.log,
+    },
+  });
+
+  context.connections.set(mgr.remoteId, mgr);
 }
 
 const ModuleId = {

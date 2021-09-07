@@ -1,11 +1,14 @@
 import * as connections from '../connections';
 import context from '../../conferencing/global-context';
+import ConnectionManager from '../../conferencing/webrtc';
+import { Stream } from '../../testing/mocks/libp2p';
 
 jest.mock('libp2p');
 
 describe('Connection effects', () => {
   beforeEach(() => {
     context.p2p = null;
+    context.connections.clear();
   });
 
   describe('listen', () => {
@@ -15,17 +18,39 @@ describe('Connection effects', () => {
         relayAddr: '/rfc1149',
       });
     });
+
+    it('adds inbound connections to the connections context', async () => {
+      await connections.listen('/music');
+      await (context as any).p2p.mock.simulateRequest(
+        connections.SIGNALING_PROTOCOL,
+        {
+          stream: Stream.from([]),
+          connection: {
+            remotePeer: { toB58String: () => 'remote-id' },
+          },
+        },
+      );
+
+      expect(context.connections.size).toBe(1);
+    });
   });
 
   describe('dial', () => {
     it('dials the remote peer', async () => {
       await connections.listen('/server');
-      await connections.dial('/remote/peer');
+      await connections.dial('/ip4/0.0.0.0/');
 
       expect(context.p2p.dialProtocol).toHaveBeenCalledWith(
-        '/remote/peer',
+        '/ip4/0.0.0.0/',
         connections.SIGNALING_PROTOCOL,
       );
+    });
+
+    it('puts the connection manager in global context', async () => {
+      await connections.listen('/PRISM');
+      await connections.dial('/ip4/0.0.0.0/');
+
+      expect(context.connections.size).toBe(1);
     });
   });
 });
