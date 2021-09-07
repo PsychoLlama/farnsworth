@@ -1,5 +1,8 @@
 import Libp2pMessenger from '../libp2p-messenger';
 import { RtcDescriptionType, RtcSignalingState } from '../../utils/constants';
+import Logger from '../../utils/logger';
+
+const logger = new Logger('ConnectionManager');
 
 /**
  * Manages WebRTC signaling over libp2p channels. Tracks and data channels are
@@ -28,6 +31,9 @@ export default class ConnectionManager {
     // 'polite' determines who backs down in a signaling conflict.
     this.polite = localId < remoteId;
 
+    logger.debug('Opening WebRTC connection:', { localId, remoteId });
+    logger.debug(`Signaling mode is '${this.polite ? 'polite' : 'impolite'}'`);
+
     this.signaler.subscribe(this.processMessage);
     this.pc = new RTCPeerConnection(DEFAULT_PC_CONFIG);
     this.pc.ontrack = this.emitTrackEvent;
@@ -46,6 +52,7 @@ export default class ConnectionManager {
    * `events.onTrack`.
    */
   addTrack(track: MediaStreamTrack) {
+    logger.debug(`Adding ${track.kind} track`);
     this.pc.addTrack(track);
   }
 
@@ -54,15 +61,18 @@ export default class ConnectionManager {
    * remote data channel.
    */
   close() {
+    logger.debug('Closing peer connection');
     this.pc.close();
   }
 
   private emitTrackEvent = ({ track }: RTCTrackEvent) => {
+    logger.debug(`Incoming remote ${track.kind} track`);
     this.events.onTrack({ track, peerId: this.remoteId });
   };
 
   private sendIceCandidate = ({ candidate }: RTCPeerConnectionIceEvent) => {
     const msg: Message = { type: MessageType.IceCandidate, payload: candidate };
+    logger.debug('Sending ICE candidate:', candidate?.candidate);
     this.signaler.send(msg);
   };
 
@@ -78,6 +88,8 @@ export default class ConnectionManager {
 
     const payload = this.pc.localDescription;
     const msg: Message = { type: MessageType.SessionDescription, payload };
+    logger.debug(`Sending session description '${payload.type}'`);
+
     this.signaler.send(msg);
   };
 
@@ -86,14 +98,20 @@ export default class ConnectionManager {
 
     switch (message.type) {
       case MessageType.SessionDescription: {
+        logger.debug(`Receiving session description '${message.payload.type}'`);
         return this.processRemoteSessionDescription(message.payload);
       }
 
       case MessageType.IceCandidate: {
         try {
+          logger.debug('Receiving ICE candidate:', message.payload?.candidate);
           await this.pc.addIceCandidate(message.payload);
         } catch (error) {
-          if (!this.ignoreIceErrors) throw error;
+          if (this.ignoreIceErrors) {
+            logger.warn('Ignoring ICE error (follows offer conflict)', error);
+          } else {
+            throw error;
+          }
         }
       }
     }
@@ -105,9 +123,16 @@ export default class ConnectionManager {
       (this.makingOffer || this.pc.signalingState !== RtcSignalingState.Stable);
 
     // The "polite" peer will rollback their offer and turn into a receiver.
-    if (conflictingOffer && !this.polite) {
-      this.ignoreIceErrors = true;
-      return;
+    if (conflictingOffer) {
+      logger.warn('Received conflicting offer');
+
+      if (!this.polite) {
+        this.ignoreIceErrors = true;
+        logger.debug('Ignoring conflict (impolite mode)');
+        return;
+      } else {
+        logger.debug('Resolving conflict, generating answer (polite mode)');
+      }
     }
 
     await this.pc.setRemoteDescription(desc);
@@ -119,6 +144,7 @@ export default class ConnectionManager {
         payload: this.pc.localDescription,
       };
 
+      logger.debug(`Answering other peer's offer`);
       this.signaler.send(msg);
     }
   }
