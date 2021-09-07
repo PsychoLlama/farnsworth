@@ -1,9 +1,10 @@
 import * as connections from '../connections';
 import context from '../../conferencing/global-context';
-import ConnectionManager from '../../conferencing/webrtc';
 import { Stream } from '../../testing/mocks/libp2p';
+import sdk from '../../utils/sdk';
 
 jest.mock('libp2p');
+jest.mock('../../utils/sdk');
 
 describe('Connection effects', () => {
   beforeEach(() => {
@@ -32,6 +33,9 @@ describe('Connection effects', () => {
       );
 
       expect(context.connections.size).toBe(1);
+      expect(sdk.connections.accept).toHaveBeenCalledWith({
+        peerId: 'remote-id',
+      });
     });
   });
 
@@ -51,6 +55,29 @@ describe('Connection effects', () => {
       await connections.dial('/ip4/0.0.0.0/');
 
       expect(context.connections.size).toBe(1);
+    });
+
+    it('returns the remote ID', async () => {
+      await connections.listen('/here');
+
+      const peerId = `Qm${Array(44).fill('Y').join('')}`;
+      const result = await connections.dial(
+        `/ip4/127.0.0.1/tcp/1337/p2p/${peerId}`,
+      );
+
+      expect(result).toEqual({ peerId });
+    });
+  });
+
+  describe('accept', () => {
+    it('returns the peer ID', async () => {
+      const peerId = `Qm${Array(44).fill('Y').join('')}`;
+
+      await connections.listen('/server');
+      await connections.dial(`/p2p/${peerId}`);
+      const result = await connections.accept(peerId);
+
+      expect(result).toHaveBeenCalledWith({ peerId: 'peer-id' });
     });
   });
 });

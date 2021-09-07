@@ -8,4 +8,18 @@ export default createReducer(initialState.participants, (handleAction) => [
     const trackIds = tracks.map((track) => track.trackId);
     state[MY_PARTICIPANT_ID].trackIds.push(...trackIds);
   }),
+
+  handleAction(actions.connections.dial, (state, { peerId }) => {
+    state[peerId] = {
+      isMe: false,
+      trackIds: [],
+    };
+  }),
+
+  handleAction(actions.connections.accept, (state, { peerId }) => {
+    state[peerId] = {
+      isMe: false,
+      trackIds: [],
+    };
+  }),
 ]);

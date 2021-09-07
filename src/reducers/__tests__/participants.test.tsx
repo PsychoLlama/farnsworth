@@ -35,4 +35,39 @@ describe('Participants reducer', () => {
       });
     });
   });
+
+  describe('dial()', () => {
+    it('adds a new participant', async () => {
+      const { store } = setup();
+
+      const peerId = `Qm${Array(44).fill('Y').join('')}`;
+      await store.dispatch(actions.connections.listen('/server'));
+      await store.dispatch(
+        actions.connections.dial(`/ip4/0.0.0.0/tcp/1/p2p/${peerId}`),
+      );
+
+      expect(store.getState().participants).toMatchObject({
+        [peerId]: {
+          trackIds: [],
+          isMe: false,
+        },
+      });
+    });
+  });
+
+  describe('accept()', () => {
+    it('adds a new participant', async () => {
+      const { store } = setup();
+
+      const peerId = `Qm${Array(44).fill('Y').join('')}`;
+      store.dispatch(actions.connections.accept(peerId));
+
+      expect(store.getState().participants).toMatchObject({
+        [peerId]: {
+          trackIds: [],
+          isMe: false,
+        },
+      });
+    });
+  });
 });

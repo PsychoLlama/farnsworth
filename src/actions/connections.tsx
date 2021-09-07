@@ -10,3 +10,8 @@ export const dial = createAction.async(
   'connections/dial',
   effects.connections.dial,
 );
+
+export const accept = createAction(
+  'connections/accept',
+  effects.connections.accept,
+);

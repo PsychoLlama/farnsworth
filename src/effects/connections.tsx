@@ -4,10 +4,11 @@ import MPLEX from 'libp2p-mplex';
 import Websockets from 'libp2p-websockets';
 import * as filters from 'libp2p-websockets/src/filters';
 import assert from 'assert';
+import { multiaddr } from 'multiaddr';
 import context from '../conferencing/global-context';
 import Libp2pMessenger from '../conferencing/libp2p-messenger';
 import ConnectionManager from '../conferencing/webrtc';
-import { multiaddr } from 'multiaddr';
+import { MY_PARTICIPANT_ID } from '../utils/constants';
 
 export const SIGNALING_PROTOCOL = '/webrtc/signal';
 
@@ -57,6 +58,10 @@ export async function listen(addr: string) {
     });
 
     context.connections.set(mgr.remoteId, mgr);
+
+    // Delay import to avoid problems with circular imports.
+    const { default: sdk } = await import('../utils/sdk');
+    sdk.connections.accept(mgr.remoteId);
   });
 
   await p2p.start();
@@ -82,6 +87,18 @@ export async function dial(addr: string) {
   });
 
   context.connections.set(mgr.remoteId, mgr);
+  // TODO: Send local tracks.
+
+  return {
+    peerId: mgr.remoteId,
+  };
+}
+
+// Accept an incoming connection and send local media tracks.
+export async function accept(peerId: string) {
+  // TODO: Send local tracks.
+
+  return { peerId };
 }
 
 const ModuleId = {
