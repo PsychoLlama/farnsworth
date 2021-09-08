@@ -126,6 +126,7 @@
     "react-icons": "^4.2.0",
     "react-redux": "^7.2.2",
     "redux": "^4.0.5",
+    "reselect": "^4.0.0",
     "retreon": "^0.6.1",
     "styled-components": "^5.2.1",
     "uuid": "^8.3.2"
