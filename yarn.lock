@@ -5106,6 +5106,11 @@ immer@^8.0.1:
   resolved "https://registry.yarnpkg.com/immer/-/immer-8.0.1.tgz#9c73db683e2b3975c424fb0572af5889877ae656"
   integrity sha512-aqXhGP7//Gui2+UrEtvxZxSquQVXTpZ7KDxfCcKAF3Vysvw0CViVaW9RZ1j1xlIYqaaaipBoqdqeibkc18PNvA==
 
+immer@^9.0.6:
+  version "9.0.6"
+  resolved "https://registry.yarnpkg.com/immer/-/immer-9.0.6.tgz#7a96bf2674d06c8143e327cbf73539388ddf1a73"
+  integrity sha512-G95ivKpy+EvVAnAab4fVa4YGYn24J1SpEktnJX7JJ45Bd7xqME/SCplFzYFmTbrkwZbQ4xJK1xMTUYBkN6pWsQ==
+
 import-fresh@^2.0.0:
   version "2.0.0"
   resolved "https://registry.yarnpkg.com/import-fresh/-/import-fresh-2.0.0.tgz#d81355c15612d386c61f9ddd3922d4304822a546"
@@ -9134,13 +9139,13 @@ retimer@^2.0.0:
   resolved "https://registry.yarnpkg.com/retimer/-/retimer-2.0.0.tgz#e8bd68c5e5a8ec2f49ccb5c636db84c04063bbca"
   integrity sha512-KLXY85WkEq2V2bKex/LOO1ViXVn2KGYe4PYysAdYdjmraYIUsVkXu8O4am+8+5UbaaGl1qho4aqAAPHNQ4GSbg==
 
-retreon@^0.6.1:
-  version "0.6.1"
-  resolved "https://registry.yarnpkg.com/retreon/-/retreon-0.6.1.tgz#6ada21da7280a92c8963174900dff9082c3da1f1"
-  integrity sha512-WGnOHucAAEkH8cqHr+RuidQeppR27P3yVUN+X+3bF/RQ47KpBjEV6TZwz3Qr/XsCqR0eTHa+YaUIVlHVgkyzbQ==
+retreon@^0.7.0:
+  version "0.7.0"
+  resolved "https://registry.yarnpkg.com/retreon/-/retreon-0.7.0.tgz#4474cc5317b6572dbed495709246c22b95cf8718"
+  integrity sha512-Voo21V80BAmzZ/J1kKhUAwVHV0RaFYak5CTWKq5af4B3xCLm7VyL0ci2tQxl38OYYVaV+WJ9xO1+/hf0z0b4VQ==
   dependencies:
     "@babel/runtime" "7.x.x"
-    immer "^8.0.1"
+    immer "^9.0.6"
 
 retry@^0.12.0:
   version "0.12.0"
