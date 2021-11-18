@@ -9,6 +9,11 @@ export const MY_PARTICIPANT_ID = uuid();
 // file.
 export const SERVER_ADDRESS = process.env.RELAY_SERVER_ADDRESS;
 
+// A semicolon delimited list of STUN servers to use during signaling.
+export const STUN_SERVERS = (process.env.STUN_SERVERS ?? '')
+  .split(';')
+  .filter(Boolean);
+
 export enum TrackKind {
   Audio = 'audio',
   Video = 'video',

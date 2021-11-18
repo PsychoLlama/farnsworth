@@ -83,7 +83,6 @@ export async function dial(addr: string) {
   });
 
   context.connections.set(mgr.remoteId, mgr);
-  // TODO: Send local tracks.
 
   return {
     peerId: mgr.remoteId,

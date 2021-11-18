@@ -1,5 +1,9 @@
 import Libp2pMessenger from '../libp2p-messenger';
-import { RtcDescriptionType, RtcSignalingState } from '../../utils/constants';
+import {
+  RtcDescriptionType,
+  RtcSignalingState,
+  STUN_SERVERS,
+} from '../../utils/constants';
 import Logger from '../../utils/logger';
 import DataChannelMessenger from './data-channel-messenger';
 
@@ -163,8 +167,9 @@ type Message =
   | { type: MessageType.SessionDescription; payload: RTCSessionDescription };
 
 const DEFAULT_PC_CONFIG = {
-  // TODO: Make this customizable.
-  iceServers: [{ urls: 'stun:stun.l.google.com:19302' }],
+  iceServers: STUN_SERVERS.map((addr: string) => ({
+    urls: `stun:${addr}`,
+  })),
 };
 
 declare global {
