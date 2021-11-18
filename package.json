@@ -9,7 +9,7 @@
     "start": "parcel src/index.html",
     "build": "parcel build src/index.html",
     "test": "./bin/run-tests",
-    "test:unit": "jest",
+    "test:unit": "jest --color",
     "test:lint": "eslint --color src",
     "test:fmt": "prettier --check --color src"
   },
