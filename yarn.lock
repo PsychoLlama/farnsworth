@@ -584,7 +584,7 @@
     unordered-array-remove "^1.0.2"
     xml2js "^0.4.23"
 
-"@msgpack/msgpack@^2.7.1":
+"@msgpack/msgpack@2.7.1":
   version "2.7.1"
   resolved "https://registry.yarnpkg.com/@msgpack/msgpack/-/msgpack-2.7.1.tgz#f01954baadc502f3c82e9c3f72c740ce65eae1cc"
   integrity sha512-ApwiSL2c9ObewdOE/sqt788P1C5lomBOHyO8nUBCr4ofErBCnYQ003NtJ8lS9OQZc11ximkbmgAZJjB8y6cCdA==

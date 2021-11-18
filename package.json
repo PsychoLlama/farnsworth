@@ -108,7 +108,7 @@
     "typescript": "4.5.2"
   },
   "dependencies": {
-    "@msgpack/msgpack": "^2.7.1",
+    "@msgpack/msgpack": "2.7.1",
     "debug": "4.3.2",
     "freeform-input": "0.2.0",
     "invariant": "2.2.4",
