@@ -49,7 +49,7 @@ describe('Tracks reducer', () => {
       store.dispatch(
         actions.tracks.add({
           track,
-          peerId: 'peer-id',
+          peerId: MY_PARTICIPANT_ID,
         }),
       );
 

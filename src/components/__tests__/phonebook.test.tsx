@@ -4,7 +4,8 @@ import { Phonebook } from '../phonebook';
 describe('Phonebook', () => {
   const setup = renderer(Phonebook, {
     getDefaultProps: () => ({
-      dial: jest.fn(),
+      // Imperative action creator - not worth adding correct types here.
+      dial: jest.fn() as any,
     }),
   });
 
