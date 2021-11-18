@@ -1365,19 +1365,6 @@
     postcss-value-parser "^4.1.0"
     semver "^5.4.1"
 
-"@parcel/transformer-html@2.0.0-nightly.612":
-  version "2.0.0-nightly.612"
-  resolved "https://registry.yarnpkg.com/@parcel/transformer-html/-/transformer-html-2.0.0-nightly.612.tgz#ea85177f52537d3ee9c074ee9caaf7af4f7ccf72"
-  integrity sha512-BnyfCyP3oUYYuWkzmOLnL3tpyfhc6l2cNpMCOhnhPI+hkCIfVm9myCWwRrxlOvKLIESclUGL5gPTeu5jht8lQQ==
-  dependencies:
-    "@parcel/plugin" "2.0.0-nightly.612+8a4fa3ee"
-    "@parcel/utils" "2.0.0-nightly.612+8a4fa3ee"
-    nullthrows "^1.1.1"
-    posthtml "^0.15.1"
-    posthtml-parser "^0.6.0"
-    posthtml-render "^1.4.0"
-    semver "^5.4.1"
-
 "@parcel/transformer-html@2.0.0-rc.0":
   version "2.0.0-rc.0"
   resolved "https://registry.yarnpkg.com/@parcel/transformer-html/-/transformer-html-2.0.0-rc.0.tgz#27baca8a617afdbf1e504709db3f5d565efd64ac"
@@ -1389,6 +1376,19 @@
     posthtml "^0.16.4"
     posthtml-parser "^0.9.0"
     posthtml-render "^2.0.6"
+    semver "^5.4.1"
+
+"@parcel/transformer-html@2.0.1":
+  version "2.0.1"
+  resolved "https://registry.yarnpkg.com/@parcel/transformer-html/-/transformer-html-2.0.1.tgz#f285e46ab654e32bdb8af506284ecb22a14b6547"
+  integrity sha512-UkRtBHPnuedSX5UPzrZDzNb5pxWCVqvE5/xTPlxWEtN4een9Aixl4RSOZiJxMp4dxxVtw/fo9Lnx0z1wYxbWRw==
+  dependencies:
+    "@parcel/hash" "^2.0.1"
+    "@parcel/plugin" "^2.0.1"
+    nullthrows "^1.1.1"
+    posthtml "^0.16.5"
+    posthtml-parser "^0.10.1"
+    posthtml-render "^3.0.0"
     semver "^5.4.1"
 
 "@parcel/transformer-js@2.0.0-rc.0":
@@ -8279,7 +8279,7 @@ postcss@^8.3.6:
     picocolors "^1.0.0"
     source-map-js "^0.6.2"
 
-posthtml-parser@^0.10.0:
+posthtml-parser@^0.10.0, posthtml-parser@^0.10.1:
   version "0.10.1"
   resolved "https://registry.yarnpkg.com/posthtml-parser/-/posthtml-parser-0.10.1.tgz#63c41931a9339cc2c32aba14f06286d98f107abf"
   integrity sha512-i7w2QEHqiGtsvNNPty0Mt/+ERch7wkgnFh3+JnBI2VgDbGlBqKW9eDVd3ENUhE1ujGFe3e3E/odf7eKhvLUyDg==

@@ -83,7 +83,7 @@
   "devDependencies": {
     "@parcel/optimizer-htmlnano": "2.0.1",
     "@parcel/packager-html": "2.0.0-nightly.612",
-    "@parcel/transformer-html": "2.0.0-nightly.612",
+    "@parcel/transformer-html": "2.0.1",
     "@parcel/transformer-posthtml": "2.0.0-nightly.612",
     "@types/enzyme": "3.10.8",
     "@types/enzyme-adapter-react-16": "1.0.6",
