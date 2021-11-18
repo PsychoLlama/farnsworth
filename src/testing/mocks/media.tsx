@@ -47,6 +47,7 @@ export class MockMediaStreamTrack
   readyState = 'live' as const;
   stop = jest.fn();
   label = '';
+  contentHint = '';
 
   getSettings = jest.fn(() => ({
     deviceId: this._deviceId,

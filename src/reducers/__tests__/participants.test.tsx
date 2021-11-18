@@ -8,7 +8,7 @@ jest.mock('../../effects/tracks', () => {
   const actual = jest.requireActual('../../effects/tracks');
 
   return {
-    ...jest.genMockFromModule('../../effects/tracks'),
+    ...(jest.genMockFromModule('../../effects/tracks') as any),
     add: actual.add,
   };
 });

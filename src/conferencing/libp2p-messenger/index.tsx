@@ -1,20 +1,21 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import pipe from 'it-pipe';
+import { MuxedStream } from 'libp2p';
 import AsyncQueue from './async-queue';
 
 /**
  * Provides a simple JSON messenger interface over libp2p streams.
  */
 export default class Libp2pMessenger {
-  static from(stream: Stream) {
+  static from(stream: MuxedStream) {
     return new Libp2pMessenger(stream);
   }
 
-  private stream: Stream;
+  private stream: MuxedStream;
   private messageQueue = new AsyncQueue();
   private connectionClosePromise: Promise<void>;
 
-  private constructor(stream: Stream) {
+  private constructor(stream: MuxedStream) {
     this.stream = stream;
     this.connectionClosePromise = pipe(
       this.messageQueue,
@@ -69,8 +70,3 @@ const json = {
     }
   },
 };
-
-interface Stream {
-  sink(stream: AsyncIterable<unknown>): Promise<void>;
-  source: AsyncGenerator<unknown>;
-}

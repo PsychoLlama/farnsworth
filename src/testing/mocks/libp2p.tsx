@@ -1,4 +1,6 @@
-export class Stream<T> {
+import { MuxedStream } from 'libp2p';
+
+export class Stream<T> implements MuxedStream {
   static from<T>(data: Array<T>) {
     return new Stream(data);
   }
@@ -18,11 +20,20 @@ export class Stream<T> {
     }
   }
 
-  sink = async <A,>(stream: AsyncIterable<A>) => {
-    for await (const value of stream) {
+  sink = async (source: Uint8Array) => {
+    for await (const value of source) {
       this.observer(value);
     }
   };
+
+  close = jest.fn();
+  abort = jest.fn();
+  reset = jest.fn();
+  timeline = null;
+  id = 'mock-id';
+
+  // -- Stubbed for MuxedStream --
+  [Symbol.asyncIterator] = () => this.consume([]);
 }
 
 export default class MockLibp2p {
