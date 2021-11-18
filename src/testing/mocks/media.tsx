@@ -32,7 +32,8 @@ export class MockMediaStream extends EventEmitter implements MediaStream {
 
 export class MockMediaStreamTrack
   extends EventEmitter
-  implements MediaStreamTrack {
+  implements MediaStreamTrack
+{
   _deviceId = uuid();
 
   // --- implemented ---

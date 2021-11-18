@@ -22,6 +22,5 @@ export async function* accept(peerId: string) {
   effects.tracks.sendLocalTracks(peerId, yield GET_STATE);
 }
 
-accept.actionFactory = createAction.factory<{ peerId: string }>(
-  'connections/accept',
-);
+accept.actionFactory =
+  createAction.factory<{ peerId: string }>('connections/accept');
