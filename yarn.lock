@@ -1181,17 +1181,6 @@
     nullthrows "^1.1.1"
     postcss "^8.3.0"
 
-"@parcel/packager-html@2.0.0-nightly.612":
-  version "2.0.0-nightly.612"
-  resolved "https://registry.yarnpkg.com/@parcel/packager-html/-/packager-html-2.0.0-nightly.612.tgz#1ac2a2be298c875653d78fed6ce6225658d1dbcb"
-  integrity sha512-2C6NESl+5TcWJ+pi++2QQ6uT6lFS782XqWp0o0Ex38NMvrwj9GzAiNYp8aSUuSjTMgHbBZpFygQWepU82JXtAQ==
-  dependencies:
-    "@parcel/plugin" "2.0.0-nightly.612+8a4fa3ee"
-    "@parcel/types" "2.0.0-nightly.612+8a4fa3ee"
-    "@parcel/utils" "2.0.0-nightly.612+8a4fa3ee"
-    nullthrows "^1.1.1"
-    posthtml "^0.15.1"
-
 "@parcel/packager-html@2.0.0-rc.0":
   version "2.0.0-rc.0"
   resolved "https://registry.yarnpkg.com/@parcel/packager-html/-/packager-html-2.0.0-rc.0.tgz#9ef3737cd1af4d8633654d458901ce9834af65d2"
@@ -1202,6 +1191,17 @@
     "@parcel/utils" "2.0.0-rc.0"
     nullthrows "^1.1.1"
     posthtml "^0.16.4"
+
+"@parcel/packager-html@2.0.1":
+  version "2.0.1"
+  resolved "https://registry.yarnpkg.com/@parcel/packager-html/-/packager-html-2.0.1.tgz#d62ffe14d7adfad916ebac8ed9f3776457c2c1ed"
+  integrity sha512-uGQYjspjz/VF4v+kVWAmPfXoGKCmos8rgTZ7XtXnhuRT4SH/OYHlRKVxzC4sb4zRoeO6Bj82yVw65Xj2gz9K4Q==
+  dependencies:
+    "@parcel/plugin" "^2.0.1"
+    "@parcel/types" "^2.0.1"
+    "@parcel/utils" "^2.0.1"
+    nullthrows "^1.1.1"
+    posthtml "^0.16.5"
 
 "@parcel/packager-js@2.0.0-rc.0":
   version "2.0.0-rc.0"
