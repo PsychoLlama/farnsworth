@@ -1,13 +1,16 @@
 import P2P from 'libp2p';
 import { NOISE } from 'libp2p-noise';
 import MPLEX from 'libp2p-mplex';
-import Websockets from 'libp2p-websockets';
+import WebSockets from 'libp2p-websockets';
 import * as filters from 'libp2p-websockets/src/filters';
 import assert from 'assert';
 import { multiaddr } from 'multiaddr';
 import context from '../conferencing/global-context';
 import Libp2pMessenger from '../conferencing/libp2p-messenger';
 import ConnectionManager from '../conferencing/webrtc';
+import Logger from '../utils/logger';
+
+const logger = new Logger('connections');
 
 export const SIGNALING_PROTOCOL = '/webrtc/signal';
 
@@ -24,13 +27,13 @@ async function initNetworkingModule(addr: string) {
       listen: [`${addr}/p2p-circuit`],
     },
     modules: {
-      transport: [Websockets],
+      transport: [WebSockets],
       connEncryption: [NOISE],
       streamMuxer: [MPLEX],
     },
     config: {
       transport: {
-        [ModuleId.Websockets]: {
+        [ModuleId.WebSockets]: {
           filter: filters.all,
         },
       },
@@ -88,5 +91,12 @@ export async function dial(addr: string) {
 }
 
 const ModuleId = {
-  Websockets: Websockets.prototype[Symbol.toStringTag],
+  WebSockets: WebSockets.prototype[Symbol.toStringTag],
 };
+
+export function shutdown() {
+  logger.debug('Closing all active connections');
+
+  Array.from(context.connections.values()).forEach((conn) => conn.close());
+  context.connections.clear();
+}
