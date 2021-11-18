@@ -1,6 +1,7 @@
 import Libp2pMessenger from '../libp2p-messenger';
 import { RtcDescriptionType, RtcSignalingState } from '../../utils/constants';
 import Logger from '../../utils/logger';
+import DataChannelMessenger from './data-channel-messenger';
 
 const logger = new Logger('ConnectionManager');
 
@@ -19,7 +20,7 @@ export default class ConnectionManager {
   private ignoreIceErrors = false;
 
   remoteId: string;
-  channel: RTCDataChannel;
+  messenger: DataChannelMessenger;
 
   constructor({ localId, remoteId, signaler }: Config) {
     this.signaler = signaler;
@@ -38,10 +39,7 @@ export default class ConnectionManager {
     this.pc.onnegotiationneeded = this.updateLocalSession;
 
     // Side effect: triggers connection setup. Register event handlers first.
-    this.channel = this.pc.createDataChannel('app', {
-      negotiated: true,
-      id: 0,
-    });
+    this.messenger = new DataChannelMessenger(this.pc);
   }
 
   /**

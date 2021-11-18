@@ -6,10 +6,7 @@ import {
   RtcDescriptionType,
   RtcSignalingState,
 } from '../../../utils/constants';
-import {
-  MockRTCDataChannel,
-  MockRTCPeerConnection,
-} from '../../../testing/mocks/webrtc';
+import { MockRTCPeerConnection } from '../../../testing/mocks/webrtc';
 import sdk from '../../../utils/sdk';
 
 jest.mock('../../../utils/sdk');
@@ -42,12 +39,6 @@ describe('ConnectionManager', () => {
       pc: (mgr as any).pc as MockRTCPeerConnection,
     };
   }
-
-  it('creates a peer', () => {
-    const { mgr } = setup();
-
-    expect(mgr.channel).toBeInstanceOf(MockRTCDataChannel);
-  });
 
   it('sends ICE candidates to the remote peer', () => {
     const { pc, signaler } = setup();
