@@ -1,17 +1,20 @@
 {
   "name": "farnsworth",
   "version": "0.1.0",
+  "type": "module",
+  "main": "server/index.js",
   "description": "A peer-to-peer video conferencing application.",
   "author": "Jesse Gibson <JesseTheGibson@gmail.com>",
   "license": "GPL-3.0-or-later",
   "private": true,
   "scripts": {
     "start": "parcel src/index.html",
+    "start:server": "DEBUG=farnsworth node .",
     "build": "parcel build src/index.html",
     "test": "./bin/run-tests",
     "test:unit": "jest --color",
-    "test:lint": "eslint --color src",
-    "test:fmt": "prettier --check --color src"
+    "test:lint": "eslint --color src server",
+    "test:fmt": "prettier --check --color src server"
   },
   "husky": {
     "hooks": {
@@ -51,6 +54,14 @@
         },
         "rules": {
           "@typescript-eslint/no-explicit-any": "off"
+        }
+      },
+      {
+        "files": [
+          "./server/**/*.js"
+        ],
+        "env": {
+          "node": true
         }
       }
     ],
@@ -119,6 +130,7 @@
     "libp2p-websockets": "0.16.2",
     "media-devices": "0.2.0",
     "multiaddr": "10.0.1",
+    "peer-id": "0.15.3",
     "react": "17.0.2",
     "react-dom": "17.0.2",
     "react-icons": "4.3.1",

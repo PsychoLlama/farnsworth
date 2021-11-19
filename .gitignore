@@ -3,3 +3,5 @@ dist/
 *.log
 .parcel-cache
 .env
+server/config.json
+server/certs/
