@@ -5,10 +5,11 @@ import { connect } from 'react-redux';
 import InviteCode from './invite-code';
 import { Button, Input } from './core';
 import * as actions from '../actions';
+import { State as ReduxState } from '../reducers/initial-state';
 
 export class Phonebook extends React.Component<Props, State> {
   state = {
-    inviteCode: '',
+    peerId: '',
   };
 
   render() {
@@ -20,7 +21,7 @@ export class Phonebook extends React.Component<Props, State> {
           <InviteInput
             data-test="invite-code-input"
             placeholder="Invite code"
-            value={this.state.inviteCode}
+            value={this.state.peerId}
             onChange={this.updateInviteCode}
           />
 
@@ -36,27 +37,29 @@ export class Phonebook extends React.Component<Props, State> {
     event.stopPropagation();
     event.preventDefault();
 
-    const { inviteCode } = this.state;
+    const { relayServer } = this.props;
+    const { peerId } = this.state;
     this.clearInput();
 
-    this.props.dial(inviteCode);
+    this.props.dial(`${relayServer}/p2p-circuit/p2p/${peerId}`);
   };
 
   clearInput = () => {
-    this.setState({ inviteCode: '' });
+    this.setState({ peerId: '' });
   };
 
-  updateInviteCode = (inviteCode: string) => {
-    this.setState({ inviteCode });
+  updateInviteCode = (peerId: string) => {
+    this.setState({ peerId });
   };
 }
 
 interface Props {
   dial: typeof actions.connections.dial;
+  relayServer: string;
 }
 
 interface State {
-  inviteCode: string;
+  peerId: string;
 }
 
 const Container = styled.div`
@@ -80,4 +83,10 @@ const mapDispatchToProps = {
   dial: actions.connections.dial,
 };
 
-export default connect(null, mapDispatchToProps)(Phonebook);
+export function mapStateToProps({ relay }: ReduxState) {
+  return {
+    relayServer: relay?.server ?? '',
+  };
+}
+
+export default connect(mapStateToProps, mapDispatchToProps)(Phonebook);

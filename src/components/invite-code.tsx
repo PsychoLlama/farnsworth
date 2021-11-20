@@ -20,8 +20,8 @@ export class InviteCode extends React.Component<Props, State> {
   }
 
   copy = async () => {
-    const { dialAddress } = this.props;
-    await navigator.clipboard.writeText(dialAddress);
+    const { localId } = this.props;
+    await navigator.clipboard.writeText(localId);
     this.setState({ showCopySuccessMessage: true });
     this.scheduleNoticeDismissal();
   };
@@ -32,8 +32,7 @@ export class InviteCode extends React.Component<Props, State> {
 }
 
 interface Props {
-  dialAddress: string;
-  connected: boolean;
+  localId: string;
 }
 
 interface State {
@@ -42,10 +41,7 @@ interface State {
 
 export function mapStateToProps({ relay }: ReduxState) {
   return {
-    connected: Boolean(relay),
-    dialAddress: relay
-      ? `${relay.server}/p2p-circuit/p2p/${relay.localId}`
-      : '',
+    localId: relay?.localId ?? '',
   };
 }
 

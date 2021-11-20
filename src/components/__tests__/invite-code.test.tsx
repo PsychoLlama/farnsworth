@@ -12,8 +12,7 @@ jest.useFakeTimers();
 describe('InviteCode', () => {
   const setup = renderer(InviteCode, {
     getDefaultProps: () => ({
-      dialAddress: '/bluetooth/5/p2p/hash',
-      connected: true,
+      localId: 'your-mom',
     }),
   });
 
@@ -29,9 +28,7 @@ describe('InviteCode', () => {
     output.update();
 
     expect(findByTestId('copy-code').text()).toBe('Copied!');
-    expect(navigator.clipboard.writeText).toHaveBeenCalledWith(
-      props.dialAddress,
-    );
+    expect(navigator.clipboard.writeText).toHaveBeenCalledWith(props.localId);
   });
 
   it('dismisses the copied notice after a short time', async () => {
@@ -50,22 +47,23 @@ describe('InviteCode', () => {
       const store = createStore();
       const props = mapStateToProps(store.getState());
 
-      expect(props).toMatchObject({
-        dialAddress: '',
-        connected: false,
-      });
+      expect(props).toMatchInlineSnapshot(`
+        Object {
+          "localId": "",
+        }
+      `);
     });
 
     it('returns the full relay address', async () => {
       const store = createStore();
       await store.dispatch(actions.connections.listen('fake-server'));
-      const { relay } = store.getState();
       const props = mapStateToProps(store.getState());
 
-      expect(props).toMatchObject({
-        dialAddress: `${relay.server}/p2p-circuit/p2p/${relay.localId}`,
-        connected: true,
-      });
+      expect(props).toMatchInlineSnapshot(`
+        Object {
+          "localId": "mock-peer-id",
+        }
+      `);
     });
   });
 });
