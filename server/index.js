@@ -31,7 +31,12 @@ async function main() {
 
   p2p.connectionManager.on('peer:connect', ({ remoteAddr, remotePeer }) => {
     debug('New connection:', remoteAddr);
-    debug(`-> ${remotePeer.toB58String()}`);
+    debug(`--> ${remotePeer.toB58String()}`);
+  });
+
+  p2p.connectionManager.on('peer:disconnect', ({ remoteAddr, remotePeer }) => {
+    debug('Disconnected:', remoteAddr);
+    debug(`<-- ${remotePeer.toB58String()}`);
   });
 
   async function stop() {
