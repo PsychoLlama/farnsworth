@@ -105,7 +105,6 @@ async function readRelativePath(relativePath) {
 }
 
 async function loadConfig() {
-  // TODO: Port over `./bin/setup` from the signaling repo.
   const fileContents = await readRelativePath('./config.json').catch(() => {
     console.error('Missing config file. Did you run `./bin/setup`?');
     process.exit(1);
