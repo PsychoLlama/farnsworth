@@ -5,7 +5,7 @@
   "source": "src/index.html",
   "description": "A peer-to-peer video conferencing application.",
   "author": "Jesse Gibson <JesseTheGibson@gmail.com>",
-  "license": "GPL-3.0-or-later",
+  "license": "AGPL-3.0-or-later",
   "private": true,
   "scripts": {
     "start": "parcel",
