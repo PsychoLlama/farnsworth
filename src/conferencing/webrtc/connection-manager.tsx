@@ -42,6 +42,9 @@ export default class ConnectionManager {
     this.pc.onicecandidate = this.sendIceCandidate;
     this.pc.onnegotiationneeded = this.updateLocalSession;
 
+    // Side effect: logs connection state changes.
+    ConnectionObserver.observe(this.pc);
+
     // Side effect: triggers connection setup. Register event handlers first.
     this.messenger = new DataChannelMessenger(this.pc);
   }
@@ -147,6 +150,60 @@ export default class ConnectionManager {
 
       logger.debug(`Answering other peer's offer`);
       this.signaler.send(msg);
+    }
+  }
+}
+
+export class ConnectionObserver {
+  private pc: RTCPeerConnection;
+  private oldIceConnectionState: RTCIceConnectionState;
+  private successStates: Set<RTCIceConnectionState> = new Set([
+    'connected' as const,
+    'completed' as const,
+  ]);
+
+  static observe(pc: RTCPeerConnection) {
+    return new ConnectionObserver(pc);
+  }
+
+  constructor(pc: RTCPeerConnection) {
+    this.pc = pc;
+
+    this.oldIceConnectionState = this.pc.iceConnectionState;
+    this.pc.addEventListener(
+      'iceconnectionstatechange',
+      this.observeIceConnectionState,
+    );
+  }
+
+  private observeIceConnectionState = () => {
+    this.logIceConnectionState(
+      this.oldIceConnectionState,
+      this.pc.iceConnectionState,
+    );
+
+    this.oldIceConnectionState = this.pc.iceConnectionState;
+  };
+
+  private logIceConnectionState(
+    previous: RTCIceConnectionState,
+    current: RTCIceConnectionState,
+  ) {
+    switch (current) {
+      case 'checking':
+        return logger.debug('Testing remote candidates...');
+      case 'disconnected':
+        return logger.warn(`Disconnected.`);
+      case 'failed':
+        return logger.error('Connection failed.');
+      case 'closed':
+        return logger.debug('Connection closed.');
+    }
+
+    // Under rare circumstances, it's possible to transition from 'checking'
+    // directly to 'completed', skipping 'connected'. Don't log twice.
+    if (!this.successStates.has(previous) && this.successStates.has(current)) {
+      logger.debug('Connection successful.');
     }
   }
 }

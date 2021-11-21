@@ -1,4 +1,8 @@
-import ConnectionManager, { Config, MessageType } from '../connection-manager';
+import ConnectionManager, {
+  Config,
+  MessageType,
+  ConnectionObserver,
+} from '../connection-manager';
 import Libp2pMessenger from '../../libp2p-messenger';
 import { Stream } from '../../../testing/mocks/libp2p';
 import { MockMediaStreamTrack } from '../../../testing/mocks/media';
@@ -223,6 +227,28 @@ describe('ConnectionManager', () => {
       mgr.addTrack(track);
 
       expect(pc.addTrack).toHaveBeenCalledWith(track);
+    });
+  });
+});
+
+describe('ConnectionObserver', () => {
+  // Bare minimum test coverage.
+  it('survives the happy paths', () => {
+    const pc = new MockRTCPeerConnection();
+    ConnectionObserver.observe(pc);
+    const states: Array<RTCIceConnectionState> = [
+      'checking',
+      'closed',
+      'completed',
+      'connected',
+      'disconnected',
+      'failed',
+      'new',
+    ];
+
+    states.forEach((state) => {
+      pc.iceConnectionState = state;
+      expect(() => pc.emit('iceconnectionstatechange')).not.toThrow();
     });
   });
 });
