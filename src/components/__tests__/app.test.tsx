@@ -6,7 +6,6 @@ describe('App', () => {
     getDefaultProps: () => ({
       requestMediaDevices: jest.fn(),
       connectToServer: jest.fn(),
-      closeAllConnections: jest.fn(),
     }),
   });
 
@@ -20,22 +19,5 @@ describe('App', () => {
     const { props } = setup();
 
     expect(props.connectToServer).toHaveBeenCalled();
-  });
-
-  it('shuts down all active connections on unmount', () => {
-    const { props } = setup();
-
-    expect(props.closeAllConnections).not.toHaveBeenCalled();
-    window.dispatchEvent(new Event('beforeunload'));
-    expect(props.closeAllConnections).toHaveBeenCalled();
-  });
-
-  it('does not leak unload listeners into the document', () => {
-    const { output, props } = setup();
-
-    output.unmount();
-    window.dispatchEvent(new Event('beforeunload'));
-
-    expect(props.closeAllConnections).not.toHaveBeenCalled();
   });
 });

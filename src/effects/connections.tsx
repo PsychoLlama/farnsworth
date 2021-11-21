@@ -8,9 +8,6 @@ import { multiaddr } from 'multiaddr';
 import context from '../conferencing/global-context';
 import Libp2pMessenger from '../conferencing/libp2p-messenger';
 import ConnectionManager from '../conferencing/webrtc';
-import Logger from '../utils/logger';
-
-const logger = new Logger('connections');
 
 export const SIGNALING_PROTOCOL = '/webrtc/signal';
 
