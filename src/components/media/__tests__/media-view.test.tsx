@@ -12,31 +12,30 @@ describe('MediaView', () => {
     }),
   });
 
-  function setVideoRef(
+  async function setVideoRef(
     output: ReturnType<typeof setup>['output'],
     ref = { srcObject: null, play: jest.fn() },
   ) {
     const video = output.find({ 'data-test-id': 'video-stream' }).getElement();
-    (video as any).ref(ref);
+    await (video as any).ref(ref);
 
     return ref;
   }
 
-  it('shows the current video stream', () => {
+  it('shows the current video stream', async () => {
     const { output } = setup();
-    const ref = setVideoRef(output);
+    const ref = await setVideoRef(output);
 
     expect(ref.srcObject).toBeInstanceOf(MediaStream);
   });
 
-  it('survives while unmounting', () => {
+  it('survives while unmounting', async () => {
     const { output } = setup();
-    const pass = () => setVideoRef(output, null);
 
-    expect(pass).not.toThrow();
+    await expect(setVideoRef(output, null)).resolves.not.toThrow();
   });
 
-  it('binds tracks to the media stream', () => {
+  it('binds tracks to the media stream', async () => {
     const audioTrack = new MediaStreamTrack();
     const videoTrack = new MediaStreamTrack();
     context.tracks.set('a-id', audioTrack);
@@ -47,13 +46,13 @@ describe('MediaView', () => {
       videoTrackId: 'v-id',
     });
 
-    const ref = setVideoRef(output);
+    const ref = await setVideoRef(output);
 
     expect(ref.srcObject.getTracks()).toContain(audioTrack);
     expect(ref.srcObject.getTracks()).toContain(videoTrack);
   });
 
-  it('removes tracks that are no longer needed', () => {
+  it('removes tracks that are no longer needed', async () => {
     const audioTrack = new MediaStreamTrack();
     context.tracks.set('a-id', audioTrack);
     context.tracks.set('v-id', new MediaStreamTrack());
@@ -63,14 +62,42 @@ describe('MediaView', () => {
       videoTrackId: 'v-id',
     });
 
-    const ref = setVideoRef(output);
+    const ref = await setVideoRef(output);
     output.setProps({ videoTrackId: null });
 
     expect(ref.srcObject.getTracks()).toHaveLength(1);
     expect(ref.play).toHaveBeenCalled();
   });
 
-  it('only adds audio tracks to remote streams', () => {
+  it('does not try to play when there are no tracks', async () => {
+    const { output } = setup({
+      audioTrackId: null,
+      videoTrackId: null,
+    });
+
+    const ref = await setVideoRef(output);
+
+    expect(ref.play).not.toHaveBeenCalled();
+  });
+
+  it('survives even if .play() throws', async () => {
+    context.tracks.set('v-id', new MediaStreamTrack());
+    const { output } = setup({
+      audioTrackId: null,
+      videoTrackId: 'v-id',
+    });
+
+    const promise = setVideoRef(output, {
+      srcObject: new MediaStream(),
+      play: jest.fn(() => {
+        throw new Error('Simulating permission error');
+      }),
+    });
+
+    await expect(promise).resolves.not.toThrow();
+  });
+
+  it('only adds audio tracks to remote streams', async () => {
     const audioTrack = new MediaStreamTrack();
     context.tracks.set('a-id', audioTrack);
     context.tracks.set('v-id', new MediaStreamTrack());
@@ -81,7 +108,7 @@ describe('MediaView', () => {
       isLocal: true,
     });
 
-    const ref = setVideoRef(output);
+    const ref = await setVideoRef(output);
 
     expect(ref.srcObject.getTracks()).not.toContain(audioTrack);
   });
