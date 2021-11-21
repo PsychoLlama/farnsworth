@@ -66,21 +66,4 @@ describe('Connection effects', () => {
       expect(result).toEqual({ peerId });
     });
   });
-
-  describe('shutdown', () => {
-    it('closes all the active connections', async () => {
-      await connections.listen('/here');
-
-      const peerId = `Qm${Array(44).fill('Y').join('')}`;
-      await connections.dial(`/ip4/127.0.0.1/tcp/1337/p2p/${peerId}`);
-
-      const [conn] = context.connections.values();
-      jest.spyOn(conn, 'close');
-
-      connections.shutdown();
-
-      expect(conn.close).toHaveBeenCalled();
-      expect(context.connections.size).toBe(0);
-    });
-  });
 });

@@ -92,10 +92,3 @@ export async function dial(addr: string) {
 const ModuleId = {
   WebSockets: WebSockets.prototype[Symbol.toStringTag],
 };
-
-export function shutdown() {
-  logger.debug('Closing all active connections');
-
-  Array.from(context.connections.values()).forEach((conn) => conn.close());
-  context.connections.clear();
-}
