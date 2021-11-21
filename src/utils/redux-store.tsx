@@ -1,3 +1,4 @@
 import createStore from './create-store';
+import tinker from './tinker';
 
-export default createStore();
+export default tinker.addTool('store', createStore());

@@ -1,5 +1,6 @@
 import Libp2p from 'libp2p';
 import ConnectionManager from './webrtc';
+import tinker from '../utils/tinker';
 
 // Video centric apps deal with a lot of stateful objects. Things like media
 // stream tracks, audio contexts, recorders, etc. None of those can exist in
@@ -35,4 +36,4 @@ interface GlobalContext {
   connections: Map<string, ConnectionManager>;
 }
 
-export default context;
+export default tinker.addTool('context', context);

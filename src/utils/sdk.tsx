@@ -1,6 +1,7 @@
 import { bindActionCreators } from 'redux';
 import * as actions from '../actions';
 import store from './redux-store';
+import tinker from './tinker';
 
 /**
  * Wraps all actions in `dispatch()`. This is useful because conferencing
@@ -22,4 +23,4 @@ export function createSdk(): SDK {
 // Same signature, just wrapped with `dispatch()`.
 type SDK = typeof actions;
 
-export default createSdk();
+export default tinker.addTool('sdk', createSdk());
