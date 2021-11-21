@@ -33,7 +33,7 @@ export default class ConnectionManager {
     // 'polite' determines who backs down in a signaling conflict.
     this.polite = localId < remoteId;
 
-    logger.debug('Opening WebRTC connection:', { localId, remoteId });
+    logger.debug('Opening WebRTC connection:', `${localId} => ${remoteId}`);
     logger.debug(`Signaling mode is '${this.polite ? 'polite' : 'impolite'}'`);
 
     this.signaler.subscribe(this.processMessage);
