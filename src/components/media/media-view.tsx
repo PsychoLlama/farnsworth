@@ -10,7 +10,14 @@ export default class MediaView extends React.Component<Props> {
   stream = new MediaStream();
   videoRef: null | HTMLVideoElement = null;
 
-  componentDidUpdate() {
+  componentDidUpdate(prevProps: Props) {
+    // When you remove a video track from a media stream, the video freezes on
+    // the last frame. You need a new stream to clear it out.
+    if (prevProps.videoTrackId !== this.props.videoTrackId) {
+      this.stream = new MediaStream();
+      this.videoRef.srcObject = this.stream;
+    }
+
     this.syncTracksToMediaStream();
   }
 

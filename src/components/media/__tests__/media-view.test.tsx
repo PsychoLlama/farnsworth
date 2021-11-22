@@ -69,6 +69,28 @@ describe('MediaView', () => {
     expect(ref.play).toHaveBeenCalled();
   });
 
+  it('resets the media stream when the video track is removed', async () => {
+    context.tracks.set('a-id', new MediaStreamTrack());
+    context.tracks.set('v-id', new MediaStreamTrack());
+
+    const { output } = setup({
+      audioTrackId: null,
+      videoTrackId: null,
+    });
+
+    const ref = await setVideoRef(output);
+    const original = ref.srcObject;
+
+    // No change with audio.
+    output.setProps({ audioTrackId: 'a-id' });
+    expect(ref.srcObject).toBe(original);
+    output.setProps({ audioTrackId: null });
+    expect(ref.srcObject).toBe(original);
+
+    output.setProps({ videoTrackId: 'v-id' });
+    expect(ref.srcObject).not.toBe(original);
+  });
+
   it('does not try to play when there are no tracks', async () => {
     const { output } = setup({
       audioTrackId: null,
