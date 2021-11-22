@@ -15,6 +15,8 @@ const logger = new Logger('ConnectionManager');
  * Signaling follows the Perfect Negotiation pattern which is more robust in
  * the case of reconnect compared to caller/callee assignments. See:
  * https://developer.mozilla.org/en-US/docs/Web/API/WebRTC_API/Perfect_negotiation
+ *
+ * Forgive the constructor side effects.
  */
 export default class ConnectionManager {
   private polite: boolean;
@@ -43,10 +45,13 @@ export default class ConnectionManager {
     this.pc.onnegotiationneeded = this.updateLocalSession;
 
     // Side effect: logs connection state changes.
-    ConnectionObserver.observe(this.pc);
+    IceLogger.observe(this.pc);
 
     // Side effect: triggers connection setup. Register event handlers first.
-    this.messenger = new DataChannelMessenger(this.pc);
+    this.messenger = new DataChannelMessenger({
+      pc: this.pc,
+      remoteId,
+    });
   }
 
   /**
@@ -154,7 +159,7 @@ export default class ConnectionManager {
   }
 }
 
-export class ConnectionObserver {
+export class IceLogger {
   private pc: RTCPeerConnection;
   private oldIceConnectionState: RTCIceConnectionState;
   private successStates: Set<RTCIceConnectionState> = new Set([
@@ -163,7 +168,7 @@ export class ConnectionObserver {
   ]);
 
   static observe(pc: RTCPeerConnection) {
-    return new ConnectionObserver(pc);
+    return new IceLogger(pc);
   }
 
   constructor(pc: RTCPeerConnection) {

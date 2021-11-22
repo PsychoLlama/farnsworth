@@ -106,4 +106,33 @@ describe('Participants reducer', () => {
       });
     });
   });
+
+  describe('connections.markDisconnected()', () => {
+    it('updates the connection state', () => {
+      const { store } = setup();
+
+      store.dispatch(actions.connections.markDisconnected(MY_PARTICIPANT_ID));
+
+      expect(store.getState().participants).toMatchObject({
+        [MY_PARTICIPANT_ID]: {
+          connection: { state: ConnectionState.Disconnected },
+        },
+      });
+    });
+  });
+
+  describe('connections.markConnected()', () => {
+    it('updates the connection state', () => {
+      const { store } = setup();
+
+      store.dispatch(actions.connections.markDisconnected(MY_PARTICIPANT_ID));
+      store.dispatch(actions.connections.markConnected(MY_PARTICIPANT_ID));
+
+      expect(store.getState().participants).toMatchObject({
+        [MY_PARTICIPANT_ID]: {
+          connection: { state: ConnectionState.Connected },
+        },
+      });
+    });
+  });
 });

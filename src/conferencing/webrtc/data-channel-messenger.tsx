@@ -25,8 +25,10 @@ const logger = new Logger('DataChannelMessenger');
  */
 export default class DataChannelMessenger {
   private channel: RTCDataChannel;
+  private remoteId: string;
 
-  constructor(pc: RTCPeerConnection) {
+  constructor({ pc, remoteId }: Config) {
+    this.remoteId = remoteId;
     this.channel = pc.createDataChannel('app', {
       protocol: MIME_TYPE,
       negotiated: true,
@@ -36,6 +38,9 @@ export default class DataChannelMessenger {
     // Prefer messages in `ArrayBuffer` instead of `Blob`.
     this.channel.binaryType = 'arraybuffer';
     this.channel.onmessage = this.processMessage;
+
+    this.channel.onopen = this.signalConnectionOpen;
+    this.channel.onclose = this.signalConnectionClosed;
   }
 
   /** Send an arbitrary event object to the other client. */
@@ -104,6 +109,21 @@ export default class DataChannelMessenger {
       return null;
     }
   };
+
+  signalConnectionOpen = async () => {
+    const { default: sdk } = await import('../../utils/sdk');
+    sdk.connections.markConnected(this.remoteId);
+  };
+
+  signalConnectionClosed = async () => {
+    const { default: sdk } = await import('../../utils/sdk');
+    sdk.connections.markDisconnected(this.remoteId);
+  };
+}
+
+interface Config {
+  pc: RTCPeerConnection;
+  remoteId: string;
 }
 
 /**

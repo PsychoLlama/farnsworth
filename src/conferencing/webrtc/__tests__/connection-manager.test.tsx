@@ -1,7 +1,7 @@
 import ConnectionManager, {
   Config,
   MessageType,
-  ConnectionObserver,
+  IceLogger,
 } from '../connection-manager';
 import Libp2pMessenger from '../../libp2p-messenger';
 import { Stream } from '../../../testing/mocks/libp2p';
@@ -231,11 +231,11 @@ describe('ConnectionManager', () => {
   });
 });
 
-describe('ConnectionObserver', () => {
+describe('IceLogger', () => {
   // Bare minimum test coverage.
   it('survives the happy paths', () => {
     const pc = new MockRTCPeerConnection();
-    ConnectionObserver.observe(pc);
+    IceLogger.observe(pc);
     const states: Array<RTCIceConnectionState> = [
       'checking',
       'closed',

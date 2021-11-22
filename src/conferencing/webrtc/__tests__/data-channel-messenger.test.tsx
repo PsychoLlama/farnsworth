@@ -1,10 +1,15 @@
 import { encode } from '@msgpack/msgpack';
 import DataChannelMessenger from '../data-channel-messenger';
+import sdk from '../../../utils/sdk';
+
+jest.mock('../../../utils/sdk');
 
 describe('DataChannelMessenger', () => {
   function setup() {
+    const remoteId = 'mock-remote-id';
+
     const pc = new RTCPeerConnection();
-    const messenger = new DataChannelMessenger(pc);
+    const messenger = new DataChannelMessenger({ pc, remoteId });
 
     expect(pc.createDataChannel).toHaveBeenCalled();
 
@@ -14,6 +19,7 @@ describe('DataChannelMessenger', () => {
       pc,
       messenger,
       channel,
+      remoteId,
     };
   }
 
@@ -52,5 +58,21 @@ describe('DataChannelMessenger', () => {
     await expect(
       sendMsg({ type: 0, data: { type: 'T' } }),
     ).resolves.not.toThrow();
+  });
+
+  it('notifies the application when the connection opens', async () => {
+    const { channel, remoteId } = setup();
+
+    await channel.onopen(new Event('open'));
+
+    expect(sdk.connections.markConnected).toHaveBeenCalledWith(remoteId);
+  });
+
+  it('notifies the application when the connection closes', async () => {
+    const { channel, remoteId } = setup();
+
+    await channel.onclose(new Event('close'));
+
+    expect(sdk.connections.markDisconnected).toHaveBeenCalledWith(remoteId);
   });
 });

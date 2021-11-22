@@ -24,3 +24,8 @@ export async function* accept(peerId: string) {
 
 accept.actionFactory =
   createAction.factory<{ peerId: string }>('connections/accept');
+
+export const markConnected = createAction<string>('connections/mark-connected');
+export const markDisconnected = createAction<string>(
+  'connections/mark-disconnected',
+);

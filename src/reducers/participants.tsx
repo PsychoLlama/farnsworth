@@ -35,4 +35,12 @@ export default createReducer(initialState.participants, (handleAction) => [
   handleAction(actions.tracks.add, (state, { peerId, track }) => {
     state[peerId].trackIds.push(track.id);
   }),
+
+  handleAction(actions.connections.markConnected, (state, peerId) => {
+    state[peerId].connection.state = ConnectionState.Connected;
+  }),
+
+  handleAction(actions.connections.markDisconnected, (state, peerId) => {
+    state[peerId].connection.state = ConnectionState.Disconnected;
+  }),
 ]);
