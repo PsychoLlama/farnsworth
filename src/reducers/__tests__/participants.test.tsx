@@ -134,5 +134,24 @@ describe('Participants reducer', () => {
         },
       });
     });
+
+    it('removes all the tracks', () => {
+      const { store } = setup();
+
+      store.dispatch(
+        actions.tracks.add({
+          track: new MediaStreamTrack(),
+          peerId: MY_PARTICIPANT_ID,
+        }),
+      );
+
+      store.dispatch(actions.connections.markDisconnected(MY_PARTICIPANT_ID));
+
+      expect(store.getState().participants).toMatchObject({
+        [MY_PARTICIPANT_ID]: {
+          trackIds: [],
+        },
+      });
+    });
   });
 });

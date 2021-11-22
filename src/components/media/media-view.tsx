@@ -3,6 +3,7 @@ import styled from 'styled-components';
 import context from '../../conferencing/global-context';
 import * as Overlays from './video-overlays';
 import Logger from '../../utils/logger';
+import { ConnectionState } from '../../utils/constants';
 
 const logger = new Logger('<MediaView>');
 
@@ -31,15 +32,27 @@ export default class MediaView extends React.Component<Props> {
           data-test="video-stream"
           tabIndex={-1}
         />
-        {this.renderOverlay()}
+        <Overlay>{this.renderOverlay()}</Overlay>
       </Container>
     );
   }
 
   renderOverlay = () => {
-    const { videoTrackId } = this.props;
+    const { videoTrackId, connectionState } = this.props;
 
-    return <Overlay>{videoTrackId ? null : <Overlays.NoVideoTrack />}</Overlay>;
+    if (connectionState === ConnectionState.Connecting) {
+      return <Overlays.Connecting />;
+    }
+
+    if (connectionState === ConnectionState.Disconnected) {
+      return <Overlays.Disconnected />;
+    }
+
+    if (!videoTrackId) {
+      return <Overlays.NoVideoTrack />;
+    }
+
+    return null;
   };
 
   attachMediaStream = async (video: null | HTMLVideoElement) => {
@@ -88,6 +101,7 @@ interface Props {
   audioTrackId: null | string;
   videoTrackId: null | string;
   isLocal: boolean;
+  connectionState: ConnectionState;
 }
 
 const Container = styled.div`

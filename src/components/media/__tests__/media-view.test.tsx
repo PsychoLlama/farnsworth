@@ -2,6 +2,7 @@ import renderer from '../../../testing/renderer';
 import MediaView from '../media-view';
 import context from '../../../conferencing/global-context';
 import * as Overlays from '../video-overlays';
+import { ConnectionState } from '../../../utils/constants';
 
 describe('MediaView', () => {
   const setup = renderer(MediaView, {
@@ -9,6 +10,7 @@ describe('MediaView', () => {
       audioTrackId: null,
       videoTrackId: null,
       isLocal: false,
+      connectionState: ConnectionState.Connected,
     }),
   });
 
@@ -133,5 +135,18 @@ describe('MediaView', () => {
 
     expect(without.find(Overlays.NoVideoTrack).exists()).toBe(true);
     expect(withVideo.find(Overlays.NoVideoTrack).exists()).toBe(false);
+  });
+
+  it('shows an overlay while connecting or disconnected', () => {
+    const { output: connecting } = setup({
+      connectionState: ConnectionState.Connecting,
+    });
+
+    const { output: disconnected } = setup({
+      connectionState: ConnectionState.Disconnected,
+    });
+
+    expect(connecting.find(Overlays.Connecting).exists()).toBe(true);
+    expect(disconnected.find(Overlays.Disconnected).exists()).toBe(true);
   });
 });

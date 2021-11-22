@@ -4,17 +4,18 @@ import invariant from 'invariant';
 import { State } from '../../reducers/initial-state';
 import { TrackKind } from '../../utils/constants';
 import MediaView from './media-view';
-import { MY_PARTICIPANT_ID } from '../../utils/constants';
+import { MY_PARTICIPANT_ID, ConnectionState } from '../../utils/constants';
 
 export class Participant extends React.Component<Props> {
   render() {
-    const { audioTrackId, videoTrackId } = this.props;
+    const { audioTrackId, videoTrackId, connectionState } = this.props;
 
     return (
       <MediaView
         isLocal={this.props.id === MY_PARTICIPANT_ID}
         audioTrackId={audioTrackId}
         videoTrackId={videoTrackId}
+        connectionState={connectionState}
       />
     );
   }
@@ -23,6 +24,7 @@ export class Participant extends React.Component<Props> {
 interface Props extends OwnProps {
   audioTrackId: null | string;
   videoTrackId: null | string;
+  connectionState: ConnectionState;
 }
 
 interface OwnProps {
@@ -44,6 +46,7 @@ export function mapStateToProps(state: State, { id }: { id: string }) {
   return {
     audioTrackId: audioTrackId || null,
     videoTrackId: videoTrackId || null,
+    connectionState: participant.connection.state,
   };
 }
 

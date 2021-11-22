@@ -42,5 +42,6 @@ export default createReducer(initialState.participants, (handleAction) => [
 
   handleAction(actions.connections.markDisconnected, (state, peerId) => {
     state[peerId].connection.state = ConnectionState.Disconnected;
+    state[peerId].trackIds = [];
   }),
 ]);

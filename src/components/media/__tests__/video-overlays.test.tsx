@@ -1,12 +1,15 @@
 import renderer from '../../../testing/renderer';
-import { NoVideoTrack } from '../video-overlays';
+import { NoVideoTrack, Connecting, Disconnected } from '../video-overlays';
 
 describe('Video overlays', () => {
-  it.each([[NoVideoTrack]])('successfully renders', (Overlay) => {
-    const setup = renderer(Overlay, {
-      getDefaultProps: () => ({}),
-    });
+  it.each([[NoVideoTrack], [Connecting], [Disconnected]])(
+    'successfully renders',
+    (Overlay) => {
+      const setup = renderer(Overlay, {
+        getDefaultProps: () => ({}),
+      });
 
-    expect(setup).not.toThrow();
-  });
+      expect(setup).not.toThrow();
+    },
+  );
 });

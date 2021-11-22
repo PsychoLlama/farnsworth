@@ -1,7 +1,11 @@
 import { produce } from 'immer';
 import renderer from '../../../testing/renderer';
 import { Participant, mapStateToProps } from '../participant';
-import { MY_PARTICIPANT_ID, TrackKind } from '../../../utils/constants';
+import {
+  MY_PARTICIPANT_ID,
+  TrackKind,
+  ConnectionState,
+} from '../../../utils/constants';
 import initialState, { State } from '../../../reducers/initial-state';
 import MediaView from '../media-view';
 
@@ -11,6 +15,7 @@ describe('Participant', () => {
       id: MY_PARTICIPANT_ID,
       audioTrackId: null,
       videoTrackId: null,
+      connectionState: ConnectionState.Connected,
     }),
   });
 
@@ -34,7 +39,7 @@ describe('Participant', () => {
     expect(other.find(MediaView).prop('isLocal')).toBe(false);
   });
 
-  describe('Connect(Participant)', () => {
+  describe('mapStateToProps', () => {
     function setup(patchState: (state: State) => void) {
       const state = produce(initialState, patchState);
 
@@ -56,6 +61,17 @@ describe('Participant', () => {
       expect(props).toMatchObject({
         audioTrackId: 'a-id',
         videoTrackId: 'v-id',
+      });
+    });
+
+    it('grabs the participant connection state', () => {
+      const { props } = setup((state) => {
+        state.participants[MY_PARTICIPANT_ID].connection.state =
+          ConnectionState.Connecting;
+      });
+
+      expect(props).toMatchObject({
+        connectionState: ConnectionState.Connecting,
       });
     });
 
