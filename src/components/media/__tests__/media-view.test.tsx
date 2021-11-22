@@ -149,4 +149,31 @@ describe('MediaView', () => {
     expect(connecting.find(Overlays.Connecting).exists()).toBe(true);
     expect(disconnected.find(Overlays.Disconnected).exists()).toBe(true);
   });
+
+  it('continues the connecting overlay until playback is ready', () => {
+    context.tracks.set('v-id', new MediaStreamTrack());
+
+    const { output, findByTestId } = setup({
+      connectionState: ConnectionState.Connected,
+      videoTrackId: 'v-id',
+    });
+
+    expect(output.find(Overlays.Connecting).exists()).toBe(true);
+    findByTestId('video-stream').simulate('play', new Event('play'));
+    expect(output.find(Overlays.Connecting).exists()).toBe(false);
+    findByTestId('video-stream').simulate('play', new Event('pause'));
+    expect(output.find(Overlays.Connecting).exists()).toBe(true);
+  });
+
+  it('hides the connecting overlay for local video streams', () => {
+    context.tracks.set('v-id', new MediaStreamTrack());
+
+    const { output } = setup({
+      connectionState: ConnectionState.Connected,
+      videoTrackId: 'v-id',
+      isLocal: true,
+    });
+
+    expect(output.find(Overlays.Connecting).exists()).toBe(false);
+  });
 });

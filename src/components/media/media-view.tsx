@@ -7,9 +7,10 @@ import { ConnectionState } from '../../utils/constants';
 
 const logger = new Logger('<MediaView>');
 
-export default class MediaView extends React.Component<Props> {
+export default class MediaView extends React.Component<Props, State> {
   stream = new MediaStream();
   videoRef: null | HTMLVideoElement = null;
+  state = { playing: false };
 
   componentDidUpdate(prevProps: Props) {
     // When you remove a video track from a media stream, the video freezes on
@@ -29,6 +30,8 @@ export default class MediaView extends React.Component<Props> {
           data-local={this.props.isLocal}
           ref={this.attachMediaStream}
           onCanPlay={this.play}
+          onPlay={this.syncPlayState}
+          onPause={this.syncPlayState}
           data-test="video-stream"
           tabIndex={-1}
         />
@@ -37,8 +40,12 @@ export default class MediaView extends React.Component<Props> {
     );
   }
 
+  syncPlayState = (event: React.SyntheticEvent<HTMLVideoElement>) => {
+    this.setState({ playing: event.type === 'play' });
+  };
+
   renderOverlay = () => {
-    const { videoTrackId, connectionState } = this.props;
+    const { videoTrackId, connectionState, isLocal } = this.props;
 
     if (connectionState === ConnectionState.Connecting) {
       return <Overlays.Connecting />;
@@ -50,6 +57,10 @@ export default class MediaView extends React.Component<Props> {
 
     if (!videoTrackId) {
       return <Overlays.NoVideoTrack />;
+    }
+
+    if (!this.state.playing && !isLocal) {
+      return <Overlays.Connecting />;
     }
 
     return null;
@@ -102,6 +113,10 @@ interface Props {
   videoTrackId: null | string;
   isLocal: boolean;
   connectionState: ConnectionState;
+}
+
+interface State {
+  playing: boolean;
 }
 
 const Container = styled.div`
