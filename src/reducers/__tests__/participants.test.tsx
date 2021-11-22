@@ -1,7 +1,11 @@
 import createStore from '../../utils/create-store';
 import * as actions from '../../actions';
 import * as deviceEffects from '../../effects/devices';
-import { TrackKind, MY_PARTICIPANT_ID } from '../../utils/constants';
+import {
+  TrackKind,
+  ConnectionState,
+  MY_PARTICIPANT_ID,
+} from '../../utils/constants';
 
 jest.mock('../../effects/devices');
 jest.mock('../../effects/tracks', () => {
@@ -58,6 +62,7 @@ describe('Participants reducer', () => {
         [peerId]: {
           trackIds: [],
           isMe: false,
+          connection: { state: ConnectionState.Connecting },
         },
       });
     });
@@ -74,6 +79,7 @@ describe('Participants reducer', () => {
         [peerId]: {
           trackIds: [],
           isMe: false,
+          connection: { state: ConnectionState.Connecting },
         },
       });
     });

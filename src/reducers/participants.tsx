@@ -1,7 +1,7 @@
 import { createReducer } from 'retreon';
 import initialState from './initial-state';
 import * as actions from '../actions';
-import { MY_PARTICIPANT_ID } from '../utils/constants';
+import { ConnectionState, MY_PARTICIPANT_ID } from '../utils/constants';
 
 export default createReducer(initialState.participants, (handleAction) => [
   handleAction(actions.devices.requestMediaDevices, (state, tracks) => {
@@ -13,6 +13,9 @@ export default createReducer(initialState.participants, (handleAction) => [
     state[peerId] = {
       isMe: false,
       trackIds: [],
+      connection: {
+        state: ConnectionState.Connecting,
+      },
     };
   }),
 
@@ -22,6 +25,9 @@ export default createReducer(initialState.participants, (handleAction) => [
       state[peerId] = {
         isMe: false,
         trackIds: [],
+        connection: {
+          state: ConnectionState.Connecting,
+        },
       };
     },
   ),

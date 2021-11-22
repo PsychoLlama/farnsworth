@@ -1,4 +1,8 @@
-import { TrackKind, MY_PARTICIPANT_ID } from '../utils/constants';
+import {
+  TrackKind,
+  ConnectionState,
+  MY_PARTICIPANT_ID,
+} from '../utils/constants';
 
 /**
  * Note: Redux state doesn't contain complex objects like media streams or
@@ -26,6 +30,9 @@ export interface State {
     [participantId: string]: {
       isMe: boolean;
       trackIds: Array<string>;
+      connection: {
+        state: ConnectionState;
+      };
     };
   };
 
@@ -49,6 +56,9 @@ const initialState: State = {
     [MY_PARTICIPANT_ID]: {
       isMe: true,
       trackIds: [],
+      connection: {
+        state: ConnectionState.Connected,
+      },
     },
   },
   tracks: {},

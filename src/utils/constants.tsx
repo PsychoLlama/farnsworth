@@ -29,3 +29,10 @@ export enum RtcSignalingState {
   HaveLocalOffer = 'have-local-offer',
   // ... incomplete ...
 }
+
+export enum ConnectionState {
+  Connecting = 'connecting',
+  Connected = 'connected',
+  Disconnected = 'disconnected',
+  Failed = 'failed',
+}
