@@ -44,7 +44,12 @@ async function initNetworkingModule(addr: string) {
 }
 
 export async function listen(addr: string) {
-  const p2p = await initNetworkingModule(addr);
+  const [p2p, { default: sdk }] = await Promise.all([
+    initNetworkingModule(addr),
+
+    // Delayed import to avoid problems with circular dependencies.
+    import('../utils/sdk'),
+  ]);
 
   p2p.handle(SIGNALING_PROTOCOL, async ({ connection, stream }) => {
     const mgr = new ConnectionManager({
@@ -54,9 +59,6 @@ export async function listen(addr: string) {
     });
 
     context.connections.set(mgr.remoteId, mgr);
-
-    // Delay import to avoid problems with circular imports.
-    const { default: sdk } = await import('../utils/sdk');
     sdk.connections.accept(mgr.remoteId);
   });
 
