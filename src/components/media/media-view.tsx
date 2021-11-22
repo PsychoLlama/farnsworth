@@ -27,7 +27,8 @@ export default class MediaView extends React.Component<Props> {
         <VideoStream
           data-local={this.props.isLocal}
           ref={this.attachMediaStream}
-          data-test-id="video-stream"
+          onCanPlay={this.play}
+          data-test="video-stream"
           tabIndex={-1}
         />
         {this.renderOverlay()}
@@ -45,12 +46,12 @@ export default class MediaView extends React.Component<Props> {
     if (video) video.srcObject = this.stream;
     this.videoRef = video;
 
-    await this.syncTracksToMediaStream();
+    this.syncTracksToMediaStream();
   };
 
   // Ensures the media stream has the tracks described by props, and only
   // those tracks. Any extras will be removed.
-  syncTracksToMediaStream = async () => {
+  syncTracksToMediaStream = () => {
     const { audioTrackId, videoTrackId } = this.props;
     const trackIds = [audioTrackId, videoTrackId].filter(this.supportsTrack);
     const tracks = trackIds.map((trackId) => context.tracks.get(trackId));
@@ -60,18 +61,6 @@ export default class MediaView extends React.Component<Props> {
     this.stream.getTracks().forEach((track) => {
       if (!tracks.includes(track)) this.stream.removeTrack(track);
     });
-
-    // Only call `.play()` if you have something to play.
-    if (this.videoRef && tracks.length) {
-      try {
-        await this.videoRef.play();
-      } catch (error) {
-        // Typically this happens due to autoplay policy. Usually browsers
-        // give us a pass after the first successful `getUserMedia(...)`.
-        // Unless you're seeing a bug, it should be safe to ignore.
-        logger.warn('Could not play stream:', error.message);
-      }
-    }
   };
 
   supportsTrack = (trackId: string) => {
@@ -81,6 +70,17 @@ export default class MediaView extends React.Component<Props> {
 
     // Filter out your own audio track from local streams. It's distracting.
     return isLocal ? trackId !== audioTrackId : true;
+  };
+
+  play = async () => {
+    try {
+      await this.videoRef.play();
+    } catch (error) {
+      // Typically this happens due to autoplay policy. Usually browsers
+      // give us a pass after the first successful `getUserMedia(...)`.
+      // Unless you're seeing a bug, it should be safe to ignore.
+      logger.warn('Could not play stream:', error.message);
+    }
   };
 }
 
