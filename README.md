@@ -3,11 +3,13 @@
   <p>A P2P video meeting app.<p>
 </div>
 
-## Development
+## Purpose
 
-- Clone the [signaling relay](https://github.com/PsychoLlama/p2p-signaling-relay) and follow the setup instructions.
-- Start the signaling server with `yarn start`.
-- Create a `.env` file. Add an environment variable `RELAY_SERVER_ADDRESS` with the signaling server multiaddr.
-- Run `yarn start` in the frontend server.
-- Profit.
+Privacy is a human right. Farnsworth makes secure, encrypted 1:1 video calling accessible to everyone.
+
+Features:
+
+- Peer to Peer: Whereever possible, calls happen directly between browsers without a middleman.
+- Trustless: Signaling is done through an encrypted tunnel. Not even the signaling server can read your ICE candidates.
+- Self-hosted: Easily run your own signaling server.
 
