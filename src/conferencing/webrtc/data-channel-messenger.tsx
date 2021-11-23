@@ -1,5 +1,6 @@
 import { encode, decode } from '@msgpack/msgpack';
 import Logger from '../../utils/logger';
+import AppEvents, { AppEvent } from '../app-events';
 
 Object.assign(globalThis, { encode, decode });
 
@@ -26,6 +27,7 @@ const logger = new Logger('DataChannelMessenger');
 export default class DataChannelMessenger {
   private channel: RTCDataChannel;
   private remoteId: string;
+  private appEvents: AppEvents;
 
   constructor({ pc, remoteId }: Config) {
     this.remoteId = remoteId;
@@ -41,6 +43,7 @@ export default class DataChannelMessenger {
 
     this.channel.onopen = this.signalConnectionOpen;
     this.channel.onclose = this.signalConnectionClosed;
+    this.appEvents = new AppEvents();
   }
 
   /** Send an arbitrary event object to the other client. */
@@ -74,6 +77,7 @@ export default class DataChannelMessenger {
     if (!envelope) return;
 
     logger.debug(`Received message "${envelope.data.type}":`, envelope.data);
+    await this.appEvents.handleEvent(envelope.data as AppEvent);
   };
 
   private parseIntoEnvelope = (data: ArrayBuffer): null | Envelope => {

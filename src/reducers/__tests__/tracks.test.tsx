@@ -43,10 +43,12 @@ describe('Tracks reducer', () => {
           "first": Object {
             "enabled": true,
             "kind": "audio",
+            "local": true,
           },
           "second": Object {
             "enabled": true,
             "kind": "video",
+            "local": true,
           },
         }
       `);
@@ -66,7 +68,7 @@ describe('Tracks reducer', () => {
       );
 
       expect(store.getState().tracks).toMatchObject({
-        [track.id]: { kind: track.kind, enabled: track.enabled },
+        [track.id]: { kind: track.kind, enabled: track.enabled, local: false },
       });
     });
   });
@@ -148,6 +150,50 @@ describe('Tracks reducer', () => {
 
       expect(store.getState().tracks).toMatchObject({
         [track.id]: { enabled: false },
+      });
+    });
+  });
+
+  describe('markPaused', () => {
+    it('marks all remote streams of the same kind as paused', () => {
+      const { store } = setup();
+
+      const track = new MediaStreamTrack();
+      track.enabled = true;
+
+      store.dispatch(
+        actions.tracks.add({
+          track,
+          peerId: MY_PARTICIPANT_ID,
+        }),
+      );
+
+      store.dispatch(actions.tracks.markPaused(track.kind as TrackKind));
+
+      expect(store.getState().tracks).toMatchObject({
+        [track.id]: { enabled: false },
+      });
+    });
+  });
+
+  describe('markResumed', () => {
+    it('marks all remote streams of the same kind as enabled', () => {
+      const { store } = setup();
+
+      const track = new MediaStreamTrack();
+      track.enabled = false;
+
+      store.dispatch(
+        actions.tracks.add({
+          track,
+          peerId: MY_PARTICIPANT_ID,
+        }),
+      );
+
+      store.dispatch(actions.tracks.markResumed(track.kind as TrackKind));
+
+      expect(store.getState().tracks).toMatchObject({
+        [track.id]: { enabled: true },
       });
     });
   });

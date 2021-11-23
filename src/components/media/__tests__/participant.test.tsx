@@ -54,8 +54,17 @@ describe('Participant', () => {
     it('grabs the participant A/V tracks', () => {
       const { props } = setup((state) => {
         state.participants[MY_PARTICIPANT_ID].trackIds = ['a-id', 'v-id'];
-        state.tracks['a-id'] = { kind: TrackKind.Audio, enabled: true };
-        state.tracks['v-id'] = { kind: TrackKind.Video, enabled: true };
+        state.tracks['a-id'] = {
+          kind: TrackKind.Audio,
+          enabled: true,
+          local: true,
+        };
+
+        state.tracks['v-id'] = {
+          kind: TrackKind.Video,
+          enabled: true,
+          local: true,
+        };
       });
 
       expect(props).toMatchObject({

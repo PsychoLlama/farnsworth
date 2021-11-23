@@ -42,6 +42,7 @@ export interface State {
     [trackId: string]: {
       kind: TrackKind;
       enabled: boolean;
+      local: boolean;
     };
   };
 

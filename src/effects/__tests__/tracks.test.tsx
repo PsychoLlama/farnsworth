@@ -46,11 +46,13 @@ describe('Track effects', () => {
           state.tracks[audioTrack.id] = {
             kind: TrackKind.Audio,
             enabled: true,
+            local: true,
           };
 
           state.tracks[videoTrack.id] = {
             kind: TrackKind.Video,
             enabled: true,
+            local: true,
           };
         }),
       };

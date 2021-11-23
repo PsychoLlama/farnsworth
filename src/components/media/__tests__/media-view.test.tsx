@@ -209,6 +209,7 @@ describe('MediaView', () => {
         state.tracks['v-id'] = {
           kind: TrackKind.Video,
           enabled: true,
+          local: true,
         };
       });
 

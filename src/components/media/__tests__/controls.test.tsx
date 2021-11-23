@@ -88,8 +88,8 @@ describe('Controls', () => {
     it('returns the expected props', () => {
       const { props } = setup((state) => {
         state.tracks = {
-          'a-id': { kind: TrackKind.Audio, enabled: true },
-          'v-id': { kind: TrackKind.Video, enabled: true },
+          'a-id': { kind: TrackKind.Audio, enabled: true, local: true },
+          'v-id': { kind: TrackKind.Video, enabled: true, local: true },
         };
 
         state.participants[MY_PARTICIPANT_ID].trackIds = Object.keys(
