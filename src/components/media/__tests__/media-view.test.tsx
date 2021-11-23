@@ -1,14 +1,17 @@
+import { produce } from 'immer';
 import renderer from '../../../testing/renderer';
-import MediaView from '../media-view';
+import { MediaView, mapStateToProps } from '../media-view';
 import context from '../../../conferencing/global-context';
 import * as Overlays from '../video-overlays';
-import { ConnectionState } from '../../../utils/constants';
+import { ConnectionState, TrackKind } from '../../../utils/constants';
+import initialState, { State } from '../../../reducers/initial-state';
 
 describe('MediaView', () => {
   const setup = renderer(MediaView, {
     getDefaultProps: () => ({
       audioTrackId: null,
       videoTrackId: null,
+      videoEnabled: true,
       isLocal: false,
       connectionState: ConnectionState.Connected,
     }),
@@ -137,6 +140,14 @@ describe('MediaView', () => {
     expect(withVideo.find(Overlays.NoVideoTrack).exists()).toBe(false);
   });
 
+  it('shows a placeholder while the video track is disabled', () => {
+    const { output } = setup({ videoTrackId: 'v-id' });
+
+    expect(output.find(Overlays.NoVideoTrack).exists()).toBe(false);
+    output.setProps({ videoEnabled: false });
+    expect(output.find(Overlays.NoVideoTrack).exists()).toBe(true);
+  });
+
   it('shows an overlay while connecting or disconnected', () => {
     const { output: connecting } = setup({
       connectionState: ConnectionState.Connecting,
@@ -175,5 +186,37 @@ describe('MediaView', () => {
     });
 
     expect(output.find(Overlays.Connecting).exists()).toBe(false);
+  });
+
+  describe('mapStateToProps', () => {
+    function setup(patchState: (state: State) => void) {
+      const state = produce(initialState, patchState);
+      const props = mapStateToProps(state, {
+        connectionState: ConnectionState.Connected,
+        audioTrackId: null,
+        videoTrackId: 'v-id',
+        isLocal: false,
+      });
+
+      return {
+        props,
+        state,
+      };
+    }
+
+    it('returns the expected props', () => {
+      const { props } = setup((state) => {
+        state.tracks['v-id'] = {
+          kind: TrackKind.Video,
+          enabled: true,
+        };
+      });
+
+      expect(props).toMatchInlineSnapshot(`
+        Object {
+          "videoEnabled": true,
+        }
+      `);
+    });
   });
 });

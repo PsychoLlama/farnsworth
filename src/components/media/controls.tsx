@@ -1,6 +1,13 @@
 import React from 'react';
 import styled from 'styled-components';
-import { FiMic, FiVideo, FiUsers, FiSliders } from 'react-icons/fi';
+import {
+  FiMic,
+  FiVideo,
+  FiUsers,
+  FiSliders,
+  FiMicOff,
+  FiVideoOff,
+} from 'react-icons/fi';
 import { connect } from 'react-redux';
 import * as css from '../../utils/css';
 import * as actions from '../../actions';
@@ -15,7 +22,7 @@ export class Controls extends React.Component<Props> {
   };
 
   render() {
-    const { togglePhonebook } = this.props;
+    const { togglePhonebook, micEnabled, camEnabled } = this.props;
 
     return (
       <Container>
@@ -24,11 +31,11 @@ export class Controls extends React.Component<Props> {
         </Control>
 
         <Control data-test="toggle-audio" onClick={this.toggleAudio}>
-          <FiMic />
+          {micEnabled ? <FiMic /> : <FiMicOff />}
         </Control>
 
         <Control data-test="toggle-video" onClick={this.toggleVideo}>
-          <FiVideo />
+          {camEnabled ? <FiVideo /> : <FiVideoOff />}
         </Control>
 
         <Control data-test="toggle-phonebook" onClick={togglePhonebook}>

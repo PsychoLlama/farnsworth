@@ -1,13 +1,15 @@
 import React from 'react';
 import styled from 'styled-components';
+import { connect } from 'react-redux';
 import context from '../../conferencing/global-context';
 import * as Overlays from './video-overlays';
 import Logger from '../../utils/logger';
 import { ConnectionState } from '../../utils/constants';
+import { State as ReduxState } from '../../reducers/initial-state';
 
 const logger = new Logger('<MediaView>');
 
-export default class MediaView extends React.Component<Props, State> {
+export class MediaView extends React.Component<Props, State> {
   stream = new MediaStream();
   videoRef: null | HTMLVideoElement = null;
   state = { playing: false };
@@ -45,7 +47,7 @@ export default class MediaView extends React.Component<Props, State> {
   };
 
   renderOverlay = () => {
-    const { videoTrackId, connectionState, isLocal } = this.props;
+    const { videoTrackId, connectionState, isLocal, videoEnabled } = this.props;
 
     if (connectionState === ConnectionState.Connecting) {
       return <Overlays.Connecting />;
@@ -55,7 +57,7 @@ export default class MediaView extends React.Component<Props, State> {
       return <Overlays.Disconnected />;
     }
 
-    if (!videoTrackId) {
+    if (!videoTrackId || !videoEnabled) {
       return <Overlays.NoVideoTrack />;
     }
 
@@ -108,11 +110,15 @@ export default class MediaView extends React.Component<Props, State> {
   };
 }
 
-interface Props {
+interface OwnProps {
+  connectionState: ConnectionState;
   audioTrackId: null | string;
   videoTrackId: null | string;
   isLocal: boolean;
-  connectionState: ConnectionState;
+}
+
+interface Props extends OwnProps {
+  videoEnabled: boolean;
 }
 
 interface State {
@@ -150,3 +156,11 @@ const VideoStream = styled.video`
     transform: rotateY(180deg);
   }
 `;
+
+export function mapStateToProps(state: ReduxState, props: OwnProps) {
+  return {
+    videoEnabled: state.tracks[props.videoTrackId]?.enabled ?? false,
+  };
+}
+
+export default connect(mapStateToProps)(MediaView);

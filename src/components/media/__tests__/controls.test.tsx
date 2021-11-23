@@ -1,4 +1,5 @@
 import { produce } from 'immer';
+import { FiMic, FiVideo, FiMicOff, FiVideoOff } from 'react-icons/fi';
 import renderer from '../../../testing/renderer';
 import { Controls, mapStateToProps } from '../controls';
 import initialState, { State } from '../../../reducers/initial-state';
@@ -45,6 +46,20 @@ describe('Controls', () => {
     output.setProps({ micEnabled: false });
     findByTestId('toggle-audio').simulate('click');
     expect(props.resumeTrack).toHaveBeenCalledWith(props.micTrackId);
+  });
+
+  it('changes mic/camera styles based on whether the track is active', () => {
+    const { output: active } = setup();
+    const { output: inactive } = setup({
+      micEnabled: false,
+      camEnabled: false,
+    });
+
+    expect(inactive.find(FiVideoOff).exists()).toBe(true);
+    expect(inactive.find(FiMicOff).exists()).toBe(true);
+
+    expect(active.find(FiVideo).exists()).toBe(true);
+    expect(active.find(FiMic).exists()).toBe(true);
   });
 
   describe('mapStateToProps', () => {
