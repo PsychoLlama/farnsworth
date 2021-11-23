@@ -85,7 +85,12 @@ describe('Tracks reducer', () => {
         }),
       );
 
-      store.dispatch(actions.tracks.pause(track.id));
+      store.dispatch(
+        actions.tracks.pause({
+          trackId: track.id,
+          kind: track.kind as TrackKind,
+        }),
+      );
 
       expect(store.getState().tracks).toMatchObject({
         [track.id]: { enabled: false },
@@ -107,7 +112,12 @@ describe('Tracks reducer', () => {
         }),
       );
 
-      store.dispatch(actions.tracks.resume(track.id));
+      store.dispatch(
+        actions.tracks.resume({
+          trackId: track.id,
+          kind: track.kind as TrackKind,
+        }),
+      );
 
       expect(store.getState().tracks).toMatchObject({
         [track.id]: { enabled: true },
@@ -129,9 +139,12 @@ describe('Tracks reducer', () => {
         }),
       );
 
-      store.dispatch(actions.tracks.toggle(track.id));
-      store.dispatch(actions.tracks.toggle(track.id));
-      store.dispatch(actions.tracks.toggle(track.id));
+      store.dispatch(
+        actions.tracks.toggle({
+          trackId: track.id,
+          kind: track.kind as TrackKind,
+        }),
+      );
 
       expect(store.getState().tracks).toMatchObject({
         [track.id]: { enabled: false },

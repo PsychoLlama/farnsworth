@@ -99,8 +99,28 @@ describe('Track effects', () => {
       context.tracks.set(track.id, track);
 
       expect(track.enabled).toBe(true);
-      effects.pause(track.id);
+      effects.pause({ trackId: track.id, kind: TrackKind.Audio });
       expect(track.enabled).toBe(false);
+    });
+
+    it('notifies the remote peer', () => {
+      const track = new MediaStreamTrack();
+      context.tracks.set(track.id, track);
+
+      const mgr = new ConnectionManager({
+        signaler: Libp2pMessenger.from(new Stream()),
+        remoteId: 'a',
+        localId: 'b',
+      });
+
+      (mgr as any).messenger = { sendEvent: jest.fn() };
+      context.connections.set('mgr', mgr);
+
+      effects.pause({ trackId: track.id, kind: TrackKind.Video });
+      expect(mgr.messenger.sendEvent).toHaveBeenCalledWith({
+        type: 'pause',
+        payload: { kind: TrackKind.Video },
+      });
     });
   });
 
@@ -111,8 +131,28 @@ describe('Track effects', () => {
       context.tracks.set(track.id, track);
 
       expect(track.enabled).toBe(false);
-      effects.resume(track.id);
+      effects.resume({ trackId: track.id, kind: TrackKind.Audio });
       expect(track.enabled).toBe(true);
+    });
+
+    it('notifies the remote peer', () => {
+      const track = new MediaStreamTrack();
+      context.tracks.set(track.id, track);
+
+      const mgr = new ConnectionManager({
+        signaler: Libp2pMessenger.from(new Stream()),
+        remoteId: 'a',
+        localId: 'b',
+      });
+
+      (mgr as any).messenger = { sendEvent: jest.fn() };
+      context.connections.set('mgr', mgr);
+
+      effects.resume({ trackId: track.id, kind: TrackKind.Video });
+      expect(mgr.messenger.sendEvent).toHaveBeenCalledWith({
+        type: 'resume',
+        payload: { kind: TrackKind.Video },
+      });
     });
   });
 
@@ -122,9 +162,9 @@ describe('Track effects', () => {
       context.tracks.set(track.id, track);
 
       track.enabled = true;
-      effects.toggle(track.id);
+      effects.toggle({ trackId: track.id, kind: track.kind as TrackKind });
       expect(track.enabled).toBe(false);
-      effects.toggle(track.id);
+      effects.toggle({ trackId: track.id, kind: track.kind as TrackKind });
       expect(track.enabled).toBe(true);
     });
   });

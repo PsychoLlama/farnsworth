@@ -44,21 +44,37 @@ export function add({
   };
 }
 
-export function pause(trackId: string) {
+// Pause and resume events don't make much sense for screen sharing. It seems
+// relatively safe (and simple) to send a track kind, in lou of an ID.
+function broadcastTrackEvent(event: { type: string; payload: unknown }) {
+  Array.from(context.connections.values()).forEach((conn) => {
+    conn.messenger.sendEvent(event);
+  });
+}
+
+export function pause({ trackId, kind }: { trackId: string; kind: TrackKind }) {
   getTrackById(trackId).enabled = false;
+  broadcastTrackEvent({ type: 'pause', payload: { kind } });
 
   return trackId;
 }
 
-export function resume(trackId: string) {
+export function resume({
+  trackId,
+  kind,
+}: {
+  trackId: string;
+  kind: TrackKind;
+}) {
   getTrackById(trackId).enabled = true;
+  broadcastTrackEvent({ type: 'resume', payload: { kind } });
 
   return trackId;
 }
 
-export function toggle(trackId: string) {
-  const track = getTrackById(trackId);
+export function toggle(v: { trackId: string; kind: TrackKind }) {
+  const track = getTrackById(v.trackId);
   const act = track.enabled ? pause : resume;
 
-  return act(trackId);
+  return act(v);
 }
