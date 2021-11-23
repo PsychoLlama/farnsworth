@@ -1,6 +1,6 @@
 import React from 'react';
 import { connect } from 'react-redux';
-import invariant from 'invariant';
+import assert from 'assert';
 import { State } from '../../reducers/initial-state';
 import { TrackKind } from '../../utils/constants';
 import MediaView from './media-view';
@@ -33,7 +33,7 @@ interface OwnProps {
 
 export function mapStateToProps(state: State, { id }: { id: string }) {
   const participant = state.participants[id];
-  invariant(participant, 'Bad participant ID.');
+  assert(participant, 'Bad participant ID.');
 
   const audioTrackId = participant.trackIds.find((trackId) => {
     return state.tracks[trackId].kind === TrackKind.Audio;
