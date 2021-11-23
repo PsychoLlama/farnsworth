@@ -5,6 +5,8 @@ import { connect } from 'react-redux';
 import * as css from '../../utils/css';
 import * as actions from '../../actions';
 import { Button } from '../core';
+import { State } from '../../reducers/initial-state';
+import { MY_PARTICIPANT_ID, TrackKind } from '../../utils/constants';
 
 export class Controls extends React.Component<Props> {
   render() {
@@ -16,11 +18,11 @@ export class Controls extends React.Component<Props> {
           <FiSliders />
         </Control>
 
-        <Control>
+        <Control data-test="toggle-audio" onClick={this.toggleAudio}>
           <FiMic />
         </Control>
 
-        <Control>
+        <Control data-test="toggle-video" onClick={this.toggleVideo}>
           <FiVideo />
         </Control>
 
@@ -30,10 +32,21 @@ export class Controls extends React.Component<Props> {
       </Container>
     );
   }
+
+  toggleAudio = () => {
+    this.props.toggleTrack(this.props.micTrackId);
+  };
+
+  toggleVideo = () => {
+    this.props.toggleTrack(this.props.camTrackId);
+  };
 }
 
 interface Props {
   togglePhonebook: typeof actions.phonebook.toggle;
+  toggleTrack: typeof actions.tracks.toggle;
+  micTrackId: null | string;
+  camTrackId: null | string;
 }
 
 const Container = styled.div`
@@ -60,6 +73,22 @@ const Control = styled(Button.Base)`
 
 const mapDispatchToProps = {
   togglePhonebook: actions.phonebook.toggle,
+  toggleTrack: actions.tracks.toggle,
 };
 
-export default connect(null, mapDispatchToProps)(Controls);
+export function mapStateToProps(state: State) {
+  const participant = state.participants[MY_PARTICIPANT_ID];
+
+  // This feature does not make sense for screen sharing. It seems safe to
+  // assume we're dealing with local hardware.
+  return {
+    micTrackId: participant.trackIds.find((id) => {
+      return state.tracks[id].kind === TrackKind.Audio;
+    }),
+    camTrackId: participant.trackIds.find((id) => {
+      return state.tracks[id].kind === TrackKind.Video;
+    }),
+  };
+}
+
+export default connect(mapStateToProps, mapDispatchToProps)(Controls);

@@ -12,7 +12,7 @@ export function sendLocalTracks(peerId: string, state: State) {
 
 function getTrackById(id: string) {
   const track = context.tracks.get(id);
-  assert(track, `No such track (invalid redux pointer: '${id}')`);
+  assert(track, `No such track (id="${id}")`);
 
   return track;
 }
@@ -41,4 +41,23 @@ export function add({
       kind: track.kind as TrackKind,
     },
   };
+}
+
+export function pause(trackId: string) {
+  getTrackById(trackId).enabled = false;
+
+  return trackId;
+}
+
+export function resume(trackId: string) {
+  getTrackById(trackId).enabled = true;
+
+  return trackId;
+}
+
+export function toggle(trackId: string) {
+  const track = getTrackById(trackId);
+  const act = track.enabled ? pause : resume;
+
+  return act(trackId);
 }

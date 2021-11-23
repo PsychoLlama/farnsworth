@@ -89,4 +89,40 @@ describe('Track effects', () => {
       });
     });
   });
+
+  describe('pause', () => {
+    it('disables the track', () => {
+      const track = new MediaStreamTrack();
+      context.tracks.set(track.id, track);
+
+      expect(track.enabled).toBe(true);
+      effects.pause(track.id);
+      expect(track.enabled).toBe(false);
+    });
+  });
+
+  describe('resume', () => {
+    it('disables the track', () => {
+      const track = new MediaStreamTrack();
+      track.enabled = false;
+      context.tracks.set(track.id, track);
+
+      expect(track.enabled).toBe(false);
+      effects.resume(track.id);
+      expect(track.enabled).toBe(true);
+    });
+  });
+
+  describe('toggle', () => {
+    it('toggles the pause/play state', () => {
+      const track = new MediaStreamTrack();
+      context.tracks.set(track.id, track);
+
+      track.enabled = true;
+      effects.toggle(track.id);
+      expect(track.enabled).toBe(false);
+      effects.toggle(track.id);
+      expect(track.enabled).toBe(true);
+    });
+  });
 });
