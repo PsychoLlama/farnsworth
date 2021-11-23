@@ -24,6 +24,7 @@ export const requestMediaDevices = async () => {
       trackId: track.id,
       kind: track.kind as TrackKind,
       deviceId: settings.deviceId,
+      enabled: track.enabled,
     };
   });
 };

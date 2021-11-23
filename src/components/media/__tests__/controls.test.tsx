@@ -1,14 +1,19 @@
+import { produce } from 'immer';
 import renderer from '../../../testing/renderer';
 import { Controls, mapStateToProps } from '../controls';
-import createStore from '../../../utils/create-store';
+import initialState, { State } from '../../../reducers/initial-state';
+import { MY_PARTICIPANT_ID, TrackKind } from '../../../utils/constants';
 
 describe('Controls', () => {
   const setup = renderer(Controls, {
     getDefaultProps: () => ({
       togglePhonebook: jest.fn(),
-      toggleTrack: jest.fn(),
+      pauseTrack: jest.fn(),
+      resumeTrack: jest.fn(),
       micTrackId: 'a-id',
       camTrackId: 'v-id',
+      micEnabled: true,
+      camEnabled: true,
     }),
   });
 
@@ -21,39 +26,56 @@ describe('Controls', () => {
   });
 
   it('toggles the video track when you click the button', () => {
-    const { findByTestId, props } = setup();
+    const { output, findByTestId, props } = setup();
 
     findByTestId('toggle-video').simulate('click');
+    expect(props.pauseTrack).toHaveBeenCalledWith(props.camTrackId);
 
-    expect(props.toggleTrack).toHaveBeenCalledWith(props.camTrackId);
+    output.setProps({ camEnabled: false });
+    findByTestId('toggle-video').simulate('click');
+    expect(props.resumeTrack).toHaveBeenCalledWith(props.camTrackId);
   });
 
   it('toggles the audio track when you click the button', () => {
-    const { findByTestId, props } = setup();
+    const { output, findByTestId, props } = setup();
 
     findByTestId('toggle-audio').simulate('click');
+    expect(props.pauseTrack).toHaveBeenCalledWith(props.micTrackId);
 
-    expect(props.toggleTrack).toHaveBeenCalledWith(props.micTrackId);
+    output.setProps({ micEnabled: false });
+    findByTestId('toggle-audio').simulate('click');
+    expect(props.resumeTrack).toHaveBeenCalledWith(props.micTrackId);
   });
 
   describe('mapStateToProps', () => {
-    function setup() {
-      const store = createStore();
-      const props = mapStateToProps(store.getState());
+    function setup(patchState: (state: State) => void) {
+      const state = produce(initialState, patchState);
+      const props = mapStateToProps(state);
 
       return {
         props,
-        store,
+        state,
       };
     }
 
     it('returns the expected props', () => {
-      const { props } = setup();
+      const { props } = setup((state) => {
+        state.tracks = {
+          'a-id': { kind: TrackKind.Audio, enabled: true },
+          'v-id': { kind: TrackKind.Video, enabled: true },
+        };
+
+        state.participants[MY_PARTICIPANT_ID].trackIds = Object.keys(
+          state.tracks,
+        );
+      });
 
       expect(props).toMatchInlineSnapshot(`
         Object {
-          "micTrackId": undefined,
-          "camTrackId": undefined,
+          "camEnabled": true,
+          "camTrackId": "v-id",
+          "micEnabled": true,
+          "micTrackId": "a-id",
         }
       `);
     });

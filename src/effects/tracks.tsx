@@ -39,6 +39,7 @@ export function add({
     track: {
       id: track.id,
       kind: track.kind as TrackKind,
+      enabled: track.enabled,
     },
   };
 }

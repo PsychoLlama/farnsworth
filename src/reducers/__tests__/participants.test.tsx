@@ -30,8 +30,18 @@ describe('Participants reducer', () => {
 
   beforeEach(() => {
     mockedEffects.requestMediaDevices.mockResolvedValue([
-      { kind: TrackKind.Audio, trackId: 'first', deviceId: 'mic' },
-      { kind: TrackKind.Video, trackId: 'second', deviceId: 'cam' },
+      {
+        kind: TrackKind.Audio,
+        trackId: 'first',
+        deviceId: 'mic',
+        enabled: true,
+      },
+      {
+        kind: TrackKind.Video,
+        trackId: 'second',
+        deviceId: 'cam',
+        enabled: true,
+      },
     ]);
   });
 

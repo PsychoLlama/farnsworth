@@ -9,6 +9,11 @@ import { State } from '../../reducers/initial-state';
 import { MY_PARTICIPANT_ID, TrackKind } from '../../utils/constants';
 
 export class Controls extends React.Component<Props> {
+  static defaultProps = {
+    micTrackId: null,
+    camTrackId: null,
+  };
+
   render() {
     const { togglePhonebook } = this.props;
 
@@ -34,19 +39,34 @@ export class Controls extends React.Component<Props> {
   }
 
   toggleAudio = () => {
-    this.props.toggleTrack(this.props.micTrackId);
+    const { micEnabled, micTrackId } = this.props;
+
+    if (micEnabled) {
+      this.props.pauseTrack(micTrackId);
+    } else {
+      this.props.resumeTrack(micTrackId);
+    }
   };
 
   toggleVideo = () => {
-    this.props.toggleTrack(this.props.camTrackId);
+    const { camEnabled, camTrackId } = this.props;
+
+    if (camEnabled) {
+      this.props.pauseTrack(camTrackId);
+    } else {
+      this.props.resumeTrack(camTrackId);
+    }
   };
 }
 
 interface Props {
   togglePhonebook: typeof actions.phonebook.toggle;
-  toggleTrack: typeof actions.tracks.toggle;
+  pauseTrack: typeof actions.tracks.pause;
+  resumeTrack: typeof actions.tracks.resume;
   micTrackId: null | string;
   camTrackId: null | string;
+  micEnabled: boolean;
+  camEnabled: boolean;
 }
 
 const Container = styled.div`
@@ -73,21 +93,29 @@ const Control = styled(Button.Base)`
 
 const mapDispatchToProps = {
   togglePhonebook: actions.phonebook.toggle,
-  toggleTrack: actions.tracks.toggle,
+  pauseTrack: actions.tracks.pause,
+  resumeTrack: actions.tracks.resume,
 };
 
 export function mapStateToProps(state: State) {
   const participant = state.participants[MY_PARTICIPANT_ID];
 
-  // This feature does not make sense for screen sharing. It seems safe to
-  // assume we're dealing with local hardware.
+  const micTrackId = participant.trackIds.find((id) => {
+    return state.tracks[id].kind === TrackKind.Audio;
+  });
+
+  const camTrackId = participant.trackIds.find((id) => {
+    return state.tracks[id].kind === TrackKind.Video;
+  });
+
+  const camEnabled = state.tracks[camTrackId]?.enabled ?? false;
+  const micEnabled = state.tracks[micTrackId]?.enabled ?? false;
+
   return {
-    micTrackId: participant.trackIds.find((id) => {
-      return state.tracks[id].kind === TrackKind.Audio;
-    }),
-    camTrackId: participant.trackIds.find((id) => {
-      return state.tracks[id].kind === TrackKind.Video;
-    }),
+    micTrackId,
+    micEnabled,
+    camTrackId,
+    camEnabled,
   };
 }
 

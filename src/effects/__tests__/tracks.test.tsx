@@ -45,10 +45,12 @@ describe('Track effects', () => {
 
           state.tracks[audioTrack.id] = {
             kind: TrackKind.Audio,
+            enabled: true,
           };
 
           state.tracks[videoTrack.id] = {
             kind: TrackKind.Video,
+            enabled: true,
           };
         }),
       };
@@ -85,6 +87,7 @@ describe('Track effects', () => {
         track: {
           id: track.id,
           kind: track.kind,
+          enabled: track.enabled,
         },
       });
     });

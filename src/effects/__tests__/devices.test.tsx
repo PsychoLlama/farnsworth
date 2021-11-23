@@ -51,11 +51,13 @@ describe('Device effects', () => {
           kind: TrackKind.Audio,
           deviceId: expect.any(String),
           trackId: expect.any(String),
+          enabled: expect.any(Boolean),
         },
         {
           kind: TrackKind.Video,
           deviceId: expect.any(String),
           trackId: expect.any(String),
+          enabled: expect.any(Boolean),
         },
       ]);
     });
