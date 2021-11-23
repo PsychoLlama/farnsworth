@@ -14,6 +14,9 @@ export const STUN_SERVERS = (process.env.STUN_SERVERS ?? '')
   .split(';')
   .filter(Boolean);
 
+// IndexedDB key storing the libp2p peer pub/priv key pair.
+export const STORAGE_KEY_PEER_ID = 'farnsworth/peer-id';
+
 export enum TrackKind {
   Audio = 'audio',
   Video = 'video',
