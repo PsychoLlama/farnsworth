@@ -7,6 +7,12 @@ import { ConnectionState, TrackKind } from '../../../utils/constants';
 import initialState, { State } from '../../../reducers/initial-state';
 
 describe('MediaView', () => {
+  beforeEach(() => {
+    context.tracks.clear();
+    context.tracks.set('a-id', new MediaStreamTrack());
+    context.tracks.set('v-id', new MediaStreamTrack());
+  });
+
   const setup = renderer(MediaView, {
     getDefaultProps: () => ({
       audioTrackId: null,
@@ -28,7 +34,7 @@ describe('MediaView', () => {
   }
 
   it('shows the current video stream', () => {
-    const { output } = setup();
+    const { output } = setup({ videoTrackId: 'v-id' });
     const ref = setVideoRef(output);
 
     expect(ref.srcObject).toBeInstanceOf(MediaStream);
@@ -43,10 +49,8 @@ describe('MediaView', () => {
   });
 
   it('binds tracks to the media stream', () => {
-    const audioTrack = new MediaStreamTrack();
-    const videoTrack = new MediaStreamTrack();
-    context.tracks.set('a-id', audioTrack);
-    context.tracks.set('v-id', videoTrack);
+    const audioTrack = context.tracks.get('a-id');
+    const videoTrack = context.tracks.get('v-id');
 
     const { output } = setup({
       audioTrackId: 'a-id',
@@ -60,10 +64,6 @@ describe('MediaView', () => {
   });
 
   it('removes tracks that are no longer needed', () => {
-    const audioTrack = new MediaStreamTrack();
-    context.tracks.set('a-id', audioTrack);
-    context.tracks.set('v-id', new MediaStreamTrack());
-
     const { output } = setup({
       audioTrackId: 'a-id',
       videoTrackId: 'v-id',
@@ -76,11 +76,8 @@ describe('MediaView', () => {
   });
 
   it('resets the media stream when the video track is removed', () => {
-    context.tracks.set('a-id', new MediaStreamTrack());
-    context.tracks.set('v-id', new MediaStreamTrack());
-
     const { output } = setup({
-      audioTrackId: null,
+      audioTrackId: 'a-id',
       videoTrackId: null,
     });
 
@@ -88,17 +85,18 @@ describe('MediaView', () => {
     const original = ref.srcObject;
 
     // No change with audio.
-    output.setProps({ audioTrackId: 'a-id' });
+    output.setProps({ videoTrackId: 'v-id' });
     expect(ref.srcObject).toBe(original);
     output.setProps({ audioTrackId: null });
     expect(ref.srcObject).toBe(original);
+    output.setProps({ audioTrackId: 'a-id' });
+    expect(ref.srcObject).toBe(original);
 
-    output.setProps({ videoTrackId: 'v-id' });
+    output.setProps({ videoTrackId: null });
     expect(ref.srcObject).not.toBe(original);
   });
 
   it('survives even if .play() throws', async () => {
-    context.tracks.set('v-id', new MediaStreamTrack());
     const { output, findByTestId } = setup({
       audioTrackId: null,
       videoTrackId: 'v-id',
@@ -117,10 +115,6 @@ describe('MediaView', () => {
   });
 
   it('only adds audio tracks to remote streams', () => {
-    const audioTrack = new MediaStreamTrack();
-    context.tracks.set('a-id', audioTrack);
-    context.tracks.set('v-id', new MediaStreamTrack());
-
     const { output } = setup({
       audioTrackId: 'a-id',
       videoTrackId: 'v-id',
@@ -129,6 +123,7 @@ describe('MediaView', () => {
 
     const ref = setVideoRef(output);
 
+    const audioTrack = context.tracks.get('a-id');
     expect(ref.srcObject.getTracks()).not.toContain(audioTrack);
   });
 
@@ -162,8 +157,6 @@ describe('MediaView', () => {
   });
 
   it('continues the connecting overlay until playback is ready', () => {
-    context.tracks.set('v-id', new MediaStreamTrack());
-
     const { output, findByTestId } = setup({
       connectionState: ConnectionState.Connected,
       videoTrackId: 'v-id',
@@ -177,8 +170,6 @@ describe('MediaView', () => {
   });
 
   it('hides the connecting overlay for local video streams', () => {
-    context.tracks.set('v-id', new MediaStreamTrack());
-
     const { output } = setup({
       connectionState: ConnectionState.Connected,
       videoTrackId: 'v-id',
@@ -186,6 +177,21 @@ describe('MediaView', () => {
     });
 
     expect(output.find(Overlays.Connecting).exists()).toBe(false);
+  });
+
+  it('only defines a media stream if there are tracks', () => {
+    const { output } = setup({ audioTrackId: null, videoTrackId: null });
+
+    const ref = setVideoRef(output);
+    expect(ref.srcObject).toBeNull();
+
+    // Component update: tracks added.
+    output.setProps({ videoTrackId: 'v-id' });
+    expect(ref.srcObject).toBeInstanceOf(MediaStream);
+
+    // Component update: all tracks removed.
+    output.setProps({ videoTrackId: null });
+    expect(ref.srcObject).toBeNull();
   });
 
   describe('mapStateToProps', () => {

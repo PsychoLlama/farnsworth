@@ -14,12 +14,16 @@ export class MediaView extends React.Component<Props, State> {
   videoRef: null | HTMLVideoElement = null;
   state = { playing: false };
 
+  componentDidMount() {
+    this.syncTracksToMediaStream();
+  }
+
   componentDidUpdate(prevProps: Props) {
     // When you remove a video track from a media stream, the video freezes on
     // the last frame. You need a new stream to clear it out.
-    if (prevProps.videoTrackId !== this.props.videoTrackId) {
+    if (prevProps.videoTrackId && !this.props.videoTrackId) {
       this.stream = new MediaStream();
-      this.videoRef.srcObject = this.stream;
+      this.videoRef.srcObject = null;
     }
 
     this.syncTracksToMediaStream();
@@ -69,10 +73,8 @@ export class MediaView extends React.Component<Props, State> {
   };
 
   attachMediaStream = async (video: null | HTMLVideoElement) => {
-    if (video) video.srcObject = this.stream;
     this.videoRef = video;
-
-    this.syncTracksToMediaStream();
+    this.bindStreamToVideo();
   };
 
   // Ensures the media stream has the tracks described by props, and only
@@ -87,6 +89,8 @@ export class MediaView extends React.Component<Props, State> {
     this.stream.getTracks().forEach((track) => {
       if (!tracks.includes(track)) this.stream.removeTrack(track);
     });
+
+    this.bindStreamToVideo();
   };
 
   supportsTrack = (trackId: string) => {
@@ -96,6 +100,24 @@ export class MediaView extends React.Component<Props, State> {
 
     // Filter out your own audio track from local streams. It's distracting.
     return isLocal ? trackId !== audioTrackId : true;
+  };
+
+  // Chrome bug: if a <video> has an attached media stream before the first
+  // `getUserMedia(...)` call, the permission prompt never shows, it just
+  // hangs. That's why we only attach the stream when it has tracks.
+  bindStreamToVideo = () => {
+    const tracks = this.stream.getTracks();
+    if (!this.videoRef) return;
+
+    // At least one track was added.
+    if (!this.videoRef.srcObject && tracks.length > 0) {
+      this.videoRef.srcObject = this.stream;
+    }
+
+    // All tracks were removed.
+    if (this.videoRef.srcObject && tracks.length === 0) {
+      this.videoRef.srcObject = null;
+    }
   };
 
   play = async () => {
