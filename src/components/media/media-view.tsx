@@ -19,11 +19,12 @@ export class MediaView extends React.Component<Props, State> {
   }
 
   componentDidUpdate(prevProps: Props) {
-    // When you remove a video track from a media stream, the video freezes on
-    // the last frame. You need a new stream to clear it out.
     if (prevProps.videoTrackId && !this.props.videoTrackId) {
-      this.stream = new MediaStream();
-      this.videoRef.srcObject = null;
+      this.resetMediaStream();
+    }
+
+    if (prevProps.videoEnabled && !this.props.videoEnabled) {
+      this.resetMediaStream();
     }
 
     this.syncTracksToMediaStream();
@@ -94,9 +95,12 @@ export class MediaView extends React.Component<Props, State> {
   };
 
   supportsTrack = (trackId: string) => {
-    const { isLocal, audioTrackId } = this.props;
+    const { isLocal, audioTrackId, videoTrackId, videoEnabled } = this.props;
 
     if (!trackId) return false;
+
+    // Exclude paused video tracks. They briefly show a janky frozen frame.
+    if (trackId === videoTrackId && !videoEnabled) return false;
 
     // Filter out your own audio track from local streams. It's distracting.
     return isLocal ? trackId !== audioTrackId : true;
@@ -118,6 +122,15 @@ export class MediaView extends React.Component<Props, State> {
     if (this.videoRef.srcObject && tracks.length === 0) {
       this.videoRef.srcObject = null;
     }
+  };
+
+  // When you remove a video track from a media stream, the video freezes on
+  // the last frame. You need a new stream to clear it out.
+  resetMediaStream = () => {
+    if (!this.videoRef) return;
+
+    this.stream = new MediaStream();
+    this.videoRef.srcObject = null;
   };
 
   play = async () => {

@@ -75,6 +75,27 @@ describe('MediaView', () => {
     expect(ref.srcObject.getTracks()).toHaveLength(1);
   });
 
+  it('resets the video stream when video is disabled', () => {
+    context.tracks.set('v-id-2', new MediaStreamTrack());
+
+    const { output } = setup({
+      audioTrackId: 'a-id',
+      videoTrackId: 'v-id',
+      videoEnabled: true,
+    });
+
+    const ref = setVideoRef(output);
+
+    const original = ref.srcObject;
+    output.setProps({ videoTrackId: 'v-id-2' });
+    expect(ref.srcObject).toBe(original);
+    output.setProps({ videoEnabled: false });
+    expect(ref.srcObject).not.toBe(original);
+
+    // Exclude paused video tracks.
+    expect(ref.srcObject.getTracks()).toHaveLength(1);
+  });
+
   it('resets the media stream when the video track is removed', () => {
     const { output } = setup({
       audioTrackId: 'a-id',
