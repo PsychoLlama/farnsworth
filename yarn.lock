@@ -5613,10 +5613,10 @@ libp2p-websockets@0.16.2:
     p-defer "^3.0.0"
     p-timeout "^4.1.0"
 
-libp2p@0.33.0:
-  version "0.33.0"
-  resolved "https://registry.yarnpkg.com/libp2p/-/libp2p-0.33.0.tgz#d05dd5715bfca7c596a17b2d30f604325bc25108"
-  integrity sha512-ZNcxWJWNBmlLa9STcYbZyS3so/JEpI7kNLjIUIhIdntjJC9z+OMbGiqfPFcaMejMpjb/j+qpsqsiayjG0p9qIA==
+libp2p@0.34.0:
+  version "0.34.0"
+  resolved "https://registry.yarnpkg.com/libp2p/-/libp2p-0.34.0.tgz#3da5acb240c1a74e80b35be99d42e68eda82fd15"
+  integrity sha512-jynwrozoIfzt2FfRFno7yschy0vG3TeEh+IVED0wt65bVDAvgiyT+HZPqY3mYotsZHcunW5kHoiT/9uPBUJbaw==
   dependencies:
     "@motrix/nat-api" "^0.3.1"
     "@vascosantos/moving-average" "^1.1.0"
