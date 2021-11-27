@@ -17,6 +17,11 @@ export const requestMediaDevices = async () => {
     context.tracks.set(track.id, track);
   });
 
+  // Send the new tracks to every open connection.
+  Array.from(context.connections.values()).forEach((conn) => {
+    stream.getTracks().forEach((track) => conn.addTrack(track));
+  });
+
   return stream.getTracks().map((track) => {
     const settings = track.getSettings();
 

@@ -1,9 +1,11 @@
 import MediaDevices from 'media-devices';
-import * as effects from '../devices';
+import * as effects from '../';
 import { TrackKind } from '../../utils/constants';
 import context from '../../conferencing/global-context';
+import ConnectionManager from '../../conferencing/webrtc';
 
 jest.mock('media-devices');
+jest.mock('../../conferencing/webrtc');
 
 const MockMediaDevices: jest.Mocked<typeof MediaDevices> = MediaDevices as any;
 
@@ -32,7 +34,7 @@ describe('Device effects', () => {
         { label: 'Camera', kind: TrackKind.Video },
       ]);
 
-      await effects.requestMediaDevices();
+      await effects.devices.requestMediaDevices();
 
       expect(context.tracks.get(tracks[0].id)).toBe(tracks[0]);
       expect(context.tracks.get(tracks[1].id)).toBe(tracks[1]);
@@ -44,7 +46,7 @@ describe('Device effects', () => {
         { label: 'Camera', kind: TrackKind.Video },
       ]);
 
-      const result = await effects.requestMediaDevices();
+      const result = await effects.devices.requestMediaDevices();
 
       expect(result).toEqual([
         {
@@ -60,6 +62,19 @@ describe('Device effects', () => {
           enabled: expect.any(Boolean),
         },
       ]);
+    });
+
+    it('sends the tracks to all remote connections', async () => {
+      mockDeviceList([
+        { label: 'Microphone', kind: TrackKind.Audio },
+        { label: 'Camera', kind: TrackKind.Video },
+      ]);
+
+      const conn = new ConnectionManager({} as any); // Mock. Params are ignored.
+      context.connections.set('remote-id', conn);
+      await effects.devices.requestMediaDevices();
+
+      expect(conn.addTrack).toHaveBeenCalledTimes(2);
     });
   });
 });
