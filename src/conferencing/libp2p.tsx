@@ -7,7 +7,7 @@ import assert from 'assert';
 import PeerId, { JSONPeerId } from 'peer-id';
 import localforage from 'localforage';
 import context from './global-context';
-import { STORAGE_KEY_PEER_ID } from '../utils/constants';
+import StorageKey from '../utils/storage-keys';
 import Logger from '../utils/logger';
 
 const logger = new Logger('libp2p');
@@ -54,19 +54,19 @@ export default async function initNetworkingModule(signalingServer: string) {
  */
 export async function loadPeerId() {
   const persistedPeerId: null | JSONPeerId = await localforage.getItem(
-    STORAGE_KEY_PEER_ID,
+    StorageKey.PeerId,
   );
 
+  const peerId = persistedPeerId
+    ? await PeerId.createFromJSON(persistedPeerId)
+    : await PeerId.create();
+
   if (persistedPeerId) {
-    const peerId = await PeerId.createFromJSON(persistedPeerId);
     logger.debug('Restored peer ID:', peerId.toB58String());
-
-    return peerId;
+  } else {
+    logger.debug('Created a new peer ID:', peerId.toB58String());
+    await localforage.setItem(StorageKey.PeerId, peerId.toJSON());
   }
-
-  logger.debug('Creating a new peer ID');
-  const peerId = await PeerId.create();
-  await localforage.setItem(STORAGE_KEY_PEER_ID, peerId.toJSON());
 
   return peerId;
 }
