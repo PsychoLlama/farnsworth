@@ -6,12 +6,11 @@ import store from './utils/redux-store';
 import { exportToCss, OneDark, OneLight } from './utils/themes';
 import App from './components/app';
 import ReduxRouter from './utils/router';
+import { Routes } from './utils/constants';
 
 ReduxRouter.init({
   store,
-  routes: {
-    '/': { effect: null },
-  },
+  routes: Object.values(Routes),
 });
 
 /**

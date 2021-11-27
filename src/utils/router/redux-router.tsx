@@ -9,7 +9,7 @@ import * as actions from '../../actions';
  */
 export default class ReduxRouter {
   dynamicRoutes: Array<DynamicRoute> = [];
-  staticRoutes: Map<string, RouteDefinition> = new Map();
+  staticRoutes: Set<string> = new Set();
   store: Config['store'];
 
   /**
@@ -42,12 +42,12 @@ export default class ReduxRouter {
     this.store = store;
 
     // Put paths with `:id` matchers in a different collection.
-    Object.entries(routes).forEach(([id, definition]) => {
+    routes.forEach((id) => {
       if (/:/.test(id)) {
         const parts = this.getParts(id);
-        this.dynamicRoutes.push({ parts, definition, id });
+        this.dynamicRoutes.push({ parts, id });
       } else {
-        this.staticRoutes.set(id, definition);
+        this.staticRoutes.add(id);
       }
     });
   }
@@ -55,7 +55,7 @@ export default class ReduxRouter {
   getRoute(): Route {
     const pathName = ReduxRouter.normalizePath(location.hash);
 
-    if (this.staticRoutes.get(pathName)) {
+    if (this.staticRoutes.has(pathName)) {
       return { id: pathName, pathName, params: {} };
     }
 
@@ -127,15 +127,7 @@ export default class ReduxRouter {
 
 interface Config {
   store: typeof store;
-  routes: Routes;
-}
-
-interface RouteDefinition {
-  /**
-   * An arbitrary effect associated with the route, intended to run when the
-   * page enters. This is not invoked here but passed to the action creator.
-   */
-  effect: null;
+  routes: Array<string>;
 }
 
 export interface Route {
@@ -146,12 +138,7 @@ export interface Route {
   };
 }
 
-interface Routes {
-  [id: string]: RouteDefinition;
-}
-
 interface DynamicRoute {
   id: string;
   parts: Array<string>;
-  definition: RouteDefinition;
 }

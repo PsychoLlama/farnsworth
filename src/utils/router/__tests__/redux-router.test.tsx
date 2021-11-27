@@ -15,10 +15,7 @@ describe('ReduxRouter', () => {
 
     const router = ReduxRouter.init({
       store: createStore(),
-      routes: {
-        '/some/:dynamic/path': { effect: null },
-        '/': { effect: null },
-      },
+      routes: ['/some/:dynamic/path', '/'],
     });
 
     expect(router.getRoute()).toMatchObject({
@@ -32,10 +29,7 @@ describe('ReduxRouter', () => {
 
     const router = ReduxRouter.init({
       store: createStore(),
-      routes: {
-        '/primary': { effect: null },
-        '/': { effect: null },
-      },
+      routes: ['/primary', '/'],
     });
 
     expect(router.getRoute()).toMatchObject({
@@ -49,9 +43,7 @@ describe('ReduxRouter', () => {
 
     const router = ReduxRouter.init({
       store: createStore(),
-      routes: {
-        '/user/:id/activity': { effect: null },
-      },
+      routes: ['/user/:id/activity'],
     });
 
     expect(router.getRoute()).toEqual({
@@ -66,10 +58,7 @@ describe('ReduxRouter', () => {
 
     const router = ReduxRouter.init({
       store: createStore(),
-      routes: {
-        '/ambiguous/:id': { effect: null },
-        '/ambiguous/route': { effect: null },
-      },
+      routes: ['/ambiguous/:id', '/ambiguous/route'],
     });
 
     expect(router.getRoute()).toMatchObject({
@@ -83,9 +72,7 @@ describe('ReduxRouter', () => {
 
     const router = ReduxRouter.init({
       store: createStore(),
-      routes: {
-        '/user/:userId/post/:postId': { effect: null },
-      },
+      routes: ['/user/:userId/post/:postId'],
     });
 
     expect(router.getRoute()).toMatchObject({
@@ -101,9 +88,7 @@ describe('ReduxRouter', () => {
     // Side effect: sync URL to redux.
     ReduxRouter.init({
       store: createStore(),
-      routes: {
-        '/known/route': { effect: null },
-      },
+      routes: ['/known/route'],
     });
 
     expect(location.hash).toBe('#/known/route');
@@ -114,10 +99,7 @@ describe('ReduxRouter', () => {
 
     const router = ReduxRouter.init({
       store: createStore(),
-      routes: {
-        '/random/route': { effect: null },
-        '/': { effect: null },
-      },
+      routes: ['/random/route', '/'],
     });
 
     location.hash = '#/invalid/route';
@@ -131,10 +113,7 @@ describe('ReduxRouter', () => {
 
     const router = ReduxRouter.init({
       store: createStore(),
-      routes: {
-        '/path': { effect: null },
-        '/': { effect: null },
-      },
+      routes: ['/path', '/'],
     });
 
     location.hash = '#/path';
@@ -148,9 +127,7 @@ describe('ReduxRouter', () => {
 
     ReduxRouter.init({
       store: createStore(),
-      routes: {
-        '/': { effect: null },
-      },
+      routes: ['/'],
     });
 
     location.hash = '#/';

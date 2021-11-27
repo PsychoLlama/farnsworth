@@ -36,3 +36,11 @@ export enum ConnectionState {
   Disconnected = 'disconnected',
   Failed = 'failed',
 }
+
+export enum Routes {
+  /** Alone, no active call. */
+  Home = '/',
+
+  /** Actively calling another user. */
+  Call = '/call/:peerId',
+}
