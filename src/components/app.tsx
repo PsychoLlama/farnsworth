@@ -4,6 +4,7 @@ import styled from 'styled-components';
 import * as actions from '../actions';
 import VideoRoomLayout from './media/video-room-layout';
 import { SERVER_ADDRESS } from '../utils/constants';
+import RouteObserver from './route-observer';
 
 export class App extends React.Component<Props> {
   async componentDidMount() {
@@ -15,9 +16,11 @@ export class App extends React.Component<Props> {
 
   render() {
     return (
-      <Container>
-        <VideoRoomLayout />
-      </Container>
+      <RouteObserver>
+        <Container>
+          <VideoRoomLayout />
+        </Container>
+      </RouteObserver>
     );
   }
 }
