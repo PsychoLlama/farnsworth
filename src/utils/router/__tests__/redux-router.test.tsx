@@ -75,6 +75,31 @@ describe('ReduxRouter', () => {
     });
   });
 
+  it('clamps the browser URL to a known good', () => {
+    location.hash = '#known/route/';
+
+    // Side effect: sync URL to redux.
+    ReduxRouter.init({
+      '/known/route': { effect: null },
+    });
+
+    expect(location.hash).toBe('#/known/route');
+  });
+
+  it('watches the browser URL for changes', () => {
+    location.hash = '#/random/route';
+
+    const router = ReduxRouter.init({
+      '/random/route': { effect: null },
+      '/': { effect: null },
+    });
+
+    location.hash = '#/invalid/route';
+    window.onhashchange(new HashChangeEvent('hashchange'));
+
+    expect(router.getRoute().pathName).toBe('/');
+  });
+
   describe('normalizePath', () => {
     it('trims the leading hash sign', () => {
       const value = ReduxRouter.normalizePath('#/with/a/#/hash');

@@ -27,7 +27,12 @@ export default class ReduxRouter {
    * dispatched to redux.
    */
   static init(routes: Routes) {
-    return new ReduxRouter(routes);
+    const router = new ReduxRouter(routes);
+    router.syncBrowserUrl();
+
+    window.onhashchange = router.syncBrowserUrl;
+
+    return router;
   }
 
   private constructor(routes: Routes) {
@@ -78,7 +83,7 @@ export default class ReduxRouter {
     parts: Array<string>,
   ): Route {
     if (!route) {
-      return { id: '/', pathName, params: {} };
+      return { id: '/', pathName: '/', params: {} };
     }
 
     const params: Route['params'] = {};
@@ -89,17 +94,24 @@ export default class ReduxRouter {
       }
     });
 
-    return {
-      id: route.id,
-      pathName,
-      params,
-    };
+    return { id: route.id, pathName, params };
   }
 
   // '/path/to/resource' -> ['path', 'to', 'resource']
   private getParts(pathName: string): Array<string> {
     return pathName.split('/').filter(Boolean);
   }
+
+  private syncBrowserUrl = () => {
+    const route = this.getRoute();
+
+    if (location.hash.slice(1) !== route.pathName) {
+      const url = new URL(String(location));
+      url.hash = route.pathName;
+
+      history.replaceState({}, '', url);
+    }
+  };
 }
 
 interface RouteDefinition {

@@ -5,6 +5,11 @@ import { Provider as ReduxProvider } from 'react-redux';
 import store from './utils/redux-store';
 import { exportToCss, OneDark, OneLight } from './utils/themes';
 import App from './components/app';
+import ReduxRouter from './utils/router';
+
+ReduxRouter.init({
+  '/': { effect: null },
+});
 
 /**
  * First, let me say that yes, I'm insane. But the insanity has reason.
