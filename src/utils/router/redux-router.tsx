@@ -1,4 +1,6 @@
 import assert from 'assert';
+import store from '../redux-store';
+import * as actions from '../../actions';
 
 /**
  * React Router is a heavy hammer to a simple problem. Binding URL state to
@@ -8,6 +10,7 @@ import assert from 'assert';
 export default class ReduxRouter {
   dynamicRoutes: Array<DynamicRoute> = [];
   staticRoutes: Map<string, RouteDefinition> = new Map();
+  store: Config['store'];
 
   /**
    * Transform `location.hash` into a consistent path name.
@@ -26,16 +29,18 @@ export default class ReduxRouter {
    * Observes the browser URL and clamps it to the given routes. Changes are
    * dispatched to redux.
    */
-  static init(routes: Routes) {
-    const router = new ReduxRouter(routes);
-    router.syncBrowserUrl();
+  static init(config: Config) {
+    const router = new ReduxRouter(config);
+    router.updateUrl();
 
-    window.onhashchange = router.syncBrowserUrl;
+    window.onhashchange = router.updateUrl;
 
     return router;
   }
 
-  private constructor(routes: Routes) {
+  private constructor({ routes, store }: Config) {
+    this.store = store;
+
     // Put paths with `:id` matchers in a different collection.
     Object.entries(routes).forEach(([id, definition]) => {
       if (/:/.test(id)) {
@@ -102,16 +107,27 @@ export default class ReduxRouter {
     return pathName.split('/').filter(Boolean);
   }
 
-  private syncBrowserUrl = () => {
+  private updateUrl = () => {
+    const state = this.store.getState();
     const route = this.getRoute();
 
+    // Clamp the browser's URL to a known route.
     if (location.hash.slice(1) !== route.pathName) {
       const url = new URL(String(location));
       url.hash = route.pathName;
 
       history.replaceState({}, '', url);
     }
+
+    if (state.route.pathName !== route.pathName) {
+      this.store.dispatch(actions.route.change(route));
+    }
   };
+}
+
+interface Config {
+  store: typeof store;
+  routes: Routes;
 }
 
 interface RouteDefinition {
@@ -122,7 +138,7 @@ interface RouteDefinition {
   effect: null;
 }
 
-interface Route {
+export interface Route {
   id: string;
   pathName: string;
   params: {

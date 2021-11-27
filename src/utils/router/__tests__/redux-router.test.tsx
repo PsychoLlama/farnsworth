@@ -1,7 +1,12 @@
 import ReduxRouter from '../redux-router';
+import createStore from '../../create-store';
+import * as actions from '../../../actions';
+
+jest.spyOn(actions.route, 'change');
 
 describe('ReduxRouter', () => {
   beforeEach(() => {
+    jest.clearAllMocks();
     location.hash = '';
   });
 
@@ -9,8 +14,11 @@ describe('ReduxRouter', () => {
     location.hash = '#/no/such/route';
 
     const router = ReduxRouter.init({
-      '/some/:dynamic/path': { effect: null },
-      '/': { effect: null },
+      store: createStore(),
+      routes: {
+        '/some/:dynamic/path': { effect: null },
+        '/': { effect: null },
+      },
     });
 
     expect(router.getRoute()).toMatchObject({
@@ -23,8 +31,11 @@ describe('ReduxRouter', () => {
     location.hash = '#/primary';
 
     const router = ReduxRouter.init({
-      '/primary': { effect: null },
-      '/': { effect: null },
+      store: createStore(),
+      routes: {
+        '/primary': { effect: null },
+        '/': { effect: null },
+      },
     });
 
     expect(router.getRoute()).toMatchObject({
@@ -37,7 +48,10 @@ describe('ReduxRouter', () => {
     location.hash = '#/user/unique-id/activity';
 
     const router = ReduxRouter.init({
-      '/user/:id/activity': { effect: null },
+      store: createStore(),
+      routes: {
+        '/user/:id/activity': { effect: null },
+      },
     });
 
     expect(router.getRoute()).toEqual({
@@ -51,8 +65,11 @@ describe('ReduxRouter', () => {
     location.hash = '#/ambiguous/route';
 
     const router = ReduxRouter.init({
-      '/ambiguous/:id': { effect: null },
-      '/ambiguous/route': { effect: null },
+      store: createStore(),
+      routes: {
+        '/ambiguous/:id': { effect: null },
+        '/ambiguous/route': { effect: null },
+      },
     });
 
     expect(router.getRoute()).toMatchObject({
@@ -65,7 +82,10 @@ describe('ReduxRouter', () => {
     location.hash = '#/user/mock-user-id/post/mock-post-id/';
 
     const router = ReduxRouter.init({
-      '/user/:userId/post/:postId': { effect: null },
+      store: createStore(),
+      routes: {
+        '/user/:userId/post/:postId': { effect: null },
+      },
     });
 
     expect(router.getRoute()).toMatchObject({
@@ -80,7 +100,10 @@ describe('ReduxRouter', () => {
 
     // Side effect: sync URL to redux.
     ReduxRouter.init({
-      '/known/route': { effect: null },
+      store: createStore(),
+      routes: {
+        '/known/route': { effect: null },
+      },
     });
 
     expect(location.hash).toBe('#/known/route');
@@ -90,14 +113,50 @@ describe('ReduxRouter', () => {
     location.hash = '#/random/route';
 
     const router = ReduxRouter.init({
-      '/random/route': { effect: null },
-      '/': { effect: null },
+      store: createStore(),
+      routes: {
+        '/random/route': { effect: null },
+        '/': { effect: null },
+      },
     });
 
     location.hash = '#/invalid/route';
     window.onhashchange(new HashChangeEvent('hashchange'));
 
     expect(router.getRoute().pathName).toBe('/');
+  });
+
+  it('dispatches URL changes to redux', () => {
+    location.hash = '#/';
+
+    const router = ReduxRouter.init({
+      store: createStore(),
+      routes: {
+        '/path': { effect: null },
+        '/': { effect: null },
+      },
+    });
+
+    location.hash = '#/path';
+    window.onhashchange(new HashChangeEvent('hashchange'));
+
+    expect(actions.route.change).toHaveBeenCalledWith(router.getRoute());
+  });
+
+  it('does not dispatch an action if the route is identical', () => {
+    location.hash = '';
+
+    ReduxRouter.init({
+      store: createStore(),
+      routes: {
+        '/': { effect: null },
+      },
+    });
+
+    location.hash = '#/';
+    window.onhashchange(new HashChangeEvent('hashchange'));
+
+    expect(actions.route.change).not.toHaveBeenCalled();
   });
 
   describe('normalizePath', () => {

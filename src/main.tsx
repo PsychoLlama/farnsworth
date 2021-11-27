@@ -8,7 +8,10 @@ import App from './components/app';
 import ReduxRouter from './utils/router';
 
 ReduxRouter.init({
-  '/': { effect: null },
+  store,
+  routes: {
+    '/': { effect: null },
+  },
 });
 
 /**

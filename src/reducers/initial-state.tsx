@@ -3,6 +3,7 @@ import {
   ConnectionState,
   MY_PARTICIPANT_ID,
 } from '../utils/constants';
+import { Route } from '../utils/router';
 
 /**
  * Note: Redux state doesn't contain complex objects like media streams or
@@ -11,6 +12,8 @@ import {
  * See: ../conferencing/global-context
  */
 export interface State {
+  route: Route;
+
   relay: null | {
     /**
      * References the libp2p peer ID. These IDs are used to distinguish
@@ -53,6 +56,11 @@ export interface State {
 }
 
 const initialState: State = {
+  route: {
+    id: '/',
+    pathName: '/',
+    params: {},
+  },
   relay: null,
   participants: {
     [MY_PARTICIPANT_ID]: {
