@@ -22,7 +22,8 @@ export class Controls extends React.Component<Props> {
   };
 
   render() {
-    const { togglePhonebook, micEnabled, camEnabled } = this.props;
+    const { togglePhonebook, micEnabled, camEnabled, micTrackId, camTrackId } =
+      this.props;
 
     return (
       <Container>
@@ -30,11 +31,19 @@ export class Controls extends React.Component<Props> {
           <FiSliders />
         </Control>
 
-        <Control data-test="toggle-audio" onClick={this.toggleAudio}>
+        <Control
+          data-test="toggle-audio"
+          onClick={this.toggleAudio}
+          disabled={!micTrackId}
+        >
           {micEnabled ? <FiMic /> : <FiMicOff />}
         </Control>
 
-        <Control data-test="toggle-video" onClick={this.toggleVideo}>
+        <Control
+          data-test="toggle-video"
+          onClick={this.toggleVideo}
+          disabled={!camTrackId}
+        >
           {camEnabled ? <FiVideo /> : <FiVideoOff />}
         </Control>
 
@@ -95,6 +104,12 @@ const Control = styled(Button.Base)`
 
   :active {
     filter: brightness(70%);
+  }
+
+  :disabled {
+    opacity: 0.5;
+    pointer-events: none;
+    cursor: not-allowed;
   }
 `;
 

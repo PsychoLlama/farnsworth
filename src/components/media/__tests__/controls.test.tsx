@@ -74,6 +74,17 @@ describe('Controls', () => {
     expect(active.find(FiMic).exists()).toBe(true);
   });
 
+  it('disables the mic/camera buttons when their track is missing', () => {
+    const { output, findByTestId } = setup();
+
+    expect(findByTestId('toggle-video').prop('disabled')).toBe(false);
+    expect(findByTestId('toggle-audio').prop('disabled')).toBe(false);
+
+    output.setProps({ camTrackId: null, micTrackId: null });
+    expect(findByTestId('toggle-video').prop('disabled')).toBe(true);
+    expect(findByTestId('toggle-audio').prop('disabled')).toBe(true);
+  });
+
   describe('mapStateToProps', () => {
     function setup(patchState: (state: State) => void) {
       const state = produce(initialState, patchState);
