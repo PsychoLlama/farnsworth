@@ -29,6 +29,10 @@ export interface State {
     server: string;
   };
 
+  call: null | {
+    peerId: string;
+  };
+
   participants: {
     [participantId: string]: {
       isMe: boolean;
@@ -62,6 +66,7 @@ const initialState: State = {
     params: {},
   },
   relay: null,
+  call: null,
   participants: {
     [MY_PARTICIPANT_ID]: {
       isMe: true,
