@@ -1,13 +1,6 @@
 import React from 'react';
 import styled from 'styled-components';
-import {
-  FiMic,
-  FiVideo,
-  FiUsers,
-  FiSliders,
-  FiMicOff,
-  FiVideoOff,
-} from 'react-icons/fi';
+import { FiMic, FiVideo, FiUsers, FiMicOff, FiVideoOff } from 'react-icons/fi';
 import { connect } from 'react-redux';
 import * as css from '../../utils/css';
 import * as actions from '../../actions';
@@ -27,29 +20,31 @@ export class Controls extends React.Component<Props> {
 
     return (
       <Container>
-        <Control>
-          <FiSliders />
-        </Control>
+        <ControlGroup data-left />
 
-        <Control
-          data-test="toggle-audio"
-          onClick={this.toggleAudio}
-          disabled={!micTrackId}
-        >
-          {micEnabled ? <FiMic /> : <FiMicOff />}
-        </Control>
+        <ControlGroup>
+          <Control
+            data-test="toggle-audio"
+            onClick={this.toggleAudio}
+            disabled={!micTrackId}
+          >
+            {micEnabled ? <FiMic /> : <FiMicOff />}
+          </Control>
 
-        <Control
-          data-test="toggle-video"
-          onClick={this.toggleVideo}
-          disabled={!camTrackId}
-        >
-          {camEnabled ? <FiVideo /> : <FiVideoOff />}
-        </Control>
+          <Control
+            data-test="toggle-video"
+            onClick={this.toggleVideo}
+            disabled={!camTrackId}
+          >
+            {camEnabled ? <FiVideo /> : <FiVideoOff />}
+          </Control>
+        </ControlGroup>
 
-        <Control data-test="toggle-phonebook" onClick={togglePhonebook}>
-          <FiUsers />
-        </Control>
+        <ControlGroup data-right>
+          <Control data-test="toggle-phonebook" onClick={togglePhonebook}>
+            <FiUsers />
+          </Control>
+        </ControlGroup>
       </Container>
     );
   }
@@ -88,8 +83,21 @@ interface Props {
 const Container = styled.div`
   background-color: ${css.color('background')};
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+  display: grid;
+  grid-template-columns: 1fr 2fr 1fr;
+`;
+
+const ControlGroup = styled.div`
   display: flex;
   justify-content: center;
+
+  &[data-left] {
+    justify-content: flex-start;
+  }
+
+  &[data-right] {
+    justify-content: flex-end;
+  }
 `;
 
 const Control = styled(Button.Base)`
