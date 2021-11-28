@@ -1,6 +1,6 @@
 import { ChatPanel, mapStateToProps } from '../chat-panel';
-import renderer from '../../testing/renderer';
-import createStore from '../../utils/create-store';
+import renderer from '../../../testing/renderer';
+import createStore from '../../../utils/create-store';
 
 describe('ChatPanel', () => {
   const setup = renderer(ChatPanel, {

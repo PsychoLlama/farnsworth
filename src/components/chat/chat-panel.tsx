@@ -2,10 +2,10 @@ import React from 'react';
 import { connect } from 'react-redux';
 import styled from 'styled-components';
 import { FiX } from 'react-icons/fi';
-import { State } from '../reducers/initial-state';
-import * as css from '../utils/css';
-import { Button } from './core';
-import * as actions from '../actions';
+import { State } from '../../reducers/initial-state';
+import * as css from '../../utils/css';
+import { Button } from '../core';
+import * as actions from '../../actions';
 
 export class ChatPanel extends React.Component<Props> {
   render() {
@@ -17,12 +17,12 @@ export class ChatPanel extends React.Component<Props> {
 
     return (
       <Container>
-        <Heading>
-          <Header>Chat</Header>
+        <Header>
+          <Title>Chat</Title>
           <CloseButton data-test="close-chat" onClick={close}>
             <FiX aria-label="Close chat" />
           </CloseButton>
-        </Heading>
+        </Header>
       </Container>
     );
   }
@@ -38,7 +38,7 @@ const Container = styled.aside.attrs({ role: 'complementary' })`
   background-color: ${css.color('background')};
   flex-direction: column;
   min-width: 315px;
-  box-shadow: inset 0 0 4px rgba(0, 0, 0, 0.4);
+  box-shadow: inset 0 -4px 4px -4px rgba(0, 0, 0, 0.4);
 
   @media screen and (max-width: ${css.breakpoint.mobile}) {
     position: absolute;
@@ -52,14 +52,16 @@ const Container = styled.aside.attrs({ role: 'complementary' })`
   }
 `;
 
-const Heading = styled.header`
+const Header = styled.header`
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 0.5rem;
+  padding: 1rem;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+  background-color: ${css.color('background')};
 `;
 
-const Header = styled.h2`
+const Title = styled.h2`
   margin: 0;
 `;
 

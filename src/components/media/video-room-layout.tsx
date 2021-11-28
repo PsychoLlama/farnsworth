@@ -8,7 +8,7 @@ import Controls from './controls';
 import Sidebar from '../sidebar';
 import { MY_PARTICIPANT_ID } from '../../utils/constants';
 import * as css from '../../utils/css';
-import ChatPanel from '../chat-panel';
+import ChatPanel from '../chat';
 
 export class VideoRoomLayout extends React.Component<Props> {
   render() {
