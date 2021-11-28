@@ -8,7 +8,14 @@ describe('MessageComposer', () => {
     }),
   });
 
-  it('renders', () => {
-    expect(setup).not.toThrow();
+  it('autosizes the input when content changes', () => {
+    const { findByTestId } = setup();
+
+    const event = { currentTarget: { style: {}, scrollHeight: 40 } };
+    findByTestId('chat-message-composer').simulate('input', event);
+
+    expect(event.currentTarget.style).toMatchObject({
+      height: expect.stringContaining('40px'),
+    });
   });
 });
