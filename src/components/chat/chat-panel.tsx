@@ -9,6 +9,8 @@ import * as actions from '../../actions';
 import MessageLog from './message-log';
 import MessageComposer from './message-composer';
 
+export const PANEL_WIDTH = '315px';
+
 export class ChatPanel extends React.Component<Props> {
   render() {
     const { showChatPanel, close } = this.props;
@@ -43,7 +45,7 @@ const Container = styled.aside.attrs({ role: 'complementary' })`
   display: flex;
   background-color: ${css.color('background')};
   flex-direction: column;
-  min-width: 315px;
+  min-width: ${PANEL_WIDTH};
   box-shadow: inset 0 -4px 4px -4px rgba(0, 0, 0, 0.4);
 
   @media screen and (max-width: ${css.breakpoint.mobile}) {

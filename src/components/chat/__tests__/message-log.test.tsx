@@ -1,14 +1,72 @@
+import produce from 'immer';
 import renderer from '../../../testing/renderer';
-import { MessageLog } from '../message-log';
+import { MessageLog, mapStateToProps } from '../message-log';
+import initialState, {
+  State,
+  ChatMessage,
+} from '../../../reducers/initial-state';
+import { ConnectionState } from '../../../utils/constants';
 
 describe('MessageLog', () => {
+  function createMsg(patch?: Partial<ChatMessage>): ChatMessage {
+    return {
+      author: 'local-peer-id',
+      sentDate: '2000-06-15T00:00:00.000Z',
+      body: 'Hello, world',
+      ...patch,
+    };
+  }
+
   const setup = renderer(MessageLog, {
     getDefaultProps: () => ({
-      // TODO
+      localId: 'local-peer-id',
+      messages: [createMsg(), createMsg()],
     }),
   });
 
-  it('renders', () => {
-    expect(setup).not.toThrow();
+  it('shows all the messages', () => {
+    const { findByTestId, props } = setup();
+
+    expect(findByTestId('chat-message').length).toBe(props.messages.length);
+  });
+
+  it('shows the message time', () => {
+    const { findByTestId, props } = setup({
+      messages: [createMsg()],
+    });
+
+    expect(findByTestId('chat-message-timestamp').prop('dateTime')).toBe(
+      props.messages[0].sentDate,
+    );
+  });
+
+  describe('mapStateToProps', () => {
+    function setup(patch: (state: State) => void | State) {
+      const state = produce(initialState, patch);
+      const props = mapStateToProps(state);
+
+      return {
+        state,
+        props,
+      };
+    }
+
+    it('grabs the necessary state', () => {
+      const { state, props } = setup((state) => {
+        state.relay = { server: '/server/maddr', localId: 'local-id' };
+        state.call = { peerId: 'remote-peer' };
+        state.participants['remote-peer'] = {
+          isMe: false,
+          trackIds: [],
+          connection: { state: ConnectionState.Connected },
+          chat: { history: [] },
+        };
+      });
+
+      expect(props).toMatchObject({
+        messages: state.participants['remote-peer'].chat.history,
+        localId: state.relay.localId,
+      });
+    });
   });
 });
