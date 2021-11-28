@@ -6,6 +6,8 @@ import { State } from '../../reducers/initial-state';
 import * as css from '../../utils/css';
 import { Button } from '../core';
 import * as actions from '../../actions';
+import MessageLog from './message-log';
+import MessageComposer from './message-composer';
 
 export class ChatPanel extends React.Component<Props> {
   render() {
@@ -23,6 +25,10 @@ export class ChatPanel extends React.Component<Props> {
             <FiX aria-label="Close chat" />
           </CloseButton>
         </Header>
+
+        <MessageLog />
+
+        <MessageComposer />
       </Container>
     );
   }
