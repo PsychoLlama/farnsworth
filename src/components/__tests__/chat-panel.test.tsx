@@ -6,6 +6,7 @@ describe('ChatPanel', () => {
   const setup = renderer(ChatPanel, {
     getDefaultProps: () => ({
       showChatPanel: true,
+      close: jest.fn(),
     }),
   });
 
@@ -15,6 +16,14 @@ describe('ChatPanel', () => {
 
     expect(hidden.isEmptyRender()).toBe(true);
     expect(visible.isEmptyRender()).toBe(false);
+  });
+
+  it('closes the chat panel when clicking the close button', () => {
+    const { findByTestId, props } = setup();
+
+    findByTestId('close-chat').simulate('click');
+
+    expect(props.close).toHaveBeenCalled();
   });
 
   describe('mapStateToProps', () => {
