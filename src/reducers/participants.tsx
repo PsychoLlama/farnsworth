@@ -1,7 +1,19 @@
 import { createReducer } from 'retreon';
-import initialState from './initial-state';
+import initialState, { ChatMessage } from './initial-state';
 import * as actions from '../actions';
 import { ConnectionState, MY_PARTICIPANT_ID } from '../utils/constants';
+
+/**
+ * Chat messages are sorted by the date stamped by their senders. Of course,
+ * this is not reliable as clocks can be wildly out of sync, but it's a good
+ * enough measure. A future version might use causal history on message IDs.
+ */
+function sortMessagesByDate(m1: ChatMessage, m2: ChatMessage) {
+  const d1 = new Date(m1.sentDate);
+  const d2 = new Date(m2.sentDate);
+
+  return d1.getTime() - d2.getTime();
+}
 
 export default createReducer(initialState.participants, (handleAction) => [
   handleAction(actions.devices.requestMediaDevices, (state, tracks) => {
@@ -45,5 +57,15 @@ export default createReducer(initialState.participants, (handleAction) => [
   handleAction(actions.connections.markDisconnected, (state, peerId) => {
     state[peerId].connection.state = ConnectionState.Disconnected;
     state[peerId].trackIds = [];
+  }),
+
+  handleAction(actions.chat.sendMessage, (state, { recipient, msg }) => {
+    state[recipient].chat.history.push(msg);
+    state[recipient].chat.history.sort(sortMessagesByDate);
+  }),
+
+  handleAction(actions.chat.receiveMessage, (state, { peerId, msg }) => {
+    state[peerId].chat.history.push(msg);
+    state[peerId].chat.history.sort(sortMessagesByDate);
   }),
 ]);

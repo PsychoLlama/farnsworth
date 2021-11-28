@@ -19,4 +19,6 @@ export function sendMessage(envelope: { recipient: string; msg: ChatMessage }) {
     type: EventType.ChatMessage,
     payload: envelope.msg,
   });
+
+  return envelope;
 }

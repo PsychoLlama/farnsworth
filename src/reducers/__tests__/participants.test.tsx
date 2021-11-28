@@ -1,6 +1,7 @@
 import createStore from '../../utils/create-store';
 import * as actions from '../../actions';
 import * as deviceEffects from '../../effects/devices';
+import * as chatEffects from '../../effects/chat';
 import {
   TrackKind,
   ConnectionState,
@@ -8,6 +9,7 @@ import {
 } from '../../utils/constants';
 
 jest.mock('../../effects/devices');
+jest.mock('../../effects/chat');
 jest.mock('../../effects/tracks', () => {
   const actual = jest.requireActual('../../effects/tracks');
 
@@ -18,6 +20,7 @@ jest.mock('../../effects/tracks', () => {
 });
 
 const mockedEffects: jest.Mocked<typeof deviceEffects> = deviceEffects as any;
+const mockedChatEffects: jest.Mocked<typeof chatEffects> = chatEffects as any;
 
 describe('Participants reducer', () => {
   function setup() {
@@ -43,6 +46,8 @@ describe('Participants reducer', () => {
         enabled: true,
       },
     ]);
+
+    mockedChatEffects.sendMessage.mockImplementation((e) => e);
   });
 
   describe('requestMediaDevices()', () => {
@@ -160,6 +165,93 @@ describe('Participants reducer', () => {
       expect(store.getState().participants).toMatchObject({
         [MY_PARTICIPANT_ID]: {
           trackIds: [],
+        },
+      });
+    });
+  });
+
+  describe('chat.sendMessage', () => {
+    it('puts the message in redux', () => {
+      const { store } = setup();
+
+      const msg = {
+        body: 'hi',
+        author: MY_PARTICIPANT_ID,
+        sentDate: new Date().toISOString(),
+      };
+
+      store.dispatch(
+        actions.chat.sendMessage({
+          recipient: MY_PARTICIPANT_ID,
+          msg,
+        }),
+      );
+
+      expect(store.getState().participants).toMatchObject({
+        [MY_PARTICIPANT_ID]: {
+          chat: { history: [msg] },
+        },
+      });
+    });
+  });
+
+  describe('chat.receiveMessage', () => {
+    it('puts the message in redux', () => {
+      const { store } = setup();
+
+      const msg = {
+        body: 'hi',
+        author: MY_PARTICIPANT_ID,
+        sentDate: new Date().toISOString(),
+      };
+
+      store.dispatch(
+        actions.chat.receiveMessage({
+          peerId: MY_PARTICIPANT_ID,
+          msg,
+        }),
+      );
+
+      expect(store.getState().participants).toMatchObject({
+        [MY_PARTICIPANT_ID]: {
+          chat: { history: [msg] },
+        },
+      });
+    });
+
+    it('sorts the messages by sent date', () => {
+      const { store } = setup();
+
+      const first = {
+        body: 'first',
+        author: MY_PARTICIPANT_ID,
+        sentDate: '2020-06-15',
+      };
+
+      const second = {
+        body: 'second',
+        author: MY_PARTICIPANT_ID,
+        sentDate: '2020-09-20',
+      };
+
+      // Dispatch out of order.
+      store.dispatch(
+        actions.chat.receiveMessage({
+          peerId: MY_PARTICIPANT_ID,
+          msg: second,
+        }),
+      );
+
+      store.dispatch(
+        actions.chat.receiveMessage({
+          peerId: MY_PARTICIPANT_ID,
+          msg: first,
+        }),
+      );
+
+      expect(store.getState().participants).toMatchObject({
+        [MY_PARTICIPANT_ID]: {
+          chat: { history: [first, second] },
         },
       });
     });
