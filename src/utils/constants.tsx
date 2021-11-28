@@ -44,3 +44,7 @@ export enum Routes {
   /** Actively calling another user. */
   Call = '/call/:peerId',
 }
+
+export enum EventType {
+  ChatMessage = 'chat-message',
+}

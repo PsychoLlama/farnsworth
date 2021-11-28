@@ -40,6 +40,13 @@ export interface State {
       connection: {
         state: ConnectionState;
       };
+      chat: {
+        /**
+         * The entire message history. Note, this may grow to an untenable
+         * level. It should be paginated in the future.
+         */
+        history: Array<ChatMessage>;
+      };
     };
   };
 
@@ -74,6 +81,9 @@ const initialState: State = {
       connection: {
         state: ConnectionState.Connected,
       },
+      chat: {
+        history: [],
+      },
     },
   },
   tracks: {},
@@ -81,5 +91,14 @@ const initialState: State = {
     open: false,
   },
 };
+
+export interface ChatMessage {
+  /** ISO 8601 */
+  sentDate: string;
+  /** Peer ID */
+  author: string;
+  /** Message body */
+  body: string;
+}
 
 export default initialState;

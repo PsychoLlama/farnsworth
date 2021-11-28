@@ -145,6 +145,7 @@ enum MessageClass {
 // helps logging and obserability.
 export interface Message {
   type: string;
+  [key: string]: unknown;
 }
 
 interface Envelope {

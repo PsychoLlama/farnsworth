@@ -13,6 +13,7 @@ export default createReducer(initialState.participants, (handleAction) => [
     state[peerId] = {
       isMe: false,
       trackIds: [],
+      chat: { history: [] },
       connection: {
         state: ConnectionState.Connecting,
       },
@@ -25,6 +26,7 @@ export default createReducer(initialState.participants, (handleAction) => [
       state[peerId] = {
         isMe: false,
         trackIds: [],
+        chat: { history: [] },
         connection: {
           state: ConnectionState.Connecting,
         },
