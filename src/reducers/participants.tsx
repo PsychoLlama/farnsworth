@@ -59,9 +59,9 @@ export default createReducer(initialState.participants, (handleAction) => [
     state[peerId].trackIds = [];
   }),
 
-  handleAction(actions.chat.sendMessage, (state, { recipient, msg }) => {
-    state[recipient].chat.history.push(msg);
-    state[recipient].chat.history.sort(sortMessagesByDate);
+  handleAction(actions.chat.sendMessage, (state, { remoteId, msg }) => {
+    state[remoteId].chat.history.push(msg);
+    state[remoteId].chat.history.sort(sortMessagesByDate);
   }),
 
   handleAction(actions.chat.receiveMessage, (state, { peerId, msg }) => {

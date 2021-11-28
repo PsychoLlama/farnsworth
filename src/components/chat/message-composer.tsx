@@ -1,7 +1,10 @@
 import React from 'react';
+import assert from 'assert';
 import { connect } from 'react-redux';
 import styled from 'styled-components';
 import * as css from '../../utils/css';
+import * as actions from '../../actions';
+import { State as ReduxState } from '../../reducers/initial-state';
 
 /**
  * This supports a cheap implementation of an autosized multiline input
@@ -13,7 +16,9 @@ const INPUT_PADDING = '0.5rem';
 const FONT_SIZE = '14px';
 const LINE_HEIGHT = '1.2';
 
-export class MessageComposer extends React.Component {
+export class MessageComposer extends React.Component<Props, State> {
+  state = { message: '' };
+
   render() {
     return (
       <Container>
@@ -21,6 +26,8 @@ export class MessageComposer extends React.Component {
           data-test="chat-message-composer"
           placeholder="Type a message"
           onInput={this.autosize}
+          onKeyDown={this.maybeSendMessage}
+          value={this.state.message}
           rows={1}
         />
       </Container>
@@ -31,7 +38,43 @@ export class MessageComposer extends React.Component {
     const ref = event.currentTarget;
     ref.style.height = 'auto'; // Handles resizing when lines are deleted.
     ref.style.height = `calc(${ref.scrollHeight}px + ${BORDER_WIDTH} * 2)`;
+
+    this.setState({ message: event.currentTarget.value });
   };
+
+  maybeSendMessage = (event: React.KeyboardEvent<HTMLTextAreaElement>) => {
+    const { localId, remoteId } = this.props;
+    const { message } = this.state;
+
+    if (event.key !== 'Enter' || event.shiftKey === true) {
+      return;
+    }
+
+    // Don't input a newline.
+    event.preventDefault();
+
+    // Clear the input.
+    this.setState({ message: '' });
+
+    this.props.sendMessage({
+      remoteId,
+      msg: {
+        author: localId,
+        sentDate: new Date().toISOString(),
+        body: message,
+      },
+    });
+  };
+}
+
+interface Props {
+  sendMessage: typeof actions.chat.sendMessage;
+  remoteId: string; // The remote peer ID.
+  localId: string; // The local peer ID.
+}
+
+interface State {
+  message: string;
 }
 
 const Container = styled.div`
@@ -48,7 +91,7 @@ const Input = styled.textarea`
   width: 100%;
   box-sizing: border-box;
 
-  font-family: sans-serif;
+  font-family: inherit;
   font-size: ${FONT_SIZE};
   line-height: ${LINE_HEIGHT};
   padding: ${INPUT_PADDING};
@@ -68,4 +111,18 @@ const Input = styled.textarea`
   }
 `;
 
-export default connect()(MessageComposer);
+export function mapStateToProps({ relay, call }: ReduxState) {
+  assert(relay, 'Missing local peer ID.');
+  assert(call, 'We are not in a call.');
+
+  return {
+    localId: relay.localId,
+    remoteId: call.peerId,
+  };
+}
+
+const mapDispatchToProps = {
+  sendMessage: actions.chat.sendMessage,
+};
+
+export default connect(mapStateToProps, mapDispatchToProps)(MessageComposer);

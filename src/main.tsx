@@ -31,6 +31,7 @@ const Viewport = styled.div`
   left: 0;
   right: 0;
   bottom: 0;
+  font-family: sans-serif;
 
   // App-wide theme settings.
   ${exportToCss(OneDark)}

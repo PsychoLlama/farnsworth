@@ -13,8 +13,8 @@ function getConnectionById(peerId: string) {
 /**
  * Sends a chat message to the other participant.
  */
-export function sendMessage(envelope: { recipient: string; msg: ChatMessage }) {
-  const conn = getConnectionById(envelope.recipient);
+export function sendMessage(envelope: { remoteId: string; msg: ChatMessage }) {
+  const conn = getConnectionById(envelope.remoteId);
   conn.messenger.sendEvent({
     type: EventType.ChatMessage,
     payload: envelope.msg,

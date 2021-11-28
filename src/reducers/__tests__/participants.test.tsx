@@ -182,7 +182,7 @@ describe('Participants reducer', () => {
 
       store.dispatch(
         actions.chat.sendMessage({
-          recipient: MY_PARTICIPANT_ID,
+          remoteId: MY_PARTICIPANT_ID,
           msg,
         }),
       );

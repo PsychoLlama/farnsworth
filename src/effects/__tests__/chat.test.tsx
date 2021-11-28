@@ -22,7 +22,7 @@ describe('Chat effects', () => {
         sentDate: new Date().toISOString(),
       };
 
-      effects.chat.sendMessage({ recipient: 'remote-peer-id', msg });
+      effects.chat.sendMessage({ remoteId: 'remote-peer-id', msg });
 
       expect(conn.messenger.sendEvent).toHaveBeenCalled();
     });
