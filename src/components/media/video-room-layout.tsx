@@ -8,6 +8,7 @@ import Controls from './controls';
 import Sidebar from '../sidebar';
 import { MY_PARTICIPANT_ID } from '../../utils/constants';
 import * as css from '../../utils/css';
+import ChatPanel from '../chat-panel';
 
 export class VideoRoomLayout extends React.Component<Props> {
   render() {
@@ -17,19 +18,22 @@ export class VideoRoomLayout extends React.Component<Props> {
     return (
       <FullScreen>
         <Column>
-          <VideoLayout>
-            {otherPeer ? (
-              <>
-                <Participant id={otherPeer} />
-                <FloatingVideo>
-                  <Participant id={MY_PARTICIPANT_ID} />
-                </FloatingVideo>
-              </>
-            ) : (
-              <Participant id={MY_PARTICIPANT_ID} />
-            )}
-            <Sidebar />
-          </VideoLayout>
+          <Row>
+            <VideoLayout>
+              {otherPeer ? (
+                <>
+                  <Participant id={otherPeer} />
+                  <FloatingVideo>
+                    <Participant id={MY_PARTICIPANT_ID} />
+                  </FloatingVideo>
+                </>
+              ) : (
+                <Participant id={MY_PARTICIPANT_ID} />
+              )}
+              <Sidebar />
+            </VideoLayout>
+            <ChatPanel />
+          </Row>
           <Controls />
         </Column>
       </FullScreen>
@@ -53,6 +57,16 @@ const Column = styled.div`
   flex-grow: 1;
   overflow: hidden;
   flex-direction: column;
+`;
+
+const Row = styled.div`
+  display: flex;
+  flex-grow: 1;
+  overflow: hidden;
+  position: relative;
+
+  // Used for <ChatPanel> stack order.
+  flex-direction: row-reverse;
 `;
 
 const VideoLayout = styled.div`

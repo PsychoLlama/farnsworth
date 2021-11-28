@@ -64,6 +64,11 @@ export interface State {
   phonebook: {
     open: boolean;
   };
+
+  // Manages the chat panel.
+  chat: {
+    open: boolean;
+  };
 }
 
 const initialState: State = {
@@ -88,6 +93,9 @@ const initialState: State = {
   },
   tracks: {},
   phonebook: {
+    open: false,
+  },
+  chat: {
     open: false,
   },
 };

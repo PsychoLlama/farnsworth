@@ -15,3 +15,8 @@ export function color(id: keyof Theme): string {
 
 // Use a consistent border radius.
 export const radius = '3px';
+
+// Defines breakpoints for device classes.
+export const breakpoint = {
+  mobile: '576px',
+};

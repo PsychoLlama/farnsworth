@@ -1,6 +1,13 @@
 import React from 'react';
 import styled from 'styled-components';
-import { FiMic, FiVideo, FiUsers, FiMicOff, FiVideoOff } from 'react-icons/fi';
+import {
+  FiMic,
+  FiVideo,
+  FiUsers,
+  FiMicOff,
+  FiVideoOff,
+  FiMessageSquare,
+} from 'react-icons/fi';
 import { connect } from 'react-redux';
 import * as css from '../../utils/css';
 import * as actions from '../../actions';
@@ -20,7 +27,11 @@ export class Controls extends React.Component<Props> {
 
     return (
       <Container>
-        <ControlGroup data-left />
+        <ControlGroup data-left>
+          <Control data-test="toggle-chat" onClick={this.props.toggleChat}>
+            <FiMessageSquare />
+          </Control>
+        </ControlGroup>
 
         <ControlGroup>
           <Control
@@ -72,6 +83,7 @@ export class Controls extends React.Component<Props> {
 
 interface Props {
   togglePhonebook: typeof actions.phonebook.toggle;
+  toggleChat: typeof actions.chat.toggle;
   pauseTrack: typeof actions.tracks.pause;
   resumeTrack: typeof actions.tracks.resume;
   micTrackId: null | string;
@@ -123,6 +135,7 @@ const Control = styled(Button.Base)`
 
 const mapDispatchToProps = {
   togglePhonebook: actions.phonebook.toggle,
+  toggleChat: actions.chat.toggle,
   pauseTrack: actions.tracks.pause,
   resumeTrack: actions.tracks.resume,
 };

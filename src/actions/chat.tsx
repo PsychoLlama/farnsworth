@@ -11,3 +11,7 @@ export const receiveMessage = createAction<{
   peerId: string;
   msg: ChatMessage;
 }>('chat/receive-message');
+
+export const open = createAction('chat/open');
+export const close = createAction('chat/close');
+export const toggle = createAction('chat/toggle');
