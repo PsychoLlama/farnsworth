@@ -3,6 +3,7 @@ import styled from 'styled-components';
 import { connect } from 'react-redux';
 import { State } from '../reducers/initial-state';
 import Phonebook from './phonebook';
+import * as css from '../utils/css';
 
 export class Sidebar extends React.Component<Props> {
   views = {
@@ -18,9 +19,9 @@ export class Sidebar extends React.Component<Props> {
     const Child = this.views[this.props.view];
 
     return (
-      <Container>
+      <Overlay>
         <Child />
-      </Container>
+      </Overlay>
     );
   }
 }
@@ -29,12 +30,16 @@ interface Props {
   view: View;
 }
 
-const Container = styled.aside.attrs({ role: 'complementary' })`
+const Overlay = styled.div.attrs({ role: 'dialog' })`
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
   flex-grow: 1;
   display: flex;
   flex-direction: column;
-  max-width: 20rem;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+  background-color: ${css.color('overlay')};
 `;
 
 export enum View {

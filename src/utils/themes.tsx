@@ -1,6 +1,7 @@
 export interface Theme {
   background: string;
   foreground: string;
+  overlay: string;
   text: string;
   black: string;
   primary: string;
@@ -15,6 +16,7 @@ export interface Theme {
 export const OneDark: Theme = {
   background: '#282C34',
   foreground: '#ABB2BF',
+  overlay: '#282C34CC',
   text: '#ABB2BF',
   black: '#282C34',
   primary: '#61AFEF',
@@ -29,6 +31,7 @@ export const OneDark: Theme = {
 export const OneLight: Theme = {
   background: '#fafafa',
   foreground: '#383a42',
+  overlay: '#FAFAFACC',
   text: '#383a42',
   black: '#696c77',
   tertiary: '#50a14f',
@@ -46,6 +49,7 @@ export function exportToCss(theme: Theme) {
     --color-background: ${theme.background};
     --color-foreground: ${theme.foreground};
     --color-text: ${theme.text};
+    --color-overlay: ${theme.overlay};
 
     --color-black: ${theme.black};
     --color-white: ${theme.white};

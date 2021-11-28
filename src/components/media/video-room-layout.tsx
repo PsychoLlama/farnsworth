@@ -28,10 +28,10 @@ export class VideoRoomLayout extends React.Component<Props> {
             ) : (
               <Participant id={MY_PARTICIPANT_ID} />
             )}
+            <Sidebar />
           </VideoLayout>
           <Controls />
         </Column>
-        <Sidebar />
       </FullScreen>
     );
   }

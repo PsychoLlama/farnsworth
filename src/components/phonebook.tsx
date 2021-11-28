@@ -66,7 +66,7 @@ const Container = styled.div`
   display: flex;
   flex-grow: 1;
   flex-direction: column;
-  justify-content: space-between;
+  align-items: flex-start;
   padding: 1rem;
 `;
 

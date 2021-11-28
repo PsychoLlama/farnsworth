@@ -1,3 +1,4 @@
+import { FiCheck } from 'react-icons/fi';
 import renderer from '../../testing/renderer';
 import { InviteCode, mapStateToProps } from '../invite-code';
 import createStore from '../../utils/create-store';
@@ -20,26 +21,45 @@ describe('InviteCode', () => {
     (navigator as any).clipboard.writeText.mockClear();
   });
 
+  it('shows the invite URL', () => {
+    const { findByTestId, props } = setup();
+
+    const { value } = findByTestId('invite-code').props();
+
+    expect(value).toBe(`${location.origin}/#/call/${props.localId}`);
+  });
+
   it('copies the code to the clipboard', async () => {
     const { findByTestId, output, props } = setup();
-    const { onClick } = findByTestId('copy-code').props();
+    const { onClick } = findByTestId('copy-invite-code').props();
 
     await onClick();
     output.update();
 
-    expect(findByTestId('copy-code').text()).toBe('Copied!');
-    expect(navigator.clipboard.writeText).toHaveBeenCalledWith(props.localId);
+    expect(findByTestId('icon-success').exists()).toBe(true);
+    expect(navigator.clipboard.writeText).toHaveBeenCalledWith(
+      `${location.origin}/#/call/${props.localId}`,
+    );
+  });
+
+  it('selects all text when the input is focused', () => {
+    const { findByTestId } = setup();
+
+    const ref = { select: jest.fn() };
+    findByTestId('invite-code').simulate('focus', { currentTarget: ref });
+
+    expect(ref.select).toHaveBeenCalled();
   });
 
   it('dismisses the copied notice after a short time', async () => {
     const { findByTestId, output } = setup();
-    const { onClick } = findByTestId('copy-code').props();
+    const { onClick } = findByTestId('copy-invite-code').props();
 
     await onClick();
     output.update();
     jest.runAllTimers();
 
-    expect(findByTestId('copy-code').text()).not.toBe('Copied!');
+    expect(findByTestId('icon-success').exists()).toBe(false);
   });
 
   describe('mapStateToProps', () => {
