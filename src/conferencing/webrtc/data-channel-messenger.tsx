@@ -29,6 +29,7 @@ export default class DataChannelMessenger {
   private remoteId: string;
   private appEvents: AppEvents;
   private messageQueue: Array<ArrayBuffer> = [];
+  private closedLocally = false;
 
   constructor({ pc, remoteId }: Config) {
     this.remoteId = remoteId;
@@ -45,6 +46,15 @@ export default class DataChannelMessenger {
     this.channel.onopen = this.signalConnectionOpen;
     this.channel.onclose = this.signalConnectionClosed;
     this.appEvents = new AppEvents({ remoteId });
+  }
+
+  /**
+   * Permanently closes the data channel. Does not issue a 'close' event
+   * because the caller is already aware.
+   */
+  close() {
+    this.closedLocally = true;
+    this.channel.close();
   }
 
   /** Send an arbitrary event object to the other client. */
@@ -141,6 +151,8 @@ export default class DataChannelMessenger {
   };
 
   signalConnectionClosed = async () => {
+    if (this.closedLocally) return;
+
     const { default: sdk } = await import('../../utils/sdk');
     sdk.connections.close(this.remoteId);
   };

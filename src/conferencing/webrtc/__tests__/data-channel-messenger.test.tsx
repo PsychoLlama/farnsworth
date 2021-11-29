@@ -5,6 +5,10 @@ import sdk from '../../../utils/sdk';
 jest.mock('../../../utils/sdk');
 
 describe('DataChannelMessenger', () => {
+  beforeEach(() => {
+    jest.clearAllMocks();
+  });
+
   function setup() {
     const remoteId = 'mock-remote-id';
 
@@ -88,5 +92,14 @@ describe('DataChannelMessenger', () => {
     await channel.onopen(new Event('open'));
 
     expect(channel.send).toHaveBeenCalled();
+  });
+
+  it('ignores close events generated locally', async () => {
+    const { channel, messenger } = setup();
+
+    messenger.close();
+    await channel.onclose(new Event('close'));
+
+    expect(sdk.connections.close).not.toHaveBeenCalled();
   });
 });

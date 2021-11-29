@@ -14,6 +14,7 @@ import { MockRTCPeerConnection } from '../../../testing/mocks/webrtc';
 import sdk from '../../../utils/sdk';
 
 jest.mock('../../../utils/sdk');
+jest.mock('../data-channel-messenger');
 
 describe('ConnectionManager', () => {
   function setup(override?: Partial<Config>) {
@@ -203,6 +204,7 @@ describe('ConnectionManager', () => {
     mgr.close();
 
     expect(pc.close).toHaveBeenCalled();
+    expect(mgr.messenger.close).toHaveBeenCalled();
   });
 
   describe('events', () => {

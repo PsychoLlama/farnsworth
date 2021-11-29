@@ -69,6 +69,7 @@ export default class ConnectionManager {
    */
   close() {
     logger.debug('Closing peer connection');
+    this.messenger.close();
     this.pc.close();
   }
 
