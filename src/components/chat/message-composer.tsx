@@ -1,7 +1,7 @@
 import React from 'react';
-import assert from 'assert';
 import { connect } from 'react-redux';
 import styled from 'styled-components';
+import assert from '../../utils/assert';
 import * as css from '../../utils/css';
 import * as actions from '../../actions';
 import { State as ReduxState } from '../../reducers/initial-state';

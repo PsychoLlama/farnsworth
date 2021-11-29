@@ -1,4 +1,4 @@
-import assert from 'assert';
+import assert from '../../utils/assert';
 import store from '../redux-store';
 import * as actions from '../../actions';
 

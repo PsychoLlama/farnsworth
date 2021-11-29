@@ -1,5 +1,5 @@
-import assert from 'assert';
 import { multiaddr } from 'multiaddr';
+import assert from '../utils/assert';
 import context from '../conferencing/global-context';
 import Libp2pMessenger from '../conferencing/libp2p-messenger';
 import ConnectionManager from '../conferencing/webrtc';

@@ -1,4 +1,4 @@
-import assert from 'assert';
+import assert from '../utils/assert';
 import { ChatMessage } from '../reducers/initial-state';
 import context from '../conferencing/global-context';
 import { EventType } from '../utils/constants';

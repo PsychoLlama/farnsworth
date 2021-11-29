@@ -1,7 +1,7 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import styled from 'styled-components';
-import assert from 'assert';
+import assert from '../../utils/assert';
 import { State, ChatMessage } from '../../reducers/initial-state';
 import * as css from '../../utils/css';
 

@@ -1,4 +1,4 @@
-import assert from 'assert';
+import assert from '../utils/assert';
 import { State } from '../reducers/initial-state';
 import context from '../conferencing/global-context';
 import { MY_PARTICIPANT_ID, TrackKind } from '../utils/constants';

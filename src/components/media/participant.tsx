@@ -1,6 +1,6 @@
 import React from 'react';
 import { connect } from 'react-redux';
-import assert from 'assert';
+import assert from '../../utils/assert';
 import { State } from '../../reducers/initial-state';
 import { TrackKind } from '../../utils/constants';
 import MediaView from './media-view';
