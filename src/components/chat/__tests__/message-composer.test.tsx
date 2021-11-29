@@ -32,7 +32,6 @@ describe('MessageComposer', () => {
     const event = {
       key: 'Enter',
       shiftKey: false,
-      currentTarget: { value: 'hi' },
       preventDefault: jest.fn(),
     };
 
@@ -57,10 +56,25 @@ describe('MessageComposer', () => {
     const event = {
       key: 'Enter',
       shiftKey: true,
-      currentTarget: { value: 'content' },
       preventDefault: jest.fn(),
     };
 
+    findByTestId('chat-message-composer').simulate('keyDown', event);
+
+    expect(props.sendMessage).not.toHaveBeenCalled();
+  });
+
+  it('does not send messages with nothing but whitespace', () => {
+    const { findByTestId, props } = setup();
+
+    const event = {
+      key: 'Enter',
+      shiftKey: false,
+      preventDefault: jest.fn(),
+    };
+
+    const input = { currentTarget: { style: {}, value: '\n\t ' } };
+    findByTestId('chat-message-composer').simulate('input', input);
     findByTestId('chat-message-composer').simulate('keyDown', event);
 
     expect(props.sendMessage).not.toHaveBeenCalled();

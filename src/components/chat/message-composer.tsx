@@ -50,6 +50,11 @@ export class MessageComposer extends React.Component<Props, State> {
       return;
     }
 
+    // The message is pure whitespace.
+    if (/^\s*$/.test(message)) {
+      return;
+    }
+
     // Don't input a newline.
     event.preventDefault();
 
