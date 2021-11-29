@@ -76,7 +76,7 @@ export default class DataChannelMessenger {
     const envelope = this.parseIntoEnvelope(data);
     if (!envelope) return;
 
-    logger.debug(`Received message "${envelope.data.type}":`, envelope.data);
+    logger.debug(`Received message (${envelope.data.type}):`, envelope.data);
     await this.appEvents.handleEvent(envelope.data as AppEvent);
   };
 

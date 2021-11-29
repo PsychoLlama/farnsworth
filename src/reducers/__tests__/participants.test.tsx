@@ -205,12 +205,7 @@ describe('Participants reducer', () => {
         sentDate: new Date().toISOString(),
       };
 
-      store.dispatch(
-        actions.chat.receiveMessage({
-          peerId: MY_PARTICIPANT_ID,
-          msg,
-        }),
-      );
+      store.dispatch(actions.chat.receiveMessage(msg));
 
       expect(store.getState().participants).toMatchObject({
         [MY_PARTICIPANT_ID]: {
@@ -235,19 +230,8 @@ describe('Participants reducer', () => {
       };
 
       // Dispatch out of order.
-      store.dispatch(
-        actions.chat.receiveMessage({
-          peerId: MY_PARTICIPANT_ID,
-          msg: second,
-        }),
-      );
-
-      store.dispatch(
-        actions.chat.receiveMessage({
-          peerId: MY_PARTICIPANT_ID,
-          msg: first,
-        }),
-      );
+      store.dispatch(actions.chat.receiveMessage(second));
+      store.dispatch(actions.chat.receiveMessage(first));
 
       expect(store.getState().participants).toMatchObject({
         [MY_PARTICIPANT_ID]: {

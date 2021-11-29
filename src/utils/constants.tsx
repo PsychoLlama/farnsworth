@@ -46,5 +46,12 @@ export enum Routes {
 }
 
 export enum EventType {
+  /** Pause a media track. */
+  Pause = 'pause',
+
+  /** Resume a media track. */
+  Resume = 'resume',
+
+  /** Send a chat message. */
   ChatMessage = 'chat-message',
 }

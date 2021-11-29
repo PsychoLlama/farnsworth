@@ -1,24 +1,32 @@
-import { TrackKind } from '../utils/constants';
+import { TrackKind, EventType } from '../utils/constants';
 import { Message } from './webrtc/data-channel-messenger';
+import { ChatMessage } from '../reducers/initial-state';
 
 export default class AppEvents {
   async handleEvent(event: AppEvent) {
     const { default: sdk } = await import('../utils/sdk');
 
     switch (event.type) {
-      case 'pause':
+      case EventType.Pause:
         return sdk.tracks.markPaused(event.payload.kind);
-      case 'resume':
+      case EventType.Resume:
         return sdk.tracks.markResumed(event.payload.kind);
+      case EventType.ChatMessage:
+        return sdk.chat.receiveMessage(event.payload);
     }
   }
 }
 
 interface TrackToggleEvent extends Message {
-  type: 'pause' | 'resume';
+  type: EventType.Pause | EventType.Resume;
   payload: {
     kind: TrackKind;
   };
 }
 
-export type AppEvent = TrackToggleEvent;
+interface ChatMessageEvent extends Message {
+  type: EventType.ChatMessage;
+  payload: ChatMessage;
+}
+
+export type AppEvent = TrackToggleEvent | ChatMessageEvent;
