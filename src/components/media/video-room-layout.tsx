@@ -1,7 +1,7 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import styled from 'styled-components';
-import { createSelector } from 'reselect';
+import selector from '../../utils/selector';
 import { State } from '../../reducers/initial-state';
 import Participant from './participant';
 import Controls from './controls';
@@ -85,14 +85,11 @@ const FloatingVideo = styled.div`
   border: 1px solid ${css.color('background')};
 `;
 
-const getParticipantIds = createSelector(
-  (state: State) => state.participants,
-  Object.keys,
-);
+const getParticipantIds = selector(Object.keys);
 
 export function mapStateToProps(state: State) {
   return {
-    participantIds: getParticipantIds(state),
+    participantIds: getParticipantIds(state.participants),
   };
 }
 
