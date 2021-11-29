@@ -3,6 +3,12 @@ import { Message } from './webrtc/data-channel-messenger';
 import { ChatMessage } from '../reducers/initial-state';
 
 export default class AppEvents {
+  private remoteId: string;
+
+  constructor(config: { remoteId: string }) {
+    this.remoteId = config.remoteId;
+  }
+
   async handleEvent(event: AppEvent) {
     const { default: sdk } = await import('../utils/sdk');
 
@@ -12,7 +18,11 @@ export default class AppEvents {
       case EventType.Resume:
         return sdk.tracks.markResumed(event.payload.kind);
       case EventType.ChatMessage:
-        return sdk.chat.receiveMessage(event.payload);
+        return sdk.chat.receiveMessage({
+          ...event.payload,
+          // Prevent senders from forging author IDs.
+          author: this.remoteId,
+        });
     }
   }
 }

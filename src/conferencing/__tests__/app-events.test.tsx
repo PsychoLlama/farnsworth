@@ -6,14 +6,14 @@ jest.mock('../../utils/sdk');
 
 describe('AppEvents', () => {
   it('ignores unknown events', async () => {
-    const app = new AppEvents();
+    const app = new AppEvents({ remoteId: 'remote-id' });
     const promise = app.handleEvent({ type: 'unknown' } as any);
 
     await expect(promise).resolves.not.toThrow();
   });
 
   it('dispatches pause & resume events', async () => {
-    const app = new AppEvents();
+    const app = new AppEvents({ remoteId: 'remote-id' });
 
     await app.handleEvent({
       type: EventType.Pause,
@@ -30,10 +30,10 @@ describe('AppEvents', () => {
   });
 
   it('adds remote chat messages', async () => {
-    const app = new AppEvents();
+    const app = new AppEvents({ remoteId: 'remote-id' });
 
     const msg = {
-      author: 'peer-id',
+      author: 'attempt-to-forge-author',
       sentDate: new Date().toISOString(),
       body: 'Did you see that *ludicrus* display last night?',
     };
@@ -43,6 +43,9 @@ describe('AppEvents', () => {
       payload: msg,
     });
 
-    expect(sdk.chat.receiveMessage).toHaveBeenCalledWith(msg);
+    expect(sdk.chat.receiveMessage).toHaveBeenCalledWith({
+      ...msg,
+      author: 'remote-id',
+    });
   });
 });

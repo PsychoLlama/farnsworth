@@ -43,7 +43,7 @@ export default class DataChannelMessenger {
 
     this.channel.onopen = this.signalConnectionOpen;
     this.channel.onclose = this.signalConnectionClosed;
-    this.appEvents = new AppEvents();
+    this.appEvents = new AppEvents({ remoteId });
   }
 
   /** Send an arbitrary event object to the other client. */
