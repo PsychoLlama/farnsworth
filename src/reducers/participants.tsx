@@ -35,6 +35,13 @@ export default createReducer(initialState.participants, (handleAction) => [
   handleAction(
     actions.connections.accept.actionFactory,
     (state, { peerId }) => {
+      // Don't wipe out state on reconnection, just update the connection
+      // state.
+      if (state[peerId]) {
+        state[peerId].connection.state = ConnectionState.Connecting;
+        return;
+      }
+
       state[peerId] = {
         isMe: false,
         trackIds: [],

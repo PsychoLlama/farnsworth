@@ -98,6 +98,34 @@ describe('Participants reducer', () => {
         },
       });
     });
+
+    it('does not wipe out state when reconnecting', async () => {
+      const { store } = setup();
+
+      const peerId = `Qm${Array(44).fill('Y').join('')}`;
+      await store.dispatch(actions.connections.accept(peerId));
+      store.dispatch(actions.connections.markDisconnected(peerId));
+      store.dispatch(
+        actions.chat.receiveMessage({
+          author: peerId,
+          sentDate: 'the-future',
+          body: 'Marty!',
+        }),
+      );
+
+      await store.dispatch(actions.connections.accept(peerId));
+
+      expect(store.getState().participants).toMatchObject({
+        [peerId]: {
+          connection: { state: ConnectionState.Connecting },
+          chat: {
+            history: expect.arrayContaining([
+              expect.objectContaining({ author: peerId }),
+            ]),
+          },
+        },
+      });
+    });
   });
 
   describe('tracks.add()', () => {
