@@ -7,6 +7,13 @@ import initNetworkingModule from '../conferencing/libp2p';
 
 export const SIGNALING_PROTOCOL = '/webrtc/signal';
 
+export function getConnectionById(peerId: string) {
+  const conn = context.connections.get(peerId);
+  assert(conn, `No such connection (id="${peerId}")`);
+
+  return conn;
+}
+
 export async function listen(addr: string) {
   const [p2p, { default: sdk }] = await Promise.all([
     initNetworkingModule(addr),
@@ -50,4 +57,12 @@ export async function dial(addr: string) {
   return {
     peerId: mgr.remoteId,
   };
+}
+
+// Permanently close a peer connection.
+export function close(peerId: string) {
+  const conn = getConnectionById(peerId);
+  conn.close();
+
+  return peerId;
 }

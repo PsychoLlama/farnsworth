@@ -57,7 +57,7 @@ export default createReducer(initialState, (handleAction) => [
     state.participants[peerId].connection.state = ConnectionState.Connected;
   }),
 
-  handleAction(actions.connections.markDisconnected, (state, peerId) => {
+  handleAction(actions.connections.close, (state, peerId) => {
     state.participants[peerId].connection.state = ConnectionState.Disconnected;
   }),
 

@@ -51,7 +51,7 @@ export default createReducer(initialState, (handleAction) => [
     }
   }),
 
-  handleAction(actions.connections.markDisconnected, (state, peerId) => {
+  handleAction(actions.connections.close, (state, peerId) => {
     state.participants[peerId].trackIds.splice(0).forEach((trackId) => {
       delete state.tracks[trackId];
     });

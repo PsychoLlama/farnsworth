@@ -2,7 +2,10 @@ import createStore from '../../utils/create-store';
 import * as actions from '../../actions';
 import * as chatEffects from '../../effects/chat';
 import { ConnectionState, MY_PARTICIPANT_ID } from '../../utils/constants';
+import ConnectionManager from '../../conferencing/webrtc';
+import context from '../../conferencing/global-context';
 
+jest.mock('../../conferencing/webrtc');
 jest.mock('../../effects/chat');
 jest.mock('../../effects/tracks', () => {
   const actual = jest.requireActual('../../effects/tracks');
@@ -26,6 +29,14 @@ describe('Participants reducer', () => {
 
   beforeEach(() => {
     mockedChatEffects.sendMessage.mockImplementation((e) => e);
+    (ConnectionManager as any).mockImplementation(function (ctx: any) {
+      this.remoteId = ctx.remoteId;
+    });
+
+    const mgr = new ConnectionManager({} as any);
+    mgr.remoteId = 'remote-peer';
+    context.connections.clear();
+    context.connections.set('remote-peer', mgr);
   });
 
   describe('dial()', () => {
@@ -67,25 +78,24 @@ describe('Participants reducer', () => {
     it('does not wipe out state when reconnecting', async () => {
       const { store } = setup();
 
-      const peerId = `Qm${Array(44).fill('Y').join('')}`;
-      await store.dispatch(actions.connections.accept(peerId));
-      store.dispatch(actions.connections.markDisconnected(peerId));
+      await store.dispatch(actions.connections.accept('remote-peer'));
+      store.dispatch(actions.connections.close('remote-peer'));
       store.dispatch(
         actions.chat.receiveMessage({
-          author: peerId,
+          author: 'remote-peer',
           sentDate: 'the-future',
           body: 'Marty!',
         }),
       );
 
-      await store.dispatch(actions.connections.accept(peerId));
+      await store.dispatch(actions.connections.accept('remote-peer'));
 
       expect(store.getState().participants).toMatchObject({
-        [peerId]: {
+        'remote-peer': {
           connection: { state: ConnectionState.Connecting },
           chat: {
             history: expect.arrayContaining([
-              expect.objectContaining({ author: peerId }),
+              expect.objectContaining({ author: 'remote-peer' }),
             ]),
           },
         },
@@ -115,14 +125,15 @@ describe('Participants reducer', () => {
     });
   });
 
-  describe('connections.markDisconnected()', () => {
-    it('updates the connection state', () => {
+  describe('connections.close()', () => {
+    it('updates the connection state', async () => {
       const { store } = setup();
 
-      store.dispatch(actions.connections.markDisconnected(MY_PARTICIPANT_ID));
+      await store.dispatch(actions.connections.accept('remote-peer'));
+      store.dispatch(actions.connections.close('remote-peer'));
 
       expect(store.getState().participants).toMatchObject({
-        [MY_PARTICIPANT_ID]: {
+        'remote-peer': {
           connection: { state: ConnectionState.Disconnected },
         },
       });
@@ -130,14 +141,15 @@ describe('Participants reducer', () => {
   });
 
   describe('connections.markConnected()', () => {
-    it('updates the connection state', () => {
+    it('updates the connection state', async () => {
       const { store } = setup();
 
-      store.dispatch(actions.connections.markDisconnected(MY_PARTICIPANT_ID));
-      store.dispatch(actions.connections.markConnected(MY_PARTICIPANT_ID));
+      await store.dispatch(actions.connections.accept('remote-peer'));
+      store.dispatch(actions.connections.close('remote-peer'));
+      store.dispatch(actions.connections.markConnected('remote-peer'));
 
       expect(store.getState().participants).toMatchObject({
-        [MY_PARTICIPANT_ID]: {
+        'remote-peer': {
           connection: { state: ConnectionState.Connected },
         },
       });

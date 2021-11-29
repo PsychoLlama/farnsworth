@@ -142,7 +142,7 @@ export default class DataChannelMessenger {
 
   signalConnectionClosed = async () => {
     const { default: sdk } = await import('../../utils/sdk');
-    sdk.connections.markDisconnected(this.remoteId);
+    sdk.connections.close(this.remoteId);
   };
 }
 

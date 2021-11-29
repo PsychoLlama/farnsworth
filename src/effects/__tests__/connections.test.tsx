@@ -66,4 +66,17 @@ describe('Connection effects', () => {
       expect(result).toEqual({ peerId });
     });
   });
+
+  describe('close', () => {
+    it('closes the peer connection', async () => {
+      await connections.listen('/server');
+      const { peerId } = await connections.dial('/ip4/0.0.0.0/');
+      const [conn] = context.connections.values();
+      jest.spyOn(conn, 'close');
+
+      expect(conn.close).not.toHaveBeenCalled();
+      connections.close(peerId);
+      expect(conn.close).toHaveBeenCalled();
+    });
+  });
 });

@@ -74,7 +74,7 @@ describe('DataChannelMessenger', () => {
 
     await channel.onclose(new Event('close'));
 
-    expect(sdk.connections.markDisconnected).toHaveBeenCalledWith(remoteId);
+    expect(sdk.connections.close).toHaveBeenCalledWith(remoteId);
   });
 
   it('buffers messages until the channel is open', async () => {

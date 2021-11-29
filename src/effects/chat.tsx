@@ -1,14 +1,6 @@
-import assert from '../utils/assert';
 import { ChatMessage } from '../reducers/initial-state';
-import context from '../conferencing/global-context';
 import { EventType } from '../utils/constants';
-
-function getConnectionById(peerId: string) {
-  const conn = context.connections.get(peerId);
-  assert(conn, `No such connection (id="${peerId}")`);
-
-  return conn;
-}
+import { getConnectionById } from './connections';
 
 /**
  * Sends a chat message to the other participant.

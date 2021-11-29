@@ -1,11 +1,15 @@
 import createStore from '../../utils/create-store';
 import * as actions from '../../actions';
+import * as connEffects from '../../effects/connections';
 import * as deviceEffects from '../../effects/devices';
 import { TrackKind, MY_PARTICIPANT_ID } from '../../utils/constants';
 
+jest.mock('../../effects/connections');
 jest.mock('../../effects/devices');
 
-const mockedEffects: jest.Mocked<typeof deviceEffects> = deviceEffects as any;
+const mockedConnEffects: jest.Mocked<typeof connEffects> = connEffects as any;
+const mockedDeviceEffects: jest.Mocked<typeof deviceEffects> =
+  deviceEffects as any;
 
 describe('Tracks reducer', () => {
   function setup() {
@@ -17,7 +21,8 @@ describe('Tracks reducer', () => {
   }
 
   beforeEach(() => {
-    mockedEffects.requestMediaDevices.mockResolvedValue([
+    mockedConnEffects.close.mockImplementation((id) => id);
+    mockedDeviceEffects.requestMediaDevices.mockResolvedValue([
       {
         kind: TrackKind.Audio,
         trackId: 'first',
@@ -194,7 +199,7 @@ describe('Tracks reducer', () => {
     });
   });
 
-  describe('connections.markDisconnected()', () => {
+  describe('connections.close()', () => {
     it('deletes the corresponding tracks', () => {
       const { store } = setup();
 
@@ -207,7 +212,7 @@ describe('Tracks reducer', () => {
       );
 
       // This never happens in practice, I'm just lazy.
-      store.dispatch(actions.connections.markDisconnected(MY_PARTICIPANT_ID));
+      store.dispatch(actions.connections.close(MY_PARTICIPANT_ID));
 
       expect(store.getState().tracks).toEqual({});
       expect(store.getState().participants).toMatchObject({
