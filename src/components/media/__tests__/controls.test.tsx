@@ -12,6 +12,7 @@ describe('Controls', () => {
       toggleChat: jest.fn(),
       pauseTrack: jest.fn(),
       resumeTrack: jest.fn(),
+      callActive: true,
       micTrackId: 'a-id',
       camTrackId: 'v-id',
       micEnabled: true,
@@ -86,6 +87,12 @@ describe('Controls', () => {
     expect(findByTestId('toggle-audio').prop('disabled')).toBe(true);
   });
 
+  it('hides the chat toggle if no call is in progress', () => {
+    const { findByTestId } = setup({ callActive: false });
+
+    expect(findByTestId('toggle-chat').exists()).toBe(false);
+  });
+
   describe('mapStateToProps', () => {
     function setup(patchState: (state: State) => void) {
       const state = produce(initialState, patchState);
@@ -111,6 +118,7 @@ describe('Controls', () => {
 
       expect(props).toMatchInlineSnapshot(`
         Object {
+          "callActive": false,
           "camEnabled": true,
           "camTrackId": "v-id",
           "micEnabled": true,

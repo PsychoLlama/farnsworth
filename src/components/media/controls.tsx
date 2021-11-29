@@ -22,15 +22,23 @@ export class Controls extends React.Component<Props> {
   };
 
   render() {
-    const { togglePhonebook, micEnabled, camEnabled, micTrackId, camTrackId } =
-      this.props;
+    const {
+      togglePhonebook,
+      micEnabled,
+      camEnabled,
+      micTrackId,
+      camTrackId,
+      callActive,
+    } = this.props;
 
     return (
       <Container>
         <ControlGroup data-left>
-          <Control data-test="toggle-chat" onClick={this.props.toggleChat}>
-            <FiMessageSquare />
-          </Control>
+          {callActive && (
+            <Control data-test="toggle-chat" onClick={this.props.toggleChat}>
+              <FiMessageSquare />
+            </Control>
+          )}
         </ControlGroup>
 
         <ControlGroup>
@@ -86,6 +94,7 @@ interface Props {
   toggleChat: typeof actions.chat.toggle;
   pauseTrack: typeof actions.tracks.pause;
   resumeTrack: typeof actions.tracks.resume;
+  callActive: boolean;
   micTrackId: null | string;
   camTrackId: null | string;
   micEnabled: boolean;
@@ -155,6 +164,7 @@ export function mapStateToProps(state: State) {
   const micEnabled = state.tracks[micTrackId]?.enabled ?? false;
 
   return {
+    callActive: state.call !== null,
     micTrackId,
     micEnabled,
     camTrackId,
