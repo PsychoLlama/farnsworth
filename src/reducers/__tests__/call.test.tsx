@@ -34,4 +34,14 @@ describe('Call reducer', () => {
       });
     });
   });
+
+  describe('leave', () => {
+    it('leaves the call', async () => {
+      const store = createStore();
+      await store.dispatch(actions.connections.accept('mock-peer-id'));
+      store.dispatch(actions.call.leave('mock-peer-id'));
+
+      expect(store.getState().call).toBeNull();
+    });
+  });
 });

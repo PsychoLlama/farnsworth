@@ -1,4 +1,3 @@
 import { createAction } from 'retreon';
-import * as effects from '../effects';
 
-export const leave = createAction('call/leave', effects.call.leave);
+export const leave = createAction<string>('call/leave');

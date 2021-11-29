@@ -19,6 +19,7 @@ const logger = new Logger('gc');
  */
 export function run(state: State) {
   discardUnusedTracks(state);
+  discardUnusedConnections(state);
 }
 
 /** Terminate tracks no longer referenced by `state.tracks`. */
@@ -31,5 +32,18 @@ export function discardUnusedTracks(state: State) {
       logger.debug('Deleting dereferenced track:', track.id);
       context.tracks.delete(track.id);
       track.stop();
+    });
+}
+
+/** Destroy connections no longer referenced by `state.participants`. */
+export function discardUnusedConnections(state: State) {
+  Array.from(context.connections.entries())
+    .filter(function isOrphanConnection([peerId]) {
+      return !state.participants.hasOwnProperty(peerId);
+    })
+    .forEach(function discardConnection([peerId, conn]) {
+      logger.debug('Deleting dereferenced connection:', peerId);
+      context.connections.delete(peerId);
+      conn.close();
     });
 }

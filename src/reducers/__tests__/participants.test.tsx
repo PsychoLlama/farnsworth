@@ -39,7 +39,7 @@ describe('Participants reducer', () => {
     context.connections.set('remote-peer', mgr);
   });
 
-  describe('dial()', () => {
+  describe('connections.dial()', () => {
     it('adds a new participant', async () => {
       const { store } = setup();
 
@@ -59,7 +59,7 @@ describe('Participants reducer', () => {
     });
   });
 
-  describe('accept()', () => {
+  describe('connections.accept()', () => {
     it('adds a new participant', async () => {
       const { store } = setup();
 
@@ -156,7 +156,7 @@ describe('Participants reducer', () => {
     });
   });
 
-  describe('chat.sendMessage', () => {
+  describe('chat.sendMessage()', () => {
     it('puts the message in redux', () => {
       const { store } = setup();
 
@@ -181,7 +181,7 @@ describe('Participants reducer', () => {
     });
   });
 
-  describe('chat.receiveMessage', () => {
+  describe('chat.receiveMessage()', () => {
     it('puts the message in redux', () => {
       const { store } = setup();
 
@@ -224,6 +224,17 @@ describe('Participants reducer', () => {
           chat: { history: [first, second] },
         },
       });
+    });
+  });
+
+  describe('call.leave()', () => {
+    it('deletes the corresponding participant', async () => {
+      const { store } = setup();
+
+      await store.dispatch(actions.connections.accept('remote-peer'));
+      store.dispatch(actions.call.leave('remote-peer'));
+
+      expect(store.getState().participants).not.toHaveProperty('remote-peer');
     });
   });
 });

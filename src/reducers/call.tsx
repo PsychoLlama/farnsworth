@@ -13,4 +13,8 @@ export default createReducer(initialState, (handleAction) => [
       state.call = { peerId };
     },
   ),
+
+  handleAction(actions.call.leave, (state) => {
+    state.call = null;
+  }),
 ]);

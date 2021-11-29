@@ -70,4 +70,8 @@ export default createReducer(initialState, (handleAction) => [
     state.participants[msg.author].chat.history.push(msg);
     state.participants[msg.author].chat.history.sort(sortMessagesByDate);
   }),
+
+  handleAction(actions.call.leave, (state, peerId) => {
+    delete state.participants[peerId];
+  }),
 ]);
