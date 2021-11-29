@@ -48,6 +48,23 @@ describe('KeyboardObserver', () => {
     });
   });
 
+  it('has no effect if there are no audio or video tracks', () => {
+    const { props } = setup({
+      audioTrackId: null,
+      videoTrackId: null,
+    });
+
+    document.body.dispatchEvent(
+      new KeyboardEvent('keydown', { ctrlKey: true, key: 'd' }),
+    );
+
+    document.body.dispatchEvent(
+      new KeyboardEvent('keydown', { ctrlKey: true, key: 'e' }),
+    );
+
+    expect(props.toggleTrack).not.toHaveBeenCalled();
+  });
+
   describe('mapStateToProps', () => {
     function setup(patch: (state: State) => State | void) {
       const state = produce(initialState, patch);

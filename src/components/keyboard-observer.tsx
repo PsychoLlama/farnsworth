@@ -35,15 +35,21 @@ export class KeyboardObserver extends React.Component<Props> {
   };
 
   toggleMic = () => {
+    const { audioTrackId } = this.props;
+
+    if (!audioTrackId) return;
     this.props.toggleTrack({
-      trackId: this.props.audioTrackId,
+      trackId: audioTrackId,
       kind: TrackKind.Audio,
     });
   };
 
   toggleCam = () => {
+    const { videoTrackId } = this.props;
+
+    if (!videoTrackId) return;
     this.props.toggleTrack({
-      trackId: this.props.videoTrackId,
+      trackId: videoTrackId,
       kind: TrackKind.Video,
     });
   };
