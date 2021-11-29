@@ -12,7 +12,8 @@ describe('Controls', () => {
       toggleChat: jest.fn(),
       pauseTrack: jest.fn(),
       resumeTrack: jest.fn(),
-      callActive: true,
+      leaveCall: jest.fn(),
+      activeCall: 'remote-peer-id',
       micTrackId: 'a-id',
       camTrackId: 'v-id',
       micEnabled: true,
@@ -76,9 +77,25 @@ describe('Controls', () => {
   });
 
   it('hides the chat toggle if no call is in progress', () => {
-    const { findByTestId } = setup({ callActive: false });
+    const { findByTestId } = setup({ activeCall: null });
 
     expect(findByTestId('toggle-chat').exists()).toBe(false);
+  });
+
+  it('only shows the "leave call" button when a call is in progress', () => {
+    const { findByTestId: active } = setup({ activeCall: 'p-id' });
+    const { findByTestId: inactive } = setup({ activeCall: null });
+
+    expect(active('leave-call').exists()).toBe(true);
+    expect(inactive('leave-call').exists()).toBe(false);
+  });
+
+  it('leaves the call when you press the "leave call" button', () => {
+    const { findByTestId, props } = setup();
+
+    findByTestId('leave-call').simulate('click');
+
+    expect(props.leaveCall).toHaveBeenCalledWith(props.activeCall);
   });
 
   describe('mapStateToProps', () => {
@@ -106,7 +123,7 @@ describe('Controls', () => {
 
       expect(props).toMatchInlineSnapshot(`
         Object {
-          "callActive": false,
+          "activeCall": null,
           "camEnabled": true,
           "camTrackId": "v-id",
           "micEnabled": true,

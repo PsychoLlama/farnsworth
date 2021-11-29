@@ -4,3 +4,4 @@ export * as phonebook from './phonebook';
 export * as tracks from './tracks';
 export * as route from './route';
 export * as chat from './chat';
+export * as call from './call';

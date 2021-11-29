@@ -6,6 +6,7 @@ import {
   FiUsers,
   FiMicOff,
   FiVideoOff,
+  FiPhone,
   FiMessageSquare,
 } from 'react-icons/fi';
 import { connect } from 'react-redux';
@@ -28,13 +29,13 @@ export class Controls extends React.Component<Props> {
       camEnabled,
       micTrackId,
       camTrackId,
-      callActive,
+      activeCall,
     } = this.props;
 
     return (
       <Container>
         <ControlGroup data-left>
-          {callActive && (
+          {activeCall && (
             <Control data-test="toggle-chat" onClick={this.props.toggleChat}>
               <FiMessageSquare />
             </Control>
@@ -49,6 +50,12 @@ export class Controls extends React.Component<Props> {
           >
             {micEnabled ? <FiMic /> : <FiMicOff />}
           </Control>
+
+          {activeCall && (
+            <Control data-test="leave-call" onClick={this.endCall}>
+              <EndCallIcon />
+            </Control>
+          )}
 
           <Control
             data-test="toggle-video"
@@ -87,6 +94,10 @@ export class Controls extends React.Component<Props> {
       this.props.resumeTrack(camTrackId);
     }
   };
+
+  endCall = () => {
+    this.props.leaveCall(this.props.activeCall);
+  };
 }
 
 interface Props {
@@ -94,7 +105,8 @@ interface Props {
   toggleChat: typeof actions.chat.toggle;
   pauseTrack: typeof actions.tracks.pause;
   resumeTrack: typeof actions.tracks.resume;
-  callActive: boolean;
+  leaveCall: typeof actions.call.leave;
+  activeCall: null | string;
   micTrackId: null | string;
   camTrackId: null | string;
   micEnabled: boolean;
@@ -127,8 +139,12 @@ const Control = styled(Button.Base)`
 
   :hover,
   :focus {
-    background-color: ${css.color('foreground')};
-    color: ${css.color('background')};
+    background-color: rgba(0, 0, 0, 0.5);
+
+    @media (prefers-color-scheme: light) {
+      background-color: ${css.color('foreground')};
+      color: ${css.color('background')};
+    }
   }
 
   :active {
@@ -142,8 +158,15 @@ const Control = styled(Button.Base)`
   }
 `;
 
+const EndCallIcon = styled(FiPhone)`
+  color: ${css.color('secondary')};
+  transform: rotate(135deg);
+  transform-origin: center;
+`;
+
 const mapDispatchToProps = {
   togglePhonebook: actions.phonebook.toggle,
+  leaveCall: actions.call.leave,
   toggleChat: actions.chat.toggle,
   pauseTrack: actions.tracks.pause,
   resumeTrack: actions.tracks.resume,
@@ -164,7 +187,7 @@ export function mapStateToProps(state: State) {
   const micEnabled = state.tracks[micTrackId]?.enabled ?? false;
 
   return {
-    callActive: state.call !== null,
+    activeCall: state.call?.peerId ?? null,
     micTrackId,
     micEnabled,
     camTrackId,
