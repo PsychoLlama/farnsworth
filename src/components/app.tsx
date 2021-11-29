@@ -5,6 +5,7 @@ import * as actions from '../actions';
 import VideoRoomLayout from './media/video-room-layout';
 import { SERVER_ADDRESS } from '../utils/constants';
 import RouteObserver from './route-observer';
+import KeyboardObserver from './keyboard-observer';
 import { State } from '../reducers/initial-state';
 
 export class App extends React.Component<Props> {
@@ -24,11 +25,13 @@ export class App extends React.Component<Props> {
 
   render() {
     return (
-      <RouteObserver>
-        <Container>
-          <VideoRoomLayout />
-        </Container>
-      </RouteObserver>
+      <KeyboardObserver>
+        <RouteObserver>
+          <Container>
+            <VideoRoomLayout />
+          </Container>
+        </RouteObserver>
+      </KeyboardObserver>
     );
   }
 }
