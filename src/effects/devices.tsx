@@ -1,6 +1,7 @@
 import MediaDevices from 'media-devices';
 import context from '../conferencing/global-context';
-import { TrackKind } from '../utils/constants';
+import { TrackKind, EventType } from '../utils/constants';
+import { broadcastEvent } from './events';
 
 // Put the tracks somewhere useful.
 function addTracksToContext(stream: MediaStream) {
@@ -54,6 +55,12 @@ export async function shareScreen() {
 
   addTracksToContext(stream);
   sendTracksToAllParticipants(stream);
+  broadcastEvent({
+    type: EventType.ScreenShared,
+    payload: {
+      trackIds: stream.getTracks().map((track) => track.id),
+    },
+  });
 
   return stream.getTracks().map(getTrackMetadata);
 }

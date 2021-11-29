@@ -1,7 +1,8 @@
 import assert from '../utils/assert';
 import { State } from '../reducers/initial-state';
 import context from '../conferencing/global-context';
-import { MY_PARTICIPANT_ID, TrackKind } from '../utils/constants';
+import { MY_PARTICIPANT_ID, TrackKind, EventType } from '../utils/constants';
+import { broadcastEvent } from './events';
 
 export function sendLocalTracks(peerId: string, state: State) {
   const { trackIds } = state.participants[MY_PARTICIPANT_ID];
@@ -44,20 +45,12 @@ export function add({
   };
 }
 
-// Pause and resume events don't make much sense for screen sharing. It seems
-// relatively safe (and simple) to send a track kind, in lou of an ID.
-function broadcastTrackEvent(event: { type: string; payload: unknown }) {
-  Array.from(context.connections.values()).forEach((conn) => {
-    conn.messenger.sendEvent(event);
-  });
-}
-
 export function pause(trackId: string) {
   const track = getTrackById(trackId);
   track.enabled = false;
 
-  broadcastTrackEvent({
-    type: 'pause',
+  broadcastEvent({
+    type: EventType.Pause,
     payload: { kind: track.kind },
   });
 
@@ -67,8 +60,9 @@ export function pause(trackId: string) {
 export function resume(trackId: string) {
   const track = getTrackById(trackId);
   track.enabled = true;
-  broadcastTrackEvent({
-    type: 'resume',
+
+  broadcastEvent({
+    type: EventType.Resume,
     payload: { kind: track.kind },
   });
 
