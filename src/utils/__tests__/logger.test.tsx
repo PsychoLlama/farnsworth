@@ -3,7 +3,10 @@ import Logger from '../logger';
 import { APP_NAME } from '../constants';
 
 jest.mock('debug', () => {
-  return jest.fn(() => jest.fn());
+  return Object.assign(
+    jest.fn(() => jest.fn()),
+    { enable: jest.fn() },
+  );
 });
 
 describe('Logger', () => {
@@ -13,7 +16,7 @@ describe('Logger', () => {
     logger.debug('msg');
 
     expect(debug).toHaveBeenCalledWith(`${APP_NAME}:Logger`);
-    expect(debug.mock.results[0].value).toHaveBeenCalledWith('msg');
+    expect((debug as any).mock.results[0].value).toHaveBeenCalledWith('msg');
   });
 
   it('creates different logging contexts for each log level', () => {
@@ -26,6 +29,6 @@ describe('Logger', () => {
     expect(debug).toHaveBeenCalledWith(`${APP_NAME}:Logger`);
     expect(debug).toHaveBeenCalledWith(`${APP_NAME}:Logger:WARN`);
     expect(debug).toHaveBeenCalledWith(`${APP_NAME}:Logger:ERROR`);
-    expect(debug.mock.results[0].value).toHaveBeenCalledWith('msg');
+    expect((debug as any).mock.results[0].value).toHaveBeenCalledWith('msg');
   });
 });

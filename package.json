@@ -94,6 +94,7 @@
     "last 2 edge versions"
   ],
   "devDependencies": {
+    "@types/debug": "^4.1.7",
     "@types/enzyme": "3.10.10",
     "@types/enzyme-adapter-react-16": "1.0.6",
     "@types/jest": "27.0.3",
