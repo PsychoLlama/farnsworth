@@ -12,6 +12,10 @@ export class Phonebook extends React.Component<Props, State> {
     showCopySuccessMessage: false,
   };
 
+  componentWillUnmount() {
+    this.scheduleNoticeDismissal.clear();
+  }
+
   render() {
     const { showCopySuccessMessage } = this.state;
 

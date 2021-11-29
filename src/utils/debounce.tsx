@@ -7,7 +7,7 @@
 export default function debounce<Callback extends (...args: any) => any>(
   delay: number,
   cb: Callback,
-): Callback {
+) {
   let timeout = null;
 
   function wrapper(...args: Parameters<Callback>) {
@@ -18,5 +18,11 @@ export default function debounce<Callback extends (...args: any) => any>(
     timeout = setTimeout.apply(null, [cb, delay].concat(args));
   }
 
-  return wrapper as Callback;
+  const callback: any = Object.assign(wrapper, {
+    clear() {
+      clearTimeout(timeout);
+    },
+  });
+
+  return callback as Callback & { clear: () => void };
 }

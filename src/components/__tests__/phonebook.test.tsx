@@ -61,6 +61,17 @@ describe('Phonebook', () => {
     expect(findByTestId('icon-success').exists()).toBe(false);
   });
 
+  it('clears the dismiss notice before unmounting', async () => {
+    const { findByTestId, output } = setup();
+    const { onClick } = findByTestId('copy-invite-code').props();
+
+    await onClick();
+    output.unmount();
+    const pass = () => jest.runAllTimers();
+
+    expect(pass).not.toThrow();
+  });
+
   describe('mapStateToProps', () => {
     it('returns placeholders while connecting to the relay', () => {
       const store = createStore();

@@ -48,4 +48,15 @@ describe('debounce', () => {
 
     expect(spy).toHaveBeenCalledWith('a', 'b', 'c');
   });
+
+  it('allows you to clear the debounced timer', () => {
+    const spy = jest.fn();
+    const wrapper = debounce(1000, spy);
+
+    wrapper(null);
+    wrapper.clear();
+    jest.runAllTimers();
+
+    expect(spy).not.toHaveBeenCalled();
+  });
 });
