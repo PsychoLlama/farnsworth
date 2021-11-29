@@ -69,8 +69,8 @@ const MessageBody = styled.p`
   white-space: pre-wrap;
   overflow-wrap: break-word;
 
-  // Should be about half the width of <ChatPanel>.
-  max-width: 150px;
+  // Should be about 2/3 the width of <ChatPanel>.
+  max-width: 200px;
 
   &[data-local='true'] {
     background-color: ${css.color('primary')};

@@ -16,6 +16,9 @@ const INPUT_PADDING = '0.5rem';
 const FONT_SIZE = '14px';
 const LINE_HEIGHT = '1.2';
 
+// This is completely arbitrary.
+const MAX_MESSAGE_SIZE = 2000;
+
 export class MessageComposer extends React.Component<Props, State> {
   state = { message: '' };
 
@@ -29,6 +32,7 @@ export class MessageComposer extends React.Component<Props, State> {
           onKeyDown={this.maybeSendMessage}
           value={this.state.message}
           rows={1}
+          maxLength={MAX_MESSAGE_SIZE}
         />
       </Container>
     );
