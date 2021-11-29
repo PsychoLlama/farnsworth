@@ -2,10 +2,10 @@ import { createReducer } from 'retreon';
 import initialState from './initial-state';
 import * as actions from '../actions';
 
-export default createReducer(initialState.tracks, (handleAction) => [
+export default createReducer(initialState, (handleAction) => [
   handleAction(actions.devices.requestMediaDevices, (state, newTracks) => {
     newTracks.forEach((track) => {
-      state[track.trackId] = {
+      state.tracks[track.trackId] = {
         kind: track.kind,
         enabled: track.enabled,
         local: true,
@@ -14,7 +14,7 @@ export default createReducer(initialState.tracks, (handleAction) => [
   }),
 
   handleAction(actions.tracks.add, (state, { track }) => {
-    state[track.id] = {
+    state.tracks[track.id] = {
       kind: track.kind,
       enabled: track.enabled,
       local: false,
@@ -22,19 +22,19 @@ export default createReducer(initialState.tracks, (handleAction) => [
   }),
 
   handleAction(actions.tracks.pause, (state, trackId) => {
-    state[trackId].enabled = false;
+    state.tracks[trackId].enabled = false;
   }),
 
   handleAction(actions.tracks.resume, (state, trackId) => {
-    state[trackId].enabled = true;
+    state.tracks[trackId].enabled = true;
   }),
 
   handleAction(actions.tracks.toggle, (state, trackId) => {
-    state[trackId].enabled = !state[trackId].enabled;
+    state.tracks[trackId].enabled = !state.tracks[trackId].enabled;
   }),
 
   handleAction(actions.tracks.markPaused, (state, kind) => {
-    for (const track of Object.values(state)) {
+    for (const track of Object.values(state.tracks)) {
       if (track.kind === kind && !track.local) {
         track.enabled = false;
       }
@@ -42,7 +42,7 @@ export default createReducer(initialState.tracks, (handleAction) => [
   }),
 
   handleAction(actions.tracks.markResumed, (state, kind) => {
-    for (const track of Object.values(state)) {
+    for (const track of Object.values(state.tracks)) {
       if (track.kind === kind && !track.local) {
         track.enabled = true;
       }

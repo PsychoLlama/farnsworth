@@ -1,7 +1,9 @@
-export { default as participants } from './participants';
-export { default as phonebook } from './phonebook';
-export { default as relay } from './relay';
-export { default as tracks } from './tracks';
-export { default as route } from './route';
-export { default as call } from './call';
-export { default as chat } from './chat';
+import participants from './participants';
+import phonebook from './phonebook';
+import relay from './relay';
+import tracks from './tracks';
+import route from './route';
+import call from './call';
+import chat from './chat';
+
+export default [participants, tracks, call, relay, route, phonebook, chat];

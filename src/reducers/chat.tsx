@@ -2,16 +2,16 @@ import { createReducer } from 'retreon';
 import initialState from './initial-state';
 import * as actions from '../actions';
 
-export default createReducer(initialState.chat, (handleAction) => [
+export default createReducer(initialState, (handleAction) => [
   handleAction(actions.chat.open, (state) => {
-    state.open = true;
+    state.chat.open = true;
   }),
 
   handleAction(actions.chat.close, (state) => {
-    state.open = false;
+    state.chat.open = false;
   }),
 
   handleAction(actions.chat.toggle, (state) => {
-    state.open = !state.open;
+    state.chat.open = !state.chat.open;
   }),
 ]);

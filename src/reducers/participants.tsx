@@ -15,14 +15,14 @@ function sortMessagesByDate(m1: ChatMessage, m2: ChatMessage) {
   return d1.getTime() - d2.getTime();
 }
 
-export default createReducer(initialState.participants, (handleAction) => [
+export default createReducer(initialState, (handleAction) => [
   handleAction(actions.devices.requestMediaDevices, (state, tracks) => {
     const trackIds = tracks.map((track) => track.trackId);
-    state[MY_PARTICIPANT_ID].trackIds.push(...trackIds);
+    state.participants[MY_PARTICIPANT_ID].trackIds.push(...trackIds);
   }),
 
   handleAction(actions.connections.dial.actionFactory, (state, { peerId }) => {
-    state[peerId] = {
+    state.participants[peerId] = {
       isMe: false,
       trackIds: [],
       chat: { history: [] },
@@ -37,12 +37,13 @@ export default createReducer(initialState.participants, (handleAction) => [
     (state, { peerId }) => {
       // Don't wipe out state on reconnection, just update the connection
       // state.
-      if (state[peerId]) {
-        state[peerId].connection.state = ConnectionState.Connecting;
+      if (state.participants[peerId]) {
+        state.participants[peerId].connection.state =
+          ConnectionState.Connecting;
         return;
       }
 
-      state[peerId] = {
+      state.participants[peerId] = {
         isMe: false,
         trackIds: [],
         chat: { history: [] },
@@ -54,25 +55,25 @@ export default createReducer(initialState.participants, (handleAction) => [
   ),
 
   handleAction(actions.tracks.add, (state, { peerId, track }) => {
-    state[peerId].trackIds.push(track.id);
+    state.participants[peerId].trackIds.push(track.id);
   }),
 
   handleAction(actions.connections.markConnected, (state, peerId) => {
-    state[peerId].connection.state = ConnectionState.Connected;
+    state.participants[peerId].connection.state = ConnectionState.Connected;
   }),
 
   handleAction(actions.connections.markDisconnected, (state, peerId) => {
-    state[peerId].connection.state = ConnectionState.Disconnected;
-    state[peerId].trackIds = [];
+    state.participants[peerId].connection.state = ConnectionState.Disconnected;
+    state.participants[peerId].trackIds = [];
   }),
 
   handleAction(actions.chat.sendMessage, (state, { remoteId, msg }) => {
-    state[remoteId].chat.history.push(msg);
-    state[remoteId].chat.history.sort(sortMessagesByDate);
+    state.participants[remoteId].chat.history.push(msg);
+    state.participants[remoteId].chat.history.sort(sortMessagesByDate);
   }),
 
   handleAction(actions.chat.receiveMessage, (state, msg) => {
-    state[msg.author].chat.history.push(msg);
-    state[msg.author].chat.history.sort(sortMessagesByDate);
+    state.participants[msg.author].chat.history.push(msg);
+    state.participants[msg.author].chat.history.sort(sortMessagesByDate);
   }),
 ]);

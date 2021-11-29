@@ -2,16 +2,16 @@ import { createReducer } from 'retreon';
 import initialState from './initial-state';
 import * as actions from '../actions';
 
-export default createReducer(initialState.phonebook, (handleAction) => [
+export default createReducer(initialState, (handleAction) => [
   handleAction(actions.phonebook.open, (state) => {
-    state.open = true;
+    state.phonebook.open = true;
   }),
 
   handleAction(actions.phonebook.close, (state) => {
-    state.open = false;
+    state.phonebook.open = false;
   }),
 
   handleAction(actions.phonebook.toggle, (state) => {
-    state.open = !state.open;
+    state.phonebook.open = !state.phonebook.open;
   }),
 ]);
