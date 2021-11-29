@@ -4,7 +4,6 @@ import styled from 'styled-components';
 import assert from 'assert';
 import { State, ChatMessage } from '../../reducers/initial-state';
 import * as css from '../../utils/css';
-import { PANEL_WIDTH } from './chat-panel';
 
 export class MessageLog extends React.Component<Props> {
   render() {
@@ -22,9 +21,14 @@ export class MessageLog extends React.Component<Props> {
     });
 
     const date = new Date(message.sentDate);
+    const writtenByMe = message.author === this.props.localId;
 
     return (
-      <Message data-test="chat-message" key={message.sentDate}>
+      <Message
+        data-local={writtenByMe}
+        data-test="chat-message"
+        key={message.sentDate}
+      >
         <MessageTimestamp
           data-test="chat-message-timestamp"
           dateTime={message.sentDate}
@@ -32,7 +36,9 @@ export class MessageLog extends React.Component<Props> {
           {formatter.format(date)}
         </MessageTimestamp>
 
-        <MessageBody data-test="chat-message-body">{message.body}</MessageBody>
+        <MessageBody data-local={writtenByMe} data-test="chat-message-body">
+          {message.body}
+        </MessageBody>
       </Message>
     );
   };
@@ -47,22 +53,28 @@ const Container = styled.ol.attrs({ role: 'log' })`
   display: flex;
   flex-direction: column;
   overflow-y: auto;
-  flex-grow: 1;
   margin: 0;
+  margin-top: auto;
   padding: 0.5rem;
   padding-bottom: 0;
   list-style-type: none;
 `;
 
 const MessageBody = styled.p`
-  background-color: ${css.color('primary')};
+  background-color: ${css.color('white')};
   color: ${css.color('background')};
   margin: 0;
   padding: 0.5rem;
   border-radius: ${css.radius};
   white-space: pre-wrap;
   overflow-wrap: break-word;
-  max-width: calc(${PANEL_WIDTH} / 2);
+
+  // Should be about half the width of <ChatPanel>.
+  max-width: 150px;
+
+  &[data-local='true'] {
+    background-color: ${css.color('primary')};
+  }
 `;
 
 const MessageTimestamp = styled.time`
@@ -77,7 +89,10 @@ const Message = styled.li`
   display: flex;
   align-items: flex-end;
   justify-content: flex-end;
-  flex-grow: 1;
+
+  &[data-local='false'] {
+    flex-direction: row-reverse;
+  }
 
   :hover ${MessageTimestamp}, :focus ${MessageTimestamp} {
     visibility: visible;
@@ -85,6 +100,11 @@ const Message = styled.li`
 
   :not(:last-child) {
     margin-bottom: 0.25rem;
+  }
+
+  &[data-local='false'] + &[data-local='true'],
+  &[data-local='true'] + &[data-local='false'] {
+    margin-top: 1rem;
   }
 `;
 

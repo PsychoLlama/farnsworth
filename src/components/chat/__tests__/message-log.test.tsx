@@ -40,6 +40,19 @@ describe('MessageLog', () => {
     );
   });
 
+  it('distinguishes local messages from remote messages', () => {
+    const { findByTestId } = setup({
+      localId: 'local-id',
+      messages: [
+        createMsg({ author: 'local-id' }),
+        createMsg({ author: 'remote-id' }),
+      ],
+    });
+
+    expect(findByTestId('chat-message').at(0).prop('data-local')).toBe(true);
+    expect(findByTestId('chat-message').at(1).prop('data-local')).toBe(false);
+  });
+
   describe('mapStateToProps', () => {
     function setup(patch: (state: State) => void | State) {
       const state = produce(initialState, patch);
