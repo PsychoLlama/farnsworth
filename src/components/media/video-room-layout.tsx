@@ -5,7 +5,7 @@ import selector from '../../utils/selector';
 import { State } from '../../reducers/initial-state';
 import Participant from './participant';
 import Controls from './controls';
-import Sidebar from '../sidebar';
+import Phonebook from '../phonebook';
 import { MY_PARTICIPANT_ID } from '../../utils/constants';
 import * as css from '../../utils/css';
 import ChatPanel from '../chat';
@@ -30,7 +30,7 @@ export class VideoRoomLayout extends React.Component<Props> {
               ) : (
                 <Participant id={MY_PARTICIPANT_ID} />
               )}
-              <Sidebar />
+              <Phonebook />
             </VideoLayout>
             <ChatPanel />
           </Row>

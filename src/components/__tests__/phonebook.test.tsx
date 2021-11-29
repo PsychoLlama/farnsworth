@@ -12,12 +12,19 @@ jest.useFakeTimers();
 describe('Phonebook', () => {
   const setup = renderer(Phonebook, {
     getDefaultProps: () => ({
+      isOpen: true,
       localId: 'your-mom',
     }),
   });
 
   beforeEach(() => {
     (navigator as any).clipboard.writeText.mockClear();
+  });
+
+  it('hides itself while closed', () => {
+    const { output } = setup({ isOpen: false });
+
+    expect(output.isEmptyRender()).toBe(true);
   });
 
   it('shows the invite URL', () => {
@@ -79,6 +86,7 @@ describe('Phonebook', () => {
 
       expect(props).toMatchInlineSnapshot(`
         Object {
+          "isOpen": false,
           "localId": "",
         }
       `);
@@ -91,6 +99,7 @@ describe('Phonebook', () => {
 
       expect(props).toMatchInlineSnapshot(`
         Object {
+          "isOpen": false,
           "localId": "mock-peer-id",
         }
       `);

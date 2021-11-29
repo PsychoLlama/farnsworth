@@ -19,6 +19,10 @@ export class Phonebook extends React.Component<Props, State> {
   render() {
     const { showCopySuccessMessage } = this.state;
 
+    if (!this.props.isOpen) {
+      return null;
+    }
+
     return (
       <Container>
         <Instructions>
@@ -31,6 +35,7 @@ export class Phonebook extends React.Component<Props, State> {
             value={this.getInviteUrl()}
             onFocus={this.selectAll}
             readOnly
+            autoFocus
           />
 
           <CopyButton
@@ -73,6 +78,7 @@ export class Phonebook extends React.Component<Props, State> {
 }
 
 interface Props {
+  isOpen: boolean;
   localId: string;
 }
 
@@ -80,7 +86,13 @@ interface State {
   showCopySuccessMessage: boolean;
 }
 
-const Container = styled.div`
+const Container = styled.div.attrs({ role: 'dialog' })`
+  background-color: ${css.color('overlay')};
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
   display: flex;
   flex-grow: 1;
   flex-direction: column;
@@ -146,9 +158,10 @@ const InputGroup = styled.div`
   max-width: 30rem;
 `;
 
-export function mapStateToProps({ relay }: ReduxState) {
+export function mapStateToProps({ relay, phonebook }: ReduxState) {
   return {
     localId: relay?.localId ?? '',
+    isOpen: phonebook.open,
   };
 }
 
