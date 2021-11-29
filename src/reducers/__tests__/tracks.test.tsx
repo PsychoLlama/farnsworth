@@ -222,4 +222,25 @@ describe('Tracks reducer', () => {
       });
     });
   });
+
+  describe('call.leave()', () => {
+    it('deletes the corresponding participant and all tracks', async () => {
+      const { store } = setup();
+
+      const track = new MediaStreamTrack();
+      store.dispatch(
+        actions.tracks.add({
+          track,
+          peerId: MY_PARTICIPANT_ID,
+        }),
+      );
+
+      store.dispatch(actions.call.leave(MY_PARTICIPANT_ID));
+
+      expect(store.getState().tracks).toEqual({});
+      expect(store.getState().participants).not.toHaveProperty(
+        MY_PARTICIPANT_ID,
+      );
+    });
+  });
 });

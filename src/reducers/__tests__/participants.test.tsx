@@ -226,15 +226,4 @@ describe('Participants reducer', () => {
       });
     });
   });
-
-  describe('call.leave()', () => {
-    it('deletes the corresponding participant', async () => {
-      const { store } = setup();
-
-      await store.dispatch(actions.connections.accept('remote-peer'));
-      store.dispatch(actions.call.leave('remote-peer'));
-
-      expect(store.getState().participants).not.toHaveProperty('remote-peer');
-    });
-  });
 });

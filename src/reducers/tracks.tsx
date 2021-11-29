@@ -56,4 +56,12 @@ export default createReducer(initialState, (handleAction) => [
       delete state.tracks[trackId];
     });
   }),
+
+  handleAction(actions.call.leave, (state, peerId) => {
+    state.participants[peerId].trackIds.forEach((trackId) => {
+      delete state.tracks[trackId];
+    });
+
+    delete state.participants[peerId];
+  }),
 ]);
