@@ -72,9 +72,9 @@ export class Controls extends React.Component<Props> {
     const { micEnabled, micTrackId } = this.props;
 
     if (micEnabled) {
-      this.props.pauseTrack({ trackId: micTrackId, kind: TrackKind.Audio });
+      this.props.pauseTrack(micTrackId);
     } else {
-      this.props.resumeTrack({ trackId: micTrackId, kind: TrackKind.Audio });
+      this.props.resumeTrack(micTrackId);
     }
   };
 
@@ -82,9 +82,9 @@ export class Controls extends React.Component<Props> {
     const { camEnabled, camTrackId } = this.props;
 
     if (camEnabled) {
-      this.props.pauseTrack({ trackId: camTrackId, kind: TrackKind.Video });
+      this.props.pauseTrack(camTrackId);
     } else {
-      this.props.resumeTrack({ trackId: camTrackId, kind: TrackKind.Video });
+      this.props.resumeTrack(camTrackId);
     }
   };
 }

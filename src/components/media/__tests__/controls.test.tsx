@@ -32,34 +32,22 @@ describe('Controls', () => {
     const { output, findByTestId, props } = setup();
 
     findByTestId('toggle-video').simulate('click');
-    expect(props.pauseTrack).toHaveBeenCalledWith({
-      trackId: props.camTrackId,
-      kind: TrackKind.Video,
-    });
+    expect(props.pauseTrack).toHaveBeenCalledWith(props.camTrackId);
 
     output.setProps({ camEnabled: false });
     findByTestId('toggle-video').simulate('click');
-    expect(props.resumeTrack).toHaveBeenCalledWith({
-      trackId: props.camTrackId,
-      kind: TrackKind.Video,
-    });
+    expect(props.resumeTrack).toHaveBeenCalledWith(props.camTrackId);
   });
 
   it('toggles the audio track when you click the button', () => {
     const { output, findByTestId, props } = setup();
 
     findByTestId('toggle-audio').simulate('click');
-    expect(props.pauseTrack).toHaveBeenCalledWith({
-      trackId: props.micTrackId,
-      kind: TrackKind.Audio,
-    });
+    expect(props.pauseTrack).toHaveBeenCalledWith(props.micTrackId);
 
     output.setProps({ micEnabled: false });
     findByTestId('toggle-audio').simulate('click');
-    expect(props.resumeTrack).toHaveBeenCalledWith({
-      trackId: props.micTrackId,
-      kind: TrackKind.Audio,
-    });
+    expect(props.resumeTrack).toHaveBeenCalledWith(props.micTrackId);
   });
 
   it('changes mic/camera styles based on whether the track is active', () => {
