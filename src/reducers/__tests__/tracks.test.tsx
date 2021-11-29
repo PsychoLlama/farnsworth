@@ -53,6 +53,17 @@ describe('Tracks reducer', () => {
         }
       `);
     });
+
+    it('puts the track IDs on tha participant', async () => {
+      const { store } = setup();
+
+      await store.dispatch(actions.devices.requestMediaDevices());
+
+      const { participants } = store.getState();
+      expect(participants[MY_PARTICIPANT_ID]).toMatchObject({
+        trackIds: ['first', 'second'],
+      });
+    });
   });
 
   describe('tracks.add()', () => {
@@ -139,7 +150,7 @@ describe('Tracks reducer', () => {
     });
   });
 
-  describe('markPaused', () => {
+  describe('tracks.markPaused()', () => {
     it('marks all remote streams of the same kind as paused', () => {
       const { store } = setup();
 
@@ -161,7 +172,7 @@ describe('Tracks reducer', () => {
     });
   });
 
-  describe('markResumed', () => {
+  describe('tracks.markResumed()', () => {
     it('marks all remote streams of the same kind as enabled', () => {
       const { store } = setup();
 
@@ -179,6 +190,30 @@ describe('Tracks reducer', () => {
 
       expect(store.getState().tracks).toMatchObject({
         [track.id]: { enabled: true },
+      });
+    });
+  });
+
+  describe('connections.markDisconnected()', () => {
+    it('deletes the corresponding tracks', () => {
+      const { store } = setup();
+
+      const track = new MediaStreamTrack();
+      store.dispatch(
+        actions.tracks.add({
+          track,
+          peerId: MY_PARTICIPANT_ID,
+        }),
+      );
+
+      // This never happens in practice, I'm just lazy.
+      store.dispatch(actions.connections.markDisconnected(MY_PARTICIPANT_ID));
+
+      expect(store.getState().tracks).toEqual({});
+      expect(store.getState().participants).toMatchObject({
+        [MY_PARTICIPANT_ID]: {
+          trackIds: [],
+        },
       });
     });
   });

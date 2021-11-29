@@ -1,10 +1,12 @@
 import { createReducer } from 'retreon';
 import initialState from './initial-state';
 import * as actions from '../actions';
+import { MY_PARTICIPANT_ID } from '../utils/constants';
 
 export default createReducer(initialState, (handleAction) => [
   handleAction(actions.devices.requestMediaDevices, (state, newTracks) => {
     newTracks.forEach((track) => {
+      state.participants[MY_PARTICIPANT_ID].trackIds.push(track.trackId);
       state.tracks[track.trackId] = {
         kind: track.kind,
         enabled: track.enabled,
@@ -47,5 +49,11 @@ export default createReducer(initialState, (handleAction) => [
         track.enabled = true;
       }
     }
+  }),
+
+  handleAction(actions.connections.markDisconnected, (state, peerId) => {
+    state.participants[peerId].trackIds.splice(0).forEach((trackId) => {
+      delete state.tracks[trackId];
+    });
   }),
 ]);

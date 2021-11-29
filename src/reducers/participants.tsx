@@ -1,7 +1,7 @@
 import { createReducer } from 'retreon';
 import initialState, { ChatMessage } from './initial-state';
 import * as actions from '../actions';
-import { ConnectionState, MY_PARTICIPANT_ID } from '../utils/constants';
+import { ConnectionState } from '../utils/constants';
 
 /**
  * Chat messages are sorted by the date stamped by their senders. Of course,
@@ -16,11 +16,6 @@ function sortMessagesByDate(m1: ChatMessage, m2: ChatMessage) {
 }
 
 export default createReducer(initialState, (handleAction) => [
-  handleAction(actions.devices.requestMediaDevices, (state, tracks) => {
-    const trackIds = tracks.map((track) => track.trackId);
-    state.participants[MY_PARTICIPANT_ID].trackIds.push(...trackIds);
-  }),
-
   handleAction(actions.connections.dial.actionFactory, (state, { peerId }) => {
     state.participants[peerId] = {
       isMe: false,
@@ -64,7 +59,6 @@ export default createReducer(initialState, (handleAction) => [
 
   handleAction(actions.connections.markDisconnected, (state, peerId) => {
     state.participants[peerId].connection.state = ConnectionState.Disconnected;
-    state.participants[peerId].trackIds = [];
   }),
 
   handleAction(actions.chat.sendMessage, (state, { remoteId, msg }) => {

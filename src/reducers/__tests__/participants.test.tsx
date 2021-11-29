@@ -1,14 +1,8 @@
 import createStore from '../../utils/create-store';
 import * as actions from '../../actions';
-import * as deviceEffects from '../../effects/devices';
 import * as chatEffects from '../../effects/chat';
-import {
-  TrackKind,
-  ConnectionState,
-  MY_PARTICIPANT_ID,
-} from '../../utils/constants';
+import { ConnectionState, MY_PARTICIPANT_ID } from '../../utils/constants';
 
-jest.mock('../../effects/devices');
 jest.mock('../../effects/chat');
 jest.mock('../../effects/tracks', () => {
   const actual = jest.requireActual('../../effects/tracks');
@@ -19,7 +13,6 @@ jest.mock('../../effects/tracks', () => {
   };
 });
 
-const mockedEffects: jest.Mocked<typeof deviceEffects> = deviceEffects as any;
 const mockedChatEffects: jest.Mocked<typeof chatEffects> = chatEffects as any;
 
 describe('Participants reducer', () => {
@@ -32,35 +25,7 @@ describe('Participants reducer', () => {
   }
 
   beforeEach(() => {
-    mockedEffects.requestMediaDevices.mockResolvedValue([
-      {
-        kind: TrackKind.Audio,
-        trackId: 'first',
-        deviceId: 'mic',
-        enabled: true,
-      },
-      {
-        kind: TrackKind.Video,
-        trackId: 'second',
-        deviceId: 'cam',
-        enabled: true,
-      },
-    ]);
-
     mockedChatEffects.sendMessage.mockImplementation((e) => e);
-  });
-
-  describe('requestMediaDevices()', () => {
-    it('puts the track IDs on tha participant', async () => {
-      const { store } = setup();
-
-      await store.dispatch(actions.devices.requestMediaDevices());
-
-      const { participants } = store.getState();
-      expect(participants[MY_PARTICIPANT_ID]).toMatchObject({
-        trackIds: ['first', 'second'],
-      });
-    });
   });
 
   describe('dial()', () => {
@@ -174,25 +139,6 @@ describe('Participants reducer', () => {
       expect(store.getState().participants).toMatchObject({
         [MY_PARTICIPANT_ID]: {
           connection: { state: ConnectionState.Connected },
-        },
-      });
-    });
-
-    it('removes all the tracks', () => {
-      const { store } = setup();
-
-      store.dispatch(
-        actions.tracks.add({
-          track: new MediaStreamTrack(),
-          peerId: MY_PARTICIPANT_ID,
-        }),
-      );
-
-      store.dispatch(actions.connections.markDisconnected(MY_PARTICIPANT_ID));
-
-      expect(store.getState().participants).toMatchObject({
-        [MY_PARTICIPANT_ID]: {
-          trackIds: [],
         },
       });
     });
