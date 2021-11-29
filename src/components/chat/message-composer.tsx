@@ -33,6 +33,9 @@ export class MessageComposer extends React.Component<Props, State> {
           value={this.state.message}
           rows={1}
           maxLength={MAX_MESSAGE_SIZE}
+          autoFocus
+          spellCheck
+          autoComplete="off"
         />
       </Container>
     );
