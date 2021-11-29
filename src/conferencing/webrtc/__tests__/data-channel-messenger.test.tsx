@@ -14,6 +14,7 @@ describe('DataChannelMessenger', () => {
     expect(pc.createDataChannel).toHaveBeenCalled();
 
     const channel: jest.Mocked<RTCDataChannel> = (messenger as any).channel;
+    (channel as any).readyState = 'open';
 
     return {
       pc,
@@ -74,5 +75,18 @@ describe('DataChannelMessenger', () => {
     await channel.onclose(new Event('close'));
 
     expect(sdk.connections.markDisconnected).toHaveBeenCalledWith(remoteId);
+  });
+
+  it('buffers messages until the channel is open', async () => {
+    const { channel, messenger } = setup();
+
+    (channel as any).readyState = 'connecting';
+    messenger.sendEvent({ type: 'test' });
+    expect(channel.send).not.toHaveBeenCalled();
+
+    (channel as any).readyState = 'open';
+    await channel.onopen(new Event('open'));
+
+    expect(channel.send).toHaveBeenCalled();
   });
 });

@@ -28,6 +28,7 @@ export default class DataChannelMessenger {
   private channel: RTCDataChannel;
   private remoteId: string;
   private appEvents: AppEvents;
+  private messageQueue: Array<ArrayBuffer> = [];
 
   constructor({ pc, remoteId }: Config) {
     this.remoteId = remoteId;
@@ -60,10 +61,29 @@ export default class DataChannelMessenger {
     this.queueOutboundPacket(packet);
   }
 
-  // TODO: Buffer messages while socket is unstable.
+  // Buffers messages in a queue until the socket opens. Note: if the socket
+  // closes, all messages are lost. There is currently no way to transfer
+  // messages to a new data channel.
   private queueOutboundPacket(packet: Uint8Array) {
-    this.channel.send(packet);
+    if (this.channel.readyState === 'open') {
+      this.channel.send(packet);
+    } else {
+      logger.debug(
+        `Queuing packet while socket opens (readyState=${this.channel.readyState}).`,
+      );
+
+      this.messageQueue.push(packet);
+    }
   }
+
+  private drainMessageQueue = () => {
+    if (this.messageQueue.length) {
+      logger.debug('Channel is open. Draining message queue.');
+    }
+
+    const messages = this.messageQueue.splice(0);
+    messages.forEach((packet) => this.channel.send(packet));
+  };
 
   private processMessage = async ({
     data,
@@ -117,6 +137,7 @@ export default class DataChannelMessenger {
   signalConnectionOpen = async () => {
     const { default: sdk } = await import('../../utils/sdk');
     sdk.connections.markConnected(this.remoteId);
+    this.drainMessageQueue();
   };
 
   signalConnectionClosed = async () => {
