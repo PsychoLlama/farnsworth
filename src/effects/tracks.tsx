@@ -52,29 +52,32 @@ function broadcastTrackEvent(event: { type: string; payload: unknown }) {
   });
 }
 
-export function pause({ trackId, kind }: { trackId: string; kind: TrackKind }) {
-  getTrackById(trackId).enabled = false;
-  broadcastTrackEvent({ type: 'pause', payload: { kind } });
+export function pause(trackId: string) {
+  const track = getTrackById(trackId);
+  track.enabled = false;
+
+  broadcastTrackEvent({
+    type: 'pause',
+    payload: { kind: track.kind },
+  });
 
   return trackId;
 }
 
-export function resume({
-  trackId,
-  kind,
-}: {
-  trackId: string;
-  kind: TrackKind;
-}) {
-  getTrackById(trackId).enabled = true;
-  broadcastTrackEvent({ type: 'resume', payload: { kind } });
+export function resume(trackId: string) {
+  const track = getTrackById(trackId);
+  track.enabled = true;
+  broadcastTrackEvent({
+    type: 'resume',
+    payload: { kind: track.kind },
+  });
 
   return trackId;
 }
 
-export function toggle(v: { trackId: string; kind: TrackKind }) {
-  const track = getTrackById(v.trackId);
+export function toggle(trackId: string) {
+  const track = getTrackById(trackId);
   const act = track.enabled ? pause : resume;
 
-  return act(v);
+  return act(trackId);
 }

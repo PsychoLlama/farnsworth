@@ -101,7 +101,7 @@ describe('Track effects', () => {
       context.tracks.set(track.id, track);
 
       expect(track.enabled).toBe(true);
-      effects.pause({ trackId: track.id, kind: TrackKind.Audio });
+      effects.pause(track.id);
       expect(track.enabled).toBe(false);
     });
 
@@ -118,10 +118,10 @@ describe('Track effects', () => {
       (mgr as any).messenger = { sendEvent: jest.fn() };
       context.connections.set('mgr', mgr);
 
-      effects.pause({ trackId: track.id, kind: TrackKind.Video });
+      effects.pause(track.id);
       expect(mgr.messenger.sendEvent).toHaveBeenCalledWith({
         type: 'pause',
-        payload: { kind: TrackKind.Video },
+        payload: { kind: track.kind },
       });
     });
   });
@@ -133,7 +133,7 @@ describe('Track effects', () => {
       context.tracks.set(track.id, track);
 
       expect(track.enabled).toBe(false);
-      effects.resume({ trackId: track.id, kind: TrackKind.Audio });
+      effects.resume(track.id);
       expect(track.enabled).toBe(true);
     });
 
@@ -150,10 +150,10 @@ describe('Track effects', () => {
       (mgr as any).messenger = { sendEvent: jest.fn() };
       context.connections.set('mgr', mgr);
 
-      effects.resume({ trackId: track.id, kind: TrackKind.Video });
+      effects.resume(track.id);
       expect(mgr.messenger.sendEvent).toHaveBeenCalledWith({
         type: 'resume',
-        payload: { kind: TrackKind.Video },
+        payload: { kind: track.kind },
       });
     });
   });
@@ -164,9 +164,9 @@ describe('Track effects', () => {
       context.tracks.set(track.id, track);
 
       track.enabled = true;
-      effects.toggle({ trackId: track.id, kind: track.kind as TrackKind });
+      effects.toggle(track.id);
       expect(track.enabled).toBe(false);
-      effects.toggle({ trackId: track.id, kind: track.kind as TrackKind });
+      effects.toggle(track.id);
       expect(track.enabled).toBe(true);
     });
   });

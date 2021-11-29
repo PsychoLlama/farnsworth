@@ -3,7 +3,6 @@ import React from 'react';
 import renderer from '../../testing/renderer';
 import { KeyboardObserver, mapStateToProps } from '../keyboard-observer';
 import initialState, { State } from '../../reducers/initial-state';
-import { TrackKind } from '../../utils/constants';
 
 describe('KeyboardObserver', () => {
   const setup = renderer(KeyboardObserver, {
@@ -30,10 +29,7 @@ describe('KeyboardObserver', () => {
     const event = new KeyboardEvent('keydown', { ctrlKey: true, key: 'e' });
     document.body.dispatchEvent(event);
 
-    expect(props.toggleTrack).toHaveBeenCalledWith({
-      trackId: props.videoTrackId,
-      kind: TrackKind.Video,
-    });
+    expect(props.toggleTrack).toHaveBeenCalledWith(props.videoTrackId);
   });
 
   it('toggles the audio track on a predetermined keybinding', () => {
@@ -42,10 +38,7 @@ describe('KeyboardObserver', () => {
     const event = new KeyboardEvent('keydown', { ctrlKey: true, key: 'd' });
     document.body.dispatchEvent(event);
 
-    expect(props.toggleTrack).toHaveBeenCalledWith({
-      trackId: props.audioTrackId,
-      kind: TrackKind.Audio,
-    });
+    expect(props.toggleTrack).toHaveBeenCalledWith(props.audioTrackId);
   });
 
   it('has no effect if there are no audio or video tracks', () => {

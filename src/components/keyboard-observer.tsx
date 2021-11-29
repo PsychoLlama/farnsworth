@@ -38,20 +38,14 @@ export class KeyboardObserver extends React.Component<Props> {
     const { audioTrackId } = this.props;
 
     if (!audioTrackId) return;
-    this.props.toggleTrack({
-      trackId: audioTrackId,
-      kind: TrackKind.Audio,
-    });
+    this.props.toggleTrack(audioTrackId);
   };
 
   toggleCam = () => {
     const { videoTrackId } = this.props;
 
     if (!videoTrackId) return;
-    this.props.toggleTrack({
-      trackId: videoTrackId,
-      kind: TrackKind.Video,
-    });
+    this.props.toggleTrack(videoTrackId);
   };
 
   keybindings = new Map([
