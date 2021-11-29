@@ -10,7 +10,7 @@ jest.mock('../../conferencing/webrtc');
 const MockMediaDevices: jest.Mocked<typeof MediaDevices> = MediaDevices as any;
 
 describe('Device effects', () => {
-  function mockDeviceList(overrides: Array<Partial<MediaStreamTrack>> = []) {
+  function createMediaStream(overrides: Array<Partial<MediaStreamTrack>> = []) {
     const stream = new MediaStream();
     const tracks = overrides.map((overrides) => {
       const track = new MediaStreamTrack();
@@ -18,9 +18,22 @@ describe('Device effects', () => {
     });
 
     tracks.forEach((track) => stream.addTrack(track));
+
+    return stream;
+  }
+
+  function mockDeviceList(overrides: Array<Partial<MediaStreamTrack>> = []) {
+    const stream = createMediaStream(overrides);
     MockMediaDevices.getUserMedia.mockResolvedValue(stream);
 
-    return tracks;
+    return stream.getTracks();
+  }
+
+  function mockDisplayTracks(overrides: Array<Partial<MediaStreamTrack>> = []) {
+    const stream = createMediaStream(overrides);
+    MockMediaDevices.getDisplayMedia.mockResolvedValue(stream);
+
+    return stream.getTracks();
   }
 
   beforeEach(() => {
@@ -75,6 +88,23 @@ describe('Device effects', () => {
       await effects.devices.requestMediaDevices();
 
       expect(conn.addTrack).toHaveBeenCalledTimes(2);
+    });
+  });
+
+  describe('shareScreen', () => {
+    it('grabs the display media', async () => {
+      mockDisplayTracks([{ label: 'Screen', kind: TrackKind.Video }]);
+
+      const newTracks = await effects.devices.shareScreen();
+
+      expect(newTracks).toEqual([
+        {
+          kind: TrackKind.Video,
+          deviceId: expect.any(String),
+          trackId: expect.any(String),
+          enabled: expect.any(Boolean),
+        },
+      ]);
     });
   });
 });

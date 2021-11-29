@@ -7,6 +7,7 @@ import {
   FiMicOff,
   FiVideoOff,
   FiPhone,
+  FiAirplay,
   FiMessageSquare,
 } from 'react-icons/fi';
 import { connect } from 'react-redux';
@@ -72,6 +73,13 @@ export class Controls extends React.Component<Props> {
         </ControlGroup>
 
         <ControlGroup data-right>
+          <Control
+            data-test="toggle-screenshare"
+            onClick={this.props.shareScreen}
+          >
+            <FiAirplay />
+          </Control>
+
           <Control data-test="toggle-phonebook" onClick={togglePhonebook}>
             <FiUsers />
           </Control>
@@ -107,6 +115,7 @@ export class Controls extends React.Component<Props> {
 
 interface Props {
   togglePhonebook: typeof actions.phonebook.toggle;
+  shareScreen: typeof actions.devices.shareScreen;
   toggleChat: typeof actions.chat.toggle;
   pauseTrack: typeof actions.tracks.pause;
   resumeTrack: typeof actions.tracks.resume;
@@ -186,6 +195,7 @@ const EndCallIcon = styled(FiPhone)`
 const mapDispatchToProps = {
   togglePhonebook: actions.phonebook.toggle,
   leaveCall: actions.call.leave,
+  shareScreen: actions.devices.shareScreen,
   toggleChat: actions.chat.toggle,
   pauseTrack: actions.tracks.pause,
   resumeTrack: actions.tracks.resume,

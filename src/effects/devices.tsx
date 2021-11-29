@@ -2,7 +2,33 @@ import MediaDevices from 'media-devices';
 import context from '../conferencing/global-context';
 import { TrackKind } from '../utils/constants';
 
-export const requestMediaDevices = async () => {
+// Put the tracks somewhere useful.
+function addTracksToContext(stream: MediaStream) {
+  stream.getTracks().forEach((track) => {
+    context.tracks.set(track.id, track);
+  });
+}
+
+// Send the new tracks to every open WebRTC connection.
+function sendTracksToAllParticipants(stream: MediaStream) {
+  Array.from(context.connections.values()).forEach((conn) => {
+    stream.getTracks().forEach((track) => conn.addTrack(track));
+  });
+}
+
+// Turns a track into something you'd trust in Redux.
+function getTrackMetadata(track: MediaStreamTrack) {
+  const settings = track.getSettings();
+
+  return {
+    trackId: track.id,
+    kind: track.kind as TrackKind,
+    deviceId: settings.deviceId,
+    enabled: track.enabled,
+  };
+}
+
+export async function requestMediaDevices() {
   const stream = await MediaDevices.getUserMedia({
     audio: true,
 
@@ -13,23 +39,21 @@ export const requestMediaDevices = async () => {
     },
   });
 
-  stream.getTracks().forEach((track) => {
-    context.tracks.set(track.id, track);
+  addTracksToContext(stream);
+  sendTracksToAllParticipants(stream);
+
+  return stream.getTracks().map(getTrackMetadata);
+}
+
+// AKA screen sharing.
+export async function shareScreen() {
+  const stream = await MediaDevices.getDisplayMedia({
+    audio: true,
+    video: true,
   });
 
-  // Send the new tracks to every open connection.
-  Array.from(context.connections.values()).forEach((conn) => {
-    stream.getTracks().forEach((track) => conn.addTrack(track));
-  });
+  addTracksToContext(stream);
+  sendTracksToAllParticipants(stream);
 
-  return stream.getTracks().map((track) => {
-    const settings = track.getSettings();
-
-    return {
-      trackId: track.id,
-      kind: track.kind as TrackKind,
-      deviceId: settings.deviceId,
-      enabled: track.enabled,
-    };
-  });
-};
+  return stream.getTracks().map(getTrackMetadata);
+}
