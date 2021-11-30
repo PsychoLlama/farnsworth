@@ -80,7 +80,7 @@ describe('MediaView', () => {
   });
 
   it('resets the video stream when video is disabled', () => {
-    context.tracks.set('v-id-2', new MediaStreamTrack());
+    context.tracks.set('a-id-2', new MediaStreamTrack());
 
     const { output } = setup({
       audioTrackId: 'a-id',
@@ -91,7 +91,7 @@ describe('MediaView', () => {
     const ref = setVideoRef(output);
 
     const original = ref.srcObject;
-    output.setProps({ videoTrackId: 'v-id-2' });
+    output.setProps({ audioTrackId: 'a-id-2' });
     expect(ref.srcObject).toBe(original);
     output.setProps({ videoEnabled: false });
     expect(ref.srcObject).not.toBe(original);
@@ -100,7 +100,7 @@ describe('MediaView', () => {
     expect(ref.srcObject.getTracks()).toHaveLength(1);
   });
 
-  it('resets the media stream when the video track is removed', () => {
+  it('resets the media stream when the video track changes', () => {
     const { output } = setup({
       audioTrackId: 'a-id',
       videoTrackId: null,

@@ -18,12 +18,10 @@ export class MediaView extends React.Component<Props, State> {
     this.syncTracksToMediaStream();
   }
 
-  componentDidUpdate(prevProps: Props) {
-    if (prevProps.videoTrackId && !this.props.videoTrackId) {
+  componentDidUpdate({ videoTrackId, videoEnabled }: Props) {
+    if (videoTrackId && this.props.videoTrackId !== videoTrackId) {
       this.resetMediaStream();
-    }
-
-    if (prevProps.videoEnabled && !this.props.videoEnabled) {
+    } else if (videoEnabled && !this.props.videoEnabled) {
       this.resetMediaStream();
     }
 
@@ -89,7 +87,6 @@ export class MediaView extends React.Component<Props, State> {
     const tracks = trackIds.map((trackId) => context.tracks.get(trackId));
     tracks.forEach((track) => this.stream.addTrack(track));
 
-    // TODO: See if Chrome still kills audio tracks when video is paused.
     this.stream.getTracks().forEach((track) => {
       if (!tracks.includes(track)) this.stream.removeTrack(track);
     });
