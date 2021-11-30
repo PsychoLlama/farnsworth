@@ -199,11 +199,13 @@ describe('ConnectionManager', () => {
   });
 
   it('closes the connection when instructed', async () => {
-    const { mgr, pc } = setup();
+    const { mgr, signaler, pc } = setup();
+    jest.spyOn(signaler, 'close');
 
     mgr.close();
 
     expect(pc.close).toHaveBeenCalled();
+    expect(signaler.close).toHaveBeenCalled();
     expect(mgr.messenger.close).toHaveBeenCalled();
   });
 

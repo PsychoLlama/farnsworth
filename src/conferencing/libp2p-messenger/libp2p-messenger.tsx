@@ -24,9 +24,12 @@ export default class Libp2pMessenger {
     );
   }
 
-  /**
-   * Send arbitrary JSON to the other side.
-   */
+  /** Permanently closes the libp2p stream. */
+  close() {
+    this.stream.close();
+  }
+
+  /** Send arbitrary JSON to the other side. */
   async send(data: unknown) {
     this.messageQueue.append(data);
   }

@@ -28,4 +28,15 @@ describe('Libp2p Signaling Messenger', () => {
       expect(spy).toHaveBeenCalledWith(payload);
     });
   });
+
+  describe('close', () => {
+    it('closes the libp2p stream', () => {
+      const stream = new Stream();
+      const messenger = Libp2pMessenger.from(stream);
+
+      expect(stream.close).not.toHaveBeenCalled();
+      messenger.close();
+      expect(stream.close).toHaveBeenCalled();
+    });
+  });
 });
