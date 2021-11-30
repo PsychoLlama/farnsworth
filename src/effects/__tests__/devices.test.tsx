@@ -1,13 +1,11 @@
 import MediaDevices from 'media-devices';
 import * as effects from '../';
-import { TrackKind, EventType } from '../../utils/constants';
+import { TrackKind } from '../../utils/constants';
 import context from '../../conferencing/global-context';
 import ConnectionManager from '../../conferencing/webrtc';
-import { broadcastEvent } from '../events';
 
 jest.mock('media-devices');
 jest.mock('../../conferencing/webrtc');
-jest.mock('../events');
 
 const MockMediaDevices: jest.Mocked<typeof MediaDevices> = MediaDevices as any;
 
@@ -98,13 +96,6 @@ describe('Device effects', () => {
       mockDisplayTracks([{ label: 'Screen', kind: TrackKind.Video }]);
 
       const newTracks = await effects.devices.shareScreen();
-
-      expect(broadcastEvent).toHaveBeenCalledWith({
-        type: EventType.ScreenShared,
-        payload: {
-          trackIds: newTracks.map((t) => t.trackId),
-        },
-      });
 
       expect(newTracks).toEqual([
         {

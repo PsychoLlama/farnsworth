@@ -60,7 +60,4 @@ export enum EventType {
 
   /** Send a chat message. */
   ChatMessage = 'chat-message',
-
-  /** Tell the other participant that you've shared your screen. */
-  ScreenShared = 'screen-shared',
 }
