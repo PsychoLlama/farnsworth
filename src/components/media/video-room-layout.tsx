@@ -83,6 +83,7 @@ const FloatingVideo = styled.div`
   width: 15rem;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
   border: 1px solid ${css.color('background')};
+  max-width: 30%;
 `;
 
 const getParticipantIds = selector(Object.keys);
