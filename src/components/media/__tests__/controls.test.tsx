@@ -19,6 +19,7 @@ describe('Controls', () => {
       pauseTrack: jest.fn(),
       resumeTrack: jest.fn(),
       leaveCall: jest.fn(),
+      supportsScreenSharing: true,
       sharingScreen: false,
       activeCall: 'remote-peer-id',
       micTrackId: 'a-id',
@@ -115,6 +116,12 @@ describe('Controls', () => {
     output.setProps({ sharingScreen: true });
     findByTestId('toggle-screen-share').simulate('click');
     expect(props.stopSharingScreen).toHaveBeenCalled();
+  });
+
+  it('hides the screen sharing button if your platform does not support it', () => {
+    const { findByTestId } = setup({ supportsScreenSharing: false });
+
+    expect(findByTestId('toggle-screen-share').exists()).toBe(false);
   });
 
   describe('mapStateToProps', () => {

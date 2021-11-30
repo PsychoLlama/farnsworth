@@ -23,6 +23,7 @@ import {
 
 export class Controls extends React.Component<Props> {
   static defaultProps = {
+    supportsScreenSharing: 'getDisplayMedia' in Object(navigator.mediaDevices),
     micTrackId: null,
     camTrackId: null,
   };
@@ -37,6 +38,7 @@ export class Controls extends React.Component<Props> {
       activeCall,
       unreadMessages,
       sharingScreen,
+      supportsScreenSharing,
     } = this.props;
 
     return (
@@ -78,13 +80,15 @@ export class Controls extends React.Component<Props> {
         </ControlGroup>
 
         <ControlGroup data-right>
-          <Control
-            data-test="toggle-screen-share"
-            data-sharing={sharingScreen}
-            onClick={this.toggleScreenShare}
-          >
-            <FiAirplay />
-          </Control>
+          {supportsScreenSharing && (
+            <Control
+              data-test="toggle-screen-share"
+              data-sharing={sharingScreen}
+              onClick={this.toggleScreenShare}
+            >
+              <FiAirplay />
+            </Control>
+          )}
 
           <Control data-test="toggle-phonebook" onClick={togglePhonebook}>
             <FiUsers />
@@ -135,6 +139,7 @@ interface Props {
   pauseTrack: typeof actions.tracks.pause;
   resumeTrack: typeof actions.tracks.resume;
   leaveCall: typeof actions.call.leave;
+  supportsScreenSharing: boolean;
   sharingScreen: boolean;
   activeCall: null | string;
   micTrackId: null | string;
