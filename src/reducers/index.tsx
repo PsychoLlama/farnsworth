@@ -5,5 +5,15 @@ import tracks from './tracks';
 import route from './route';
 import call from './call';
 import chat from './chat';
+import tools from './tools';
 
-export default [participants, tracks, call, relay, route, phonebook, chat];
+export default [
+  participants,
+  tracks,
+  call,
+  relay,
+  route,
+  phonebook,
+  chat,
+  tools,
+];
