@@ -64,4 +64,15 @@ export default createReducer(initialState, (handleAction) => [
 
     delete state.participants[peerId];
   }),
+
+  handleAction(actions.devices.shareScreen, (state, tracks) => {
+    tracks.forEach((track) => {
+      state.participants[MY_PARTICIPANT_ID].trackIds.push(track.trackId);
+      state.tracks[track.trackId] = {
+        kind: track.kind,
+        enabled: track.enabled,
+        local: true,
+      };
+    });
+  }),
 ]);
