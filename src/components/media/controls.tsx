@@ -79,9 +79,9 @@ export class Controls extends React.Component<Props> {
 
         <ControlGroup data-right>
           <Control
-            data-test="toggle-screenshare"
+            data-test="toggle-screen-share"
             data-sharing={sharingScreen}
-            onClick={this.props.shareScreen}
+            onClick={this.toggleScreenShare}
           >
             <FiAirplay />
           </Control>
@@ -114,6 +114,14 @@ export class Controls extends React.Component<Props> {
     }
   };
 
+  toggleScreenShare = () => {
+    if (this.props.sharingScreen) {
+      this.props.stopSharingScreen();
+    } else {
+      this.props.shareScreen();
+    }
+  };
+
   endCall = () => {
     this.props.leaveCall(this.props.activeCall);
   };
@@ -122,6 +130,7 @@ export class Controls extends React.Component<Props> {
 interface Props {
   togglePhonebook: typeof actions.phonebook.toggle;
   shareScreen: typeof actions.devices.shareScreen;
+  stopSharingScreen: typeof actions.devices.stopSharingScreen;
   toggleChat: typeof actions.chat.toggle;
   pauseTrack: typeof actions.tracks.pause;
   resumeTrack: typeof actions.tracks.resume;
@@ -213,6 +222,7 @@ const mapDispatchToProps = {
   togglePhonebook: actions.phonebook.toggle,
   leaveCall: actions.call.leave,
   shareScreen: actions.devices.shareScreen,
+  stopSharingScreen: actions.devices.stopSharingScreen,
   toggleChat: actions.chat.toggle,
   pauseTrack: actions.tracks.pause,
   resumeTrack: actions.tracks.resume,

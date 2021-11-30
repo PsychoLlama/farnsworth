@@ -281,4 +281,29 @@ describe('Tracks reducer', () => {
       });
     });
   });
+
+  describe('devices.stopSharingScreen()', () => {
+    it('removes local display tracks', async () => {
+      const { store } = setup();
+      const track = new MediaStreamTrack();
+      mockedDeviceEffects.shareScreen.mockResolvedValue([
+        {
+          trackId: track.id,
+          kind: track.kind as TrackKind,
+          deviceId: track.getSettings().deviceId,
+          enabled: track.enabled,
+        },
+      ]);
+
+      await store.dispatch(actions.devices.shareScreen());
+      store.dispatch(actions.devices.stopSharingScreen());
+
+      expect(store.getState().tracks).not.toHaveProperty(track.id);
+      expect(store.getState().participants).toMatchObject({
+        [MY_PARTICIPANT_ID]: {
+          trackIds: [],
+        },
+      });
+    });
+  });
 });

@@ -14,6 +14,7 @@ describe('Controls', () => {
     getDefaultProps: () => ({
       togglePhonebook: jest.fn(),
       shareScreen: jest.fn(),
+      stopSharingScreen: jest.fn(),
       toggleChat: jest.fn(),
       pauseTrack: jest.fn(),
       resumeTrack: jest.fn(),
@@ -103,6 +104,17 @@ describe('Controls', () => {
     findByTestId('leave-call').simulate('click');
 
     expect(props.leaveCall).toHaveBeenCalledWith(props.activeCall);
+  });
+
+  it('ends the screen share if you press the button again', () => {
+    const { output, findByTestId, props } = setup({ sharingScreen: false });
+
+    findByTestId('toggle-screen-share').simulate('click');
+    expect(props.shareScreen).toHaveBeenCalled();
+
+    output.setProps({ sharingScreen: true });
+    findByTestId('toggle-screen-share').simulate('click');
+    expect(props.stopSharingScreen).toHaveBeenCalled();
   });
 
   describe('mapStateToProps', () => {

@@ -78,4 +78,20 @@ export default createReducer(initialState, (handleAction) => [
       };
     });
   }),
+
+  handleAction(actions.devices.stopSharingScreen, (state) => {
+    const participant = state.participants[MY_PARTICIPANT_ID];
+
+    // Poor man's _.partition(...).
+    const [deviceTracks, displayTracks] = participant.trackIds.reduce(
+      ([device, display], trackId) =>
+        state.tracks[trackId].source === TrackSource.Display
+          ? [device, display.concat(trackId)]
+          : [device.concat(trackId), display],
+      [[], []],
+    );
+
+    displayTracks.forEach((trackId: string) => delete state.tracks[trackId]);
+    participant.trackIds = deviceTracks;
+  }),
 ]);
