@@ -10,6 +10,7 @@ describe('RouteObserver', () => {
     getDefaultProps: () => ({
       dial: jest.fn() as any, // Imperative action creator.
       relayServer: '/server/multiaddr',
+      hasLocalTracks: true,
       route: {
         id: Routes.Home,
         pathName: Routes.Home,
@@ -62,6 +63,21 @@ describe('RouteObserver', () => {
     expect(props.dial).toHaveBeenCalledWith(
       '/server/multiaddr/p2p-circuit/p2p/john',
     );
+  });
+
+  it('waits for getUserMedia(...) before calling another peer', () => {
+    const { output, props } = setup({
+      hasLocalTracks: false,
+      route: {
+        id: Routes.Call,
+        pathName: '/call/ghostbusters',
+        params: { peerId: 'ghostbusters' },
+      },
+    });
+
+    expect(props.dial).not.toHaveBeenCalled();
+    output.setProps({ hasLocalTracks: true });
+    expect(props.dial).toHaveBeenCalled();
   });
 
   describe('mapStateToProps', () => {

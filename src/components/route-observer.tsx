@@ -2,7 +2,7 @@ import React from 'react';
 import { connect } from 'react-redux';
 import { State } from '../reducers/initial-state';
 import * as actions from '../actions';
-import { Routes } from '../utils/constants';
+import { Routes, MY_PARTICIPANT_ID } from '../utils/constants';
 
 export class RouteObserver extends React.Component<Props> {
   componentDidUpdate(prevProps: Props) {
@@ -17,7 +17,11 @@ export class RouteObserver extends React.Component<Props> {
   }
 
   readyToCall(props: Props) {
-    return props.route.id === Routes.Call && props.relayServer !== null;
+    return (
+      props.route.id === Routes.Call &&
+      props.relayServer !== null &&
+      props.hasLocalTracks
+    );
   }
 }
 
@@ -25,6 +29,7 @@ interface Props {
   route: State['route'];
   relayServer: string | null;
   children?: React.ReactNode;
+  hasLocalTracks: boolean;
   dial: typeof actions.connections.dial;
 }
 
@@ -32,6 +37,7 @@ export function mapStateToProps(state: State) {
   return {
     route: state.route,
     relayServer: state.relay?.server ?? null,
+    hasLocalTracks: state.participants[MY_PARTICIPANT_ID].trackIds.length > 0,
   };
 }
 
