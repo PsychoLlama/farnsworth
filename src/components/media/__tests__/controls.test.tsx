@@ -3,16 +3,23 @@ import { FiMic, FiVideo, FiMicOff, FiVideoOff } from 'react-icons/fi';
 import renderer from '../../../testing/renderer';
 import { Controls, mapStateToProps } from '../controls';
 import initialState, { State } from '../../../reducers/initial-state';
-import { MY_PARTICIPANT_ID, TrackKind } from '../../../utils/constants';
+import {
+  MY_PARTICIPANT_ID,
+  TrackKind,
+  TrackSource,
+} from '../../../utils/constants';
 
 describe('Controls', () => {
   const setup = renderer(Controls, {
     getDefaultProps: () => ({
       togglePhonebook: jest.fn(),
+      shareScreen: jest.fn(),
+      stopSharingScreen: jest.fn(),
       toggleChat: jest.fn(),
       pauseTrack: jest.fn(),
       resumeTrack: jest.fn(),
       leaveCall: jest.fn(),
+      sharingScreen: false,
       activeCall: 'remote-peer-id',
       micTrackId: 'a-id',
       camTrackId: 'v-id',
@@ -99,6 +106,17 @@ describe('Controls', () => {
     expect(props.leaveCall).toHaveBeenCalledWith(props.activeCall);
   });
 
+  it('ends the screen share if you press the button again', () => {
+    const { output, findByTestId, props } = setup({ sharingScreen: false });
+
+    findByTestId('toggle-screen-share').simulate('click');
+    expect(props.shareScreen).toHaveBeenCalled();
+
+    output.setProps({ sharingScreen: true });
+    findByTestId('toggle-screen-share').simulate('click');
+    expect(props.stopSharingScreen).toHaveBeenCalled();
+  });
+
   describe('mapStateToProps', () => {
     function setup(patchState: (state: State) => void) {
       const state = produce(initialState, patchState);
@@ -113,8 +131,18 @@ describe('Controls', () => {
     it('returns the expected props', () => {
       const { props } = setup((state) => {
         state.tracks = {
-          'a-id': { kind: TrackKind.Audio, enabled: true, local: true },
-          'v-id': { kind: TrackKind.Video, enabled: true, local: true },
+          'a-id': {
+            kind: TrackKind.Audio,
+            source: TrackSource.Device,
+            enabled: true,
+            local: true,
+          },
+          'v-id': {
+            kind: TrackKind.Video,
+            source: TrackSource.Device,
+            enabled: true,
+            local: true,
+          },
         };
 
         state.participants[MY_PARTICIPANT_ID].trackIds = Object.keys(
@@ -129,6 +157,7 @@ describe('Controls', () => {
           "camTrackId": "v-id",
           "micEnabled": true,
           "micTrackId": "a-id",
+          "sharingScreen": false,
           "unreadMessages": false,
         }
       `);

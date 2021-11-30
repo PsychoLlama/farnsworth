@@ -7,6 +7,7 @@ import {
   FiMicOff,
   FiVideoOff,
   FiPhone,
+  FiAirplay,
   FiMessageSquare,
 } from 'react-icons/fi';
 import { connect } from 'react-redux';
@@ -14,7 +15,11 @@ import * as css from '../../utils/css';
 import * as actions from '../../actions';
 import { Button } from '../core';
 import { State } from '../../reducers/initial-state';
-import { MY_PARTICIPANT_ID, TrackKind } from '../../utils/constants';
+import {
+  MY_PARTICIPANT_ID,
+  TrackKind,
+  TrackSource,
+} from '../../utils/constants';
 
 export class Controls extends React.Component<Props> {
   static defaultProps = {
@@ -31,6 +36,7 @@ export class Controls extends React.Component<Props> {
       camTrackId,
       activeCall,
       unreadMessages,
+      sharingScreen,
     } = this.props;
 
     return (
@@ -72,6 +78,14 @@ export class Controls extends React.Component<Props> {
         </ControlGroup>
 
         <ControlGroup data-right>
+          <Control
+            data-test="toggle-screen-share"
+            data-sharing={sharingScreen}
+            onClick={this.toggleScreenShare}
+          >
+            <FiAirplay />
+          </Control>
+
           <Control data-test="toggle-phonebook" onClick={togglePhonebook}>
             <FiUsers />
           </Control>
@@ -100,6 +114,14 @@ export class Controls extends React.Component<Props> {
     }
   };
 
+  toggleScreenShare = () => {
+    if (this.props.sharingScreen) {
+      this.props.stopSharingScreen();
+    } else {
+      this.props.shareScreen();
+    }
+  };
+
   endCall = () => {
     this.props.leaveCall(this.props.activeCall);
   };
@@ -107,10 +129,13 @@ export class Controls extends React.Component<Props> {
 
 interface Props {
   togglePhonebook: typeof actions.phonebook.toggle;
+  shareScreen: typeof actions.devices.shareScreen;
+  stopSharingScreen: typeof actions.devices.stopSharingScreen;
   toggleChat: typeof actions.chat.toggle;
   pauseTrack: typeof actions.tracks.pause;
   resumeTrack: typeof actions.tracks.resume;
   leaveCall: typeof actions.call.leave;
+  sharingScreen: boolean;
   activeCall: null | string;
   micTrackId: null | string;
   camTrackId: null | string;
@@ -175,6 +200,16 @@ const Control = styled(Button.Base)`
     top: 0.5rem;
     right: 0.5rem;
   }
+
+  &[data-sharing='true'] {
+    color: ${css.color('primary')};
+
+    :hover,
+    :focus {
+      color: ${css.color('background')};
+      background-color: ${css.color('primary')};
+    }
+  }
 `;
 
 const EndCallIcon = styled(FiPhone)`
@@ -186,6 +221,8 @@ const EndCallIcon = styled(FiPhone)`
 const mapDispatchToProps = {
   togglePhonebook: actions.phonebook.toggle,
   leaveCall: actions.call.leave,
+  shareScreen: actions.devices.shareScreen,
+  stopSharingScreen: actions.devices.stopSharingScreen,
   toggleChat: actions.chat.toggle,
   pauseTrack: actions.tracks.pause,
   resumeTrack: actions.tracks.resume,
@@ -194,20 +231,25 @@ const mapDispatchToProps = {
 export function mapStateToProps(state: State) {
   const participant = state.participants[MY_PARTICIPANT_ID];
 
-  const micTrackId = participant.trackIds.find((id) => {
-    return state.tracks[id].kind === TrackKind.Audio;
-  });
+  const query = (kind: TrackKind) => (id: string) => {
+    const track = state.tracks[id];
+    return track.kind === kind && track.source === TrackSource.Device;
+  };
 
-  const camTrackId = participant.trackIds.find((id) => {
-    return state.tracks[id].kind === TrackKind.Video;
-  });
+  const micTrackId = participant.trackIds.find(query(TrackKind.Audio));
+  const camTrackId = participant.trackIds.find(query(TrackKind.Video));
 
   const camEnabled = state.tracks[camTrackId]?.enabled ?? false;
   const micEnabled = state.tracks[micTrackId]?.enabled ?? false;
 
+  const sharingScreen = Object.values(state.tracks).some((track) => {
+    return track.local && track.source === TrackSource.Display;
+  });
+
   return {
     activeCall: state.call?.peerId ?? null,
     unreadMessages: state.chat.unreadMessages,
+    sharingScreen,
     micTrackId,
     micEnabled,
     camTrackId,

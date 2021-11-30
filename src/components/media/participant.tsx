@@ -2,13 +2,14 @@ import React from 'react';
 import { connect } from 'react-redux';
 import assert from '../../utils/assert';
 import { State } from '../../reducers/initial-state';
-import { TrackKind } from '../../utils/constants';
+import { TrackKind, TrackSource } from '../../utils/constants';
 import MediaView from './media-view';
 import { MY_PARTICIPANT_ID, ConnectionState } from '../../utils/constants';
 
 export class Participant extends React.Component<Props> {
   render() {
-    const { audioTrackId, videoTrackId, connectionState } = this.props;
+    const { audioTrackId, videoTrackId, connectionState, sourceType } =
+      this.props;
 
     return (
       <MediaView
@@ -16,6 +17,7 @@ export class Participant extends React.Component<Props> {
         audioTrackId={audioTrackId}
         videoTrackId={videoTrackId}
         connectionState={connectionState}
+        sourceType={sourceType}
       />
     );
   }
@@ -29,19 +31,23 @@ interface Props extends OwnProps {
 
 interface OwnProps {
   id: string;
+  sourceType?: TrackSource;
 }
 
-export function mapStateToProps(state: State, { id }: { id: string }) {
+export function mapStateToProps(
+  state: State,
+  { id, sourceType = TrackSource.Device }: OwnProps,
+) {
   const participant = state.participants[id];
   assert(participant, 'Bad participant ID.');
 
-  const audioTrackId = participant.trackIds.find((trackId) => {
-    return state.tracks[trackId].kind === TrackKind.Audio;
-  });
+  const query = (kind: TrackKind) => (id: string) => {
+    const track = state.tracks[id];
+    return track.kind === kind && track.source === sourceType;
+  };
 
-  const videoTrackId = participant.trackIds.find((trackId) => {
-    return state.tracks[trackId].kind === TrackKind.Video;
-  });
+  const audioTrackId = participant.trackIds.find(query(TrackKind.Audio));
+  const videoTrackId = participant.trackIds.find(query(TrackKind.Video));
 
   return {
     audioTrackId: audioTrackId || null,

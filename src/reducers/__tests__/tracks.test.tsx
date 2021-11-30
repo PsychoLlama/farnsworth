@@ -2,7 +2,11 @@ import createStore from '../../utils/create-store';
 import * as actions from '../../actions';
 import * as connEffects from '../../effects/connections';
 import * as deviceEffects from '../../effects/devices';
-import { TrackKind, MY_PARTICIPANT_ID } from '../../utils/constants';
+import {
+  TrackKind,
+  TrackSource,
+  MY_PARTICIPANT_ID,
+} from '../../utils/constants';
 
 jest.mock('../../effects/connections');
 jest.mock('../../effects/devices');
@@ -49,11 +53,13 @@ describe('Tracks reducer', () => {
             "enabled": true,
             "kind": "audio",
             "local": true,
+            "source": "device",
           },
           "second": Object {
             "enabled": true,
             "kind": "video",
             "local": true,
+            "source": "device",
           },
         }
       `);
@@ -79,6 +85,7 @@ describe('Tracks reducer', () => {
       store.dispatch(
         actions.tracks.add({
           track,
+          source: TrackSource.Device,
           peerId: MY_PARTICIPANT_ID,
         }),
       );
@@ -99,6 +106,7 @@ describe('Tracks reducer', () => {
       store.dispatch(
         actions.tracks.add({
           track,
+          source: TrackSource.Device,
           peerId: MY_PARTICIPANT_ID,
         }),
       );
@@ -121,6 +129,7 @@ describe('Tracks reducer', () => {
       store.dispatch(
         actions.tracks.add({
           track,
+          source: TrackSource.Display,
           peerId: MY_PARTICIPANT_ID,
         }),
       );
@@ -143,6 +152,7 @@ describe('Tracks reducer', () => {
       store.dispatch(
         actions.tracks.add({
           track,
+          source: TrackSource.Device,
           peerId: MY_PARTICIPANT_ID,
         }),
       );
@@ -165,6 +175,7 @@ describe('Tracks reducer', () => {
       store.dispatch(
         actions.tracks.add({
           track,
+          source: TrackSource.Device,
           peerId: MY_PARTICIPANT_ID,
         }),
       );
@@ -187,6 +198,7 @@ describe('Tracks reducer', () => {
       store.dispatch(
         actions.tracks.add({
           track,
+          source: TrackSource.Device,
           peerId: MY_PARTICIPANT_ID,
         }),
       );
@@ -207,6 +219,7 @@ describe('Tracks reducer', () => {
       store.dispatch(
         actions.tracks.add({
           track,
+          source: TrackSource.Device,
           peerId: MY_PARTICIPANT_ID,
         }),
       );
@@ -232,6 +245,7 @@ describe('Tracks reducer', () => {
         actions.tracks.add({
           track,
           peerId: MY_PARTICIPANT_ID,
+          source: TrackSource.Display,
         }),
       );
 
@@ -241,6 +255,55 @@ describe('Tracks reducer', () => {
       expect(store.getState().participants).not.toHaveProperty(
         MY_PARTICIPANT_ID,
       );
+    });
+  });
+
+  describe('devices.shareScreen()', () => {
+    it('stores tracks in state', async () => {
+      const { store } = setup();
+      const track = new MediaStreamTrack();
+      mockedDeviceEffects.shareScreen.mockResolvedValue([
+        {
+          trackId: track.id,
+          kind: track.kind as TrackKind,
+          deviceId: track.getSettings().deviceId,
+          enabled: track.enabled,
+        },
+      ]);
+
+      await store.dispatch(actions.devices.shareScreen());
+
+      expect(store.getState().tracks).toHaveProperty(track.id);
+      expect(store.getState().participants).toMatchObject({
+        [MY_PARTICIPANT_ID]: {
+          trackIds: [track.id],
+        },
+      });
+    });
+  });
+
+  describe('devices.stopSharingScreen()', () => {
+    it('removes local display tracks', async () => {
+      const { store } = setup();
+      const track = new MediaStreamTrack();
+      mockedDeviceEffects.shareScreen.mockResolvedValue([
+        {
+          trackId: track.id,
+          kind: track.kind as TrackKind,
+          deviceId: track.getSettings().deviceId,
+          enabled: track.enabled,
+        },
+      ]);
+
+      await store.dispatch(actions.devices.shareScreen());
+      store.dispatch(actions.devices.stopSharingScreen());
+
+      expect(store.getState().tracks).not.toHaveProperty(track.id);
+      expect(store.getState().participants).toMatchObject({
+        [MY_PARTICIPANT_ID]: {
+          trackIds: [],
+        },
+      });
     });
   });
 });

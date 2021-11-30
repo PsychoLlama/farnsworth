@@ -5,7 +5,11 @@ import { Stream } from '../../testing/mocks/libp2p';
 import Libp2pMessenger from '../../conferencing/libp2p-messenger';
 import context from '../../conferencing/global-context';
 import initialState from '../../reducers/initial-state';
-import { MY_PARTICIPANT_ID, TrackKind } from '../../utils/constants';
+import {
+  MY_PARTICIPANT_ID,
+  TrackKind,
+  TrackSource,
+} from '../../utils/constants';
 
 jest.mock('../../conferencing/webrtc');
 
@@ -45,12 +49,14 @@ describe('Track effects', () => {
 
           state.tracks[audioTrack.id] = {
             kind: TrackKind.Audio,
+            source: TrackSource.Device,
             enabled: true,
             local: true,
           };
 
           state.tracks[videoTrack.id] = {
             kind: TrackKind.Video,
+            source: TrackSource.Display,
             enabled: true,
             local: true,
           };
@@ -63,8 +69,11 @@ describe('Track effects', () => {
 
       effects.sendLocalTracks(peerId, state);
 
-      expect(mgr.addTrack).toHaveBeenCalledWith(audioTrack);
-      expect(mgr.addTrack).toHaveBeenCalledWith(videoTrack);
+      expect(mgr.addTrack).toHaveBeenCalledWith(audioTrack, TrackSource.Device);
+      expect(mgr.addTrack).toHaveBeenCalledWith(
+        videoTrack,
+        TrackSource.Display,
+      );
     });
   });
 
@@ -73,7 +82,7 @@ describe('Track effects', () => {
       const track = new MediaStreamTrack();
       const peerId = 'remote-peer';
 
-      effects.add({ track, peerId });
+      effects.add({ track, peerId, source: TrackSource.Device });
 
       expect(context.tracks.get(track.id)).toBe(track);
     });
@@ -82,7 +91,7 @@ describe('Track effects', () => {
       const track = new MediaStreamTrack();
       const peerId = 'remote-peer';
 
-      const result = effects.add({ track, peerId });
+      const result = effects.add({ track, peerId, source: TrackSource.Device });
 
       expect(result).toEqual({
         peerId,
@@ -90,6 +99,7 @@ describe('Track effects', () => {
           id: track.id,
           kind: track.kind,
           enabled: track.enabled,
+          source: TrackSource.Device,
         },
       });
     });

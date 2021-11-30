@@ -4,6 +4,7 @@ import { Participant, mapStateToProps } from '../participant';
 import {
   MY_PARTICIPANT_ID,
   TrackKind,
+  TrackSource,
   ConnectionState,
 } from '../../../utils/constants';
 import initialState, { State } from '../../../reducers/initial-state';
@@ -56,12 +57,14 @@ describe('Participant', () => {
         state.participants[MY_PARTICIPANT_ID].trackIds = ['a-id', 'v-id'];
         state.tracks['a-id'] = {
           kind: TrackKind.Audio,
+          source: TrackSource.Device,
           enabled: true,
           local: true,
         };
 
         state.tracks['v-id'] = {
           kind: TrackKind.Video,
+          source: TrackSource.Device,
           enabled: true,
           local: true,
         };
@@ -71,6 +74,33 @@ describe('Participant', () => {
         audioTrackId: 'a-id',
         videoTrackId: 'v-id',
       });
+    });
+
+    it('filters by tracks of its own kind', () => {
+      const state = produce(initialState, (state) => {
+        state.participants[MY_PARTICIPANT_ID].trackIds = ['dev-id', 'dis-id'];
+        state.tracks = {
+          'dev-id': {
+            source: TrackSource.Device,
+            kind: TrackKind.Video,
+            local: true,
+            enabled: true,
+          },
+          'dis-id': {
+            source: TrackSource.Display,
+            kind: TrackKind.Video,
+            local: true,
+            enabled: true,
+          },
+        };
+      });
+
+      const props = mapStateToProps(state, {
+        id: MY_PARTICIPANT_ID,
+        sourceType: TrackSource.Display,
+      });
+
+      expect(props.videoTrackId).toBe('dis-id');
     });
 
     it('grabs the participant connection state', () => {

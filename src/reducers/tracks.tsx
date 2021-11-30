@@ -1,7 +1,7 @@
 import { createReducer } from 'retreon';
 import initialState from './initial-state';
 import * as actions from '../actions';
-import { MY_PARTICIPANT_ID } from '../utils/constants';
+import { MY_PARTICIPANT_ID, TrackSource } from '../utils/constants';
 
 export default createReducer(initialState, (handleAction) => [
   handleAction(actions.devices.requestMediaDevices, (state, newTracks) => {
@@ -9,6 +9,7 @@ export default createReducer(initialState, (handleAction) => [
       state.participants[MY_PARTICIPANT_ID].trackIds.push(track.trackId);
       state.tracks[track.trackId] = {
         kind: track.kind,
+        source: TrackSource.Device,
         enabled: track.enabled,
         local: true,
       };
@@ -18,6 +19,7 @@ export default createReducer(initialState, (handleAction) => [
   handleAction(actions.tracks.add, (state, { track }) => {
     state.tracks[track.id] = {
       kind: track.kind,
+      source: track.source,
       enabled: track.enabled,
       local: false,
     };
@@ -63,5 +65,33 @@ export default createReducer(initialState, (handleAction) => [
     });
 
     delete state.participants[peerId];
+  }),
+
+  handleAction(actions.devices.shareScreen, (state, tracks) => {
+    tracks.forEach((track) => {
+      state.participants[MY_PARTICIPANT_ID].trackIds.push(track.trackId);
+      state.tracks[track.trackId] = {
+        kind: track.kind,
+        source: TrackSource.Display,
+        enabled: track.enabled,
+        local: true,
+      };
+    });
+  }),
+
+  handleAction(actions.devices.stopSharingScreen, (state) => {
+    const participant = state.participants[MY_PARTICIPANT_ID];
+
+    // Poor man's _.partition(...).
+    const [deviceTracks, displayTracks] = participant.trackIds.reduce(
+      ([device, display], trackId) =>
+        state.tracks[trackId].source === TrackSource.Display
+          ? [device, display.concat(trackId)]
+          : [device.concat(trackId), display],
+      [[], []],
+    );
+
+    displayTracks.forEach((trackId: string) => delete state.tracks[trackId]);
+    participant.trackIds = deviceTracks;
   }),
 ]);

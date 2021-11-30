@@ -3,7 +3,11 @@ import renderer from '../../../testing/renderer';
 import { MediaView, mapStateToProps } from '../media-view';
 import context from '../../../conferencing/global-context';
 import * as Overlays from '../video-overlays';
-import { ConnectionState, TrackKind } from '../../../utils/constants';
+import {
+  ConnectionState,
+  TrackKind,
+  TrackSource,
+} from '../../../utils/constants';
 import initialState, { State } from '../../../reducers/initial-state';
 
 describe('MediaView', () => {
@@ -235,6 +239,7 @@ describe('MediaView', () => {
       const { props } = setup((state) => {
         state.tracks['v-id'] = {
           kind: TrackKind.Video,
+          source: TrackSource.Device,
           enabled: true,
           local: true,
         };
