@@ -8,7 +8,8 @@ import { MY_PARTICIPANT_ID, ConnectionState } from '../../utils/constants';
 
 export class Participant extends React.Component<Props> {
   render() {
-    const { audioTrackId, videoTrackId, connectionState } = this.props;
+    const { audioTrackId, videoTrackId, connectionState, sourceType } =
+      this.props;
 
     return (
       <MediaView
@@ -16,6 +17,7 @@ export class Participant extends React.Component<Props> {
         audioTrackId={audioTrackId}
         videoTrackId={videoTrackId}
         connectionState={connectionState}
+        sourceType={sourceType}
       />
     );
   }
@@ -29,7 +31,7 @@ interface Props extends OwnProps {
 
 interface OwnProps {
   id: string;
-  sourceType?: string;
+  sourceType?: TrackSource;
 }
 
 export function mapStateToProps(

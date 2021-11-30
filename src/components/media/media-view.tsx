@@ -4,7 +4,7 @@ import { connect } from 'react-redux';
 import context from '../../conferencing/global-context';
 import * as Overlays from './video-overlays';
 import Logger from '../../utils/logger';
-import { ConnectionState } from '../../utils/constants';
+import { ConnectionState, TrackSource } from '../../utils/constants';
 import { State as ReduxState } from '../../reducers/initial-state';
 
 const logger = new Logger('<MediaView>');
@@ -31,10 +31,13 @@ export class MediaView extends React.Component<Props, State> {
   }
 
   render() {
+    const { isLocal, sourceType } = this.props;
+
     return (
       <Container>
         <VideoStream
-          data-local={this.props.isLocal}
+          data-local={isLocal}
+          data-screen={sourceType === TrackSource.Display}
           ref={this.attachMediaStream}
           onCanPlay={this.play}
           onPlay={this.syncPlayState}
@@ -150,6 +153,7 @@ interface OwnProps {
   audioTrackId: null | string;
   videoTrackId: null | string;
   isLocal: boolean;
+  sourceType?: TrackSource;
 }
 
 interface Props extends OwnProps {
@@ -184,6 +188,10 @@ const VideoStream = styled.video`
   object-position: center;
   flex-grow: 1;
   overflow: hidden;
+
+  &[data-screen='true'] {
+    object-fit: contain;
+  }
 
   // People are used to seeing their own faces in a mirror. Replicate the
   // effect for local video streams.
