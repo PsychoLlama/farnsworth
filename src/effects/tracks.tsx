@@ -1,14 +1,23 @@
 import assert from '../utils/assert';
 import { State } from '../reducers/initial-state';
 import context from '../conferencing/global-context';
-import { MY_PARTICIPANT_ID, TrackKind, EventType } from '../utils/constants';
+import {
+  MY_PARTICIPANT_ID,
+  TrackKind,
+  TrackSource,
+  EventType,
+} from '../utils/constants';
 import { broadcastEvent } from './events';
 
 export function sendLocalTracks(peerId: string, state: State) {
   const { trackIds } = state.participants[MY_PARTICIPANT_ID];
   const conn = getConnectionById(peerId);
 
-  trackIds.map(getTrackById).forEach((track) => conn.addTrack(track));
+  trackIds.forEach((trackId) => {
+    const track = getTrackById(trackId);
+    const { source } = state.tracks[trackId];
+    conn.addTrack(track, source);
+  });
 }
 
 function getTrackById(id: string) {
@@ -29,9 +38,11 @@ function getConnectionById(peerId: string) {
 export function add({
   track,
   peerId,
+  source,
 }: {
   track: MediaStreamTrack;
   peerId: string;
+  source: TrackSource;
 }) {
   context.tracks.set(track.id, track);
 
@@ -41,6 +52,7 @@ export function add({
       id: track.id,
       kind: track.kind as TrackKind,
       enabled: track.enabled,
+      source,
     },
   };
 }

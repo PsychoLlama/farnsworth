@@ -9,6 +9,7 @@ import { MockMediaStreamTrack } from '../../../testing/mocks/media';
 import {
   RtcDescriptionType,
   RtcSignalingState,
+  TrackSource,
 } from '../../../utils/constants';
 import { MockRTCPeerConnection } from '../../../testing/mocks/webrtc';
 import sdk from '../../../utils/sdk';
@@ -214,10 +215,24 @@ describe('ConnectionManager', () => {
       const { pc, config } = setup();
       const track = new MockMediaStreamTrack();
 
-      await pc.ontrack({ track });
+      await pc.ontrack({ track, streams: [] });
 
       expect(sdk.tracks.add).toHaveBeenCalledWith({
         peerId: config.remoteId,
+        source: TrackSource.Device,
+        track,
+      });
+    });
+
+    it('identifies a stream association as being a screen share', async () => {
+      const { pc, config } = setup();
+      const track = new MockMediaStreamTrack();
+
+      await pc.ontrack({ track, streams: [new MediaStream()] });
+
+      expect(sdk.tracks.add).toHaveBeenCalledWith({
+        peerId: config.remoteId,
+        source: TrackSource.Display,
         track,
       });
     });
@@ -228,9 +243,18 @@ describe('ConnectionManager', () => {
       const { mgr, pc } = setup();
       const track = new MockMediaStreamTrack();
 
-      mgr.addTrack(track);
+      mgr.addTrack(track, TrackSource.Device);
 
       expect(pc.addTrack).toHaveBeenCalledWith(track);
+    });
+
+    it('adds a stream association for display tracks', () => {
+      const { mgr, pc } = setup();
+      const track = new MockMediaStreamTrack();
+
+      mgr.addTrack(track, TrackSource.Display);
+
+      expect(pc.addTrack).toHaveBeenCalledWith(track, expect.any(MediaStream));
     });
   });
 });

@@ -1,7 +1,11 @@
 import createStore from '../../utils/create-store';
 import * as actions from '../../actions';
 import * as chatEffects from '../../effects/chat';
-import { ConnectionState, MY_PARTICIPANT_ID } from '../../utils/constants';
+import {
+  ConnectionState,
+  TrackSource,
+  MY_PARTICIPANT_ID,
+} from '../../utils/constants';
 import ConnectionManager from '../../conferencing/webrtc';
 import context from '../../conferencing/global-context';
 
@@ -111,6 +115,7 @@ describe('Participants reducer', () => {
       store.dispatch(
         actions.tracks.add({
           track,
+          source: TrackSource.Device,
 
           // Never happens in practice. This is just laziness.
           peerId: MY_PARTICIPANT_ID,

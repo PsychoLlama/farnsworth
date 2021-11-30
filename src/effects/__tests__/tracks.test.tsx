@@ -56,7 +56,7 @@ describe('Track effects', () => {
 
           state.tracks[videoTrack.id] = {
             kind: TrackKind.Video,
-            source: TrackSource.Device,
+            source: TrackSource.Display,
             enabled: true,
             local: true,
           };
@@ -69,8 +69,11 @@ describe('Track effects', () => {
 
       effects.sendLocalTracks(peerId, state);
 
-      expect(mgr.addTrack).toHaveBeenCalledWith(audioTrack);
-      expect(mgr.addTrack).toHaveBeenCalledWith(videoTrack);
+      expect(mgr.addTrack).toHaveBeenCalledWith(audioTrack, TrackSource.Device);
+      expect(mgr.addTrack).toHaveBeenCalledWith(
+        videoTrack,
+        TrackSource.Display,
+      );
     });
   });
 
@@ -79,7 +82,7 @@ describe('Track effects', () => {
       const track = new MediaStreamTrack();
       const peerId = 'remote-peer';
 
-      effects.add({ track, peerId });
+      effects.add({ track, peerId, source: TrackSource.Device });
 
       expect(context.tracks.get(track.id)).toBe(track);
     });
@@ -88,7 +91,7 @@ describe('Track effects', () => {
       const track = new MediaStreamTrack();
       const peerId = 'remote-peer';
 
-      const result = effects.add({ track, peerId });
+      const result = effects.add({ track, peerId, source: TrackSource.Device });
 
       expect(result).toEqual({
         peerId,
@@ -96,6 +99,7 @@ describe('Track effects', () => {
           id: track.id,
           kind: track.kind,
           enabled: track.enabled,
+          source: TrackSource.Device,
         },
       });
     });

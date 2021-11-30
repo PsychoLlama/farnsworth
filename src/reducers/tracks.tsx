@@ -19,8 +19,7 @@ export default createReducer(initialState, (handleAction) => [
   handleAction(actions.tracks.add, (state, { track }) => {
     state.tracks[track.id] = {
       kind: track.kind,
-      // TODO: Pass this from the source.
-      source: TrackSource.Device,
+      source: track.source,
       enabled: track.enabled,
       local: false,
     };

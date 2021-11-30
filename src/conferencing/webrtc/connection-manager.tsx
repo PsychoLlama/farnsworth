@@ -2,6 +2,7 @@ import Libp2pMessenger from '../libp2p-messenger';
 import {
   RtcDescriptionType,
   RtcSignalingState,
+  TrackSource,
   STUN_SERVERS,
 } from '../../utils/constants';
 import Logger from '../../utils/logger';
@@ -58,9 +59,25 @@ export default class ConnectionManager {
    * Send an audio/video track to the remote peer, received under
    * `pc.ontrack`.
    */
-  addTrack(track: MediaStreamTrack) {
+  addTrack(track: MediaStreamTrack, source: TrackSource) {
     logger.debug(`Adding ${track.kind} track`);
-    this.pc.addTrack(track);
+
+    // Let me explain my genius. Since there isn't a way to communicate
+    // arbitrary data with a new track, the receiving side has no idea what it
+    // goes to. It could be a webcam or a chrome tab and they'd both look just
+    // as opaque. Data channel messages are limited too, as the messages
+    // might not make it through and we don't have consistent track IDs
+    // anyway.
+    //
+    // But we have a secret weapon. You can associate a variable number of
+    // media streams with each track. We don't have to *use* those streams,
+    // the other side just has to count them. We predefine each count with
+    // a track type and voila! Now we know what the track is for.
+    if (source === TrackSource.Display) {
+      this.pc.addTrack(track, new MediaStream());
+    } else {
+      this.pc.addTrack(track);
+    }
   }
 
   /**
@@ -74,11 +91,18 @@ export default class ConnectionManager {
     this.pc.close();
   }
 
-  private emitTrackEvent = async ({ track }: RTCTrackEvent) => {
+  private emitTrackEvent = async ({ track, streams }: RTCTrackEvent) => {
     logger.debug(`Incoming remote ${track.kind} track`);
 
+    const source =
+      streams.length === 1 ? TrackSource.Display : TrackSource.Device;
+
     const { default: sdk } = await import('../../utils/sdk');
-    sdk.tracks.add({ track, peerId: this.remoteId });
+    sdk.tracks.add({
+      peerId: this.remoteId,
+      source,
+      track,
+    });
   };
 
   private sendIceCandidate = ({ candidate }: RTCPeerConnectionIceEvent) => {

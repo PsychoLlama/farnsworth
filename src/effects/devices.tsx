@@ -1,6 +1,6 @@
 import MediaDevices from 'media-devices';
 import context from '../conferencing/global-context';
-import { TrackKind, EventType } from '../utils/constants';
+import { TrackKind, TrackSource, EventType } from '../utils/constants';
 import { broadcastEvent } from './events';
 
 // Put the tracks somewhere useful.
@@ -11,9 +11,9 @@ function addTracksToContext(stream: MediaStream) {
 }
 
 // Send the new tracks to every open WebRTC connection.
-function sendTracksToAllParticipants(stream: MediaStream) {
+function sendTracksToAllParticipants(stream: MediaStream, source: TrackSource) {
   Array.from(context.connections.values()).forEach((conn) => {
-    stream.getTracks().forEach((track) => conn.addTrack(track));
+    stream.getTracks().forEach((track) => conn.addTrack(track, source));
   });
 }
 
@@ -41,7 +41,7 @@ export async function requestMediaDevices() {
   });
 
   addTracksToContext(stream);
-  sendTracksToAllParticipants(stream);
+  sendTracksToAllParticipants(stream, TrackSource.Device);
 
   return stream.getTracks().map(getTrackMetadata);
 }
@@ -54,7 +54,7 @@ export async function shareScreen() {
   });
 
   addTracksToContext(stream);
-  sendTracksToAllParticipants(stream);
+  sendTracksToAllParticipants(stream, TrackSource.Display);
   broadcastEvent({
     type: EventType.ScreenShared,
     payload: {

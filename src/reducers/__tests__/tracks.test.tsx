@@ -2,7 +2,11 @@ import createStore from '../../utils/create-store';
 import * as actions from '../../actions';
 import * as connEffects from '../../effects/connections';
 import * as deviceEffects from '../../effects/devices';
-import { TrackKind, MY_PARTICIPANT_ID } from '../../utils/constants';
+import {
+  TrackKind,
+  TrackSource,
+  MY_PARTICIPANT_ID,
+} from '../../utils/constants';
 
 jest.mock('../../effects/connections');
 jest.mock('../../effects/devices');
@@ -81,6 +85,7 @@ describe('Tracks reducer', () => {
       store.dispatch(
         actions.tracks.add({
           track,
+          source: TrackSource.Device,
           peerId: MY_PARTICIPANT_ID,
         }),
       );
@@ -101,6 +106,7 @@ describe('Tracks reducer', () => {
       store.dispatch(
         actions.tracks.add({
           track,
+          source: TrackSource.Device,
           peerId: MY_PARTICIPANT_ID,
         }),
       );
@@ -123,6 +129,7 @@ describe('Tracks reducer', () => {
       store.dispatch(
         actions.tracks.add({
           track,
+          source: TrackSource.Display,
           peerId: MY_PARTICIPANT_ID,
         }),
       );
@@ -145,6 +152,7 @@ describe('Tracks reducer', () => {
       store.dispatch(
         actions.tracks.add({
           track,
+          source: TrackSource.Device,
           peerId: MY_PARTICIPANT_ID,
         }),
       );
@@ -167,6 +175,7 @@ describe('Tracks reducer', () => {
       store.dispatch(
         actions.tracks.add({
           track,
+          source: TrackSource.Device,
           peerId: MY_PARTICIPANT_ID,
         }),
       );
@@ -189,6 +198,7 @@ describe('Tracks reducer', () => {
       store.dispatch(
         actions.tracks.add({
           track,
+          source: TrackSource.Device,
           peerId: MY_PARTICIPANT_ID,
         }),
       );
@@ -209,6 +219,7 @@ describe('Tracks reducer', () => {
       store.dispatch(
         actions.tracks.add({
           track,
+          source: TrackSource.Device,
           peerId: MY_PARTICIPANT_ID,
         }),
       );
@@ -234,6 +245,7 @@ describe('Tracks reducer', () => {
         actions.tracks.add({
           track,
           peerId: MY_PARTICIPANT_ID,
+          source: TrackSource.Display,
         }),
       );
 
