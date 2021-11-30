@@ -2,7 +2,7 @@ import produce from 'immer';
 import initialState from '../../reducers/initial-state';
 import context from '../../conferencing/global-context';
 import * as effects from '../';
-import { TrackKind } from '../../utils/constants';
+import { TrackKind, TrackSource } from '../../utils/constants';
 import ConnectionManager from '../../conferencing/webrtc';
 
 jest.mock('../../conferencing/webrtc');
@@ -32,6 +32,7 @@ describe('Garbage collection effects', () => {
       const state = produce(initialState, (state) => {
         state.tracks[track.id] = {
           kind: track.kind as TrackKind,
+          source: TrackSource.Device,
           enabled: track.enabled,
           local: false,
         };

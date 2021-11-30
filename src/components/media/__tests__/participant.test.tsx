@@ -4,6 +4,7 @@ import { Participant, mapStateToProps } from '../participant';
 import {
   MY_PARTICIPANT_ID,
   TrackKind,
+  TrackSource,
   ConnectionState,
 } from '../../../utils/constants';
 import initialState, { State } from '../../../reducers/initial-state';
@@ -56,12 +57,14 @@ describe('Participant', () => {
         state.participants[MY_PARTICIPANT_ID].trackIds = ['a-id', 'v-id'];
         state.tracks['a-id'] = {
           kind: TrackKind.Audio,
+          source: TrackSource.Device,
           enabled: true,
           local: true,
         };
 
         state.tracks['v-id'] = {
           kind: TrackKind.Video,
+          source: TrackSource.Device,
           enabled: true,
           local: true,
         };

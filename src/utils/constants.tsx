@@ -17,6 +17,14 @@ export enum TrackKind {
   Video = 'video',
 }
 
+export enum TrackSource {
+  /** A webcam or physical microphone. */
+  Device = 'device',
+
+  /** A shared screen or browser tab. */
+  Display = 'display',
+}
+
 export enum RtcDescriptionType {
   Offer = 'offer',
   // ... incomplete ...

@@ -1,7 +1,7 @@
 import { createReducer } from 'retreon';
 import initialState from './initial-state';
 import * as actions from '../actions';
-import { MY_PARTICIPANT_ID } from '../utils/constants';
+import { MY_PARTICIPANT_ID, TrackSource } from '../utils/constants';
 
 export default createReducer(initialState, (handleAction) => [
   handleAction(actions.devices.requestMediaDevices, (state, newTracks) => {
@@ -9,6 +9,7 @@ export default createReducer(initialState, (handleAction) => [
       state.participants[MY_PARTICIPANT_ID].trackIds.push(track.trackId);
       state.tracks[track.trackId] = {
         kind: track.kind,
+        source: TrackSource.Device,
         enabled: track.enabled,
         local: true,
       };
@@ -18,6 +19,8 @@ export default createReducer(initialState, (handleAction) => [
   handleAction(actions.tracks.add, (state, { track }) => {
     state.tracks[track.id] = {
       kind: track.kind,
+      // TODO: Pass this from the source.
+      source: TrackSource.Device,
       enabled: track.enabled,
       local: false,
     };
@@ -70,6 +73,7 @@ export default createReducer(initialState, (handleAction) => [
       state.participants[MY_PARTICIPANT_ID].trackIds.push(track.trackId);
       state.tracks[track.trackId] = {
         kind: track.kind,
+        source: TrackSource.Display,
         enabled: track.enabled,
         local: true,
       };

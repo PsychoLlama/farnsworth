@@ -49,11 +49,13 @@ describe('Tracks reducer', () => {
             "enabled": true,
             "kind": "audio",
             "local": true,
+            "source": "device",
           },
           "second": Object {
             "enabled": true,
             "kind": "video",
             "local": true,
+            "source": "device",
           },
         }
       `);

@@ -5,7 +5,11 @@ import { Stream } from '../../testing/mocks/libp2p';
 import Libp2pMessenger from '../../conferencing/libp2p-messenger';
 import context from '../../conferencing/global-context';
 import initialState from '../../reducers/initial-state';
-import { MY_PARTICIPANT_ID, TrackKind } from '../../utils/constants';
+import {
+  MY_PARTICIPANT_ID,
+  TrackKind,
+  TrackSource,
+} from '../../utils/constants';
 
 jest.mock('../../conferencing/webrtc');
 
@@ -45,12 +49,14 @@ describe('Track effects', () => {
 
           state.tracks[audioTrack.id] = {
             kind: TrackKind.Audio,
+            source: TrackSource.Device,
             enabled: true,
             local: true,
           };
 
           state.tracks[videoTrack.id] = {
             kind: TrackKind.Video,
+            source: TrackSource.Device,
             enabled: true,
             local: true,
           };

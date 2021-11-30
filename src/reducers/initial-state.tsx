@@ -1,5 +1,6 @@
 import {
   TrackKind,
+  TrackSource,
   ConnectionState,
   MY_PARTICIPANT_ID,
 } from '../utils/constants';
@@ -54,6 +55,7 @@ export interface State {
   // video.
   tracks: {
     [trackId: string]: {
+      source: TrackSource;
       kind: TrackKind;
       enabled: boolean;
       local: boolean;
