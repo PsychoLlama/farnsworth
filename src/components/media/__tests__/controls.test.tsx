@@ -18,6 +18,7 @@ describe('Controls', () => {
       camTrackId: 'v-id',
       micEnabled: true,
       camEnabled: true,
+      unreadMessages: false,
     }),
   });
 
@@ -128,6 +129,7 @@ describe('Controls', () => {
           "camTrackId": "v-id",
           "micEnabled": true,
           "micTrackId": "a-id",
+          "unreadMessages": false,
         }
       `);
     });

@@ -68,6 +68,7 @@ export interface State {
   // Manages the chat panel.
   chat: {
     open: boolean;
+    unreadMessages: boolean;
   };
 }
 
@@ -97,6 +98,7 @@ const initialState: State = {
   },
   chat: {
     open: false,
+    unreadMessages: false,
   },
 };
 

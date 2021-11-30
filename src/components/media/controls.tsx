@@ -30,13 +30,18 @@ export class Controls extends React.Component<Props> {
       micTrackId,
       camTrackId,
       activeCall,
+      unreadMessages,
     } = this.props;
 
     return (
       <Container>
         <ControlGroup data-left>
           {activeCall && (
-            <Control data-test="toggle-chat" onClick={this.props.toggleChat}>
+            <Control
+              data-test="toggle-chat"
+              onClick={this.props.toggleChat}
+              data-unread={unreadMessages}
+            >
               <FiMessageSquare />
             </Control>
           )}
@@ -111,6 +116,7 @@ interface Props {
   camTrackId: null | string;
   micEnabled: boolean;
   camEnabled: boolean;
+  unreadMessages: boolean;
 }
 
 const Container = styled.div`
@@ -136,6 +142,7 @@ const ControlGroup = styled.div`
 const Control = styled(Button.Base)`
   font-size: 1.5rem;
   padding: 1rem;
+  position: relative;
 
   :hover,
   :focus {
@@ -155,6 +162,18 @@ const Control = styled(Button.Base)`
     opacity: 0.5;
     pointer-events: none;
     cursor: not-allowed;
+  }
+
+  &[data-unread='true']::after {
+    content: ' ';
+    display: block;
+    border-radius: 50%;
+    width: 10px;
+    height: 10px;
+    background-color: ${css.color('secondary')};
+    position: absolute;
+    top: 0.5rem;
+    right: 0.5rem;
   }
 `;
 
@@ -188,6 +207,7 @@ export function mapStateToProps(state: State) {
 
   return {
     activeCall: state.call?.peerId ?? null,
+    unreadMessages: state.chat.unreadMessages,
     micTrackId,
     micEnabled,
     camTrackId,
