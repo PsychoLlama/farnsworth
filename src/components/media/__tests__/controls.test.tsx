@@ -18,6 +18,7 @@ describe('Controls', () => {
       pauseTrack: jest.fn(),
       resumeTrack: jest.fn(),
       leaveCall: jest.fn(),
+      sharingScreen: false,
       activeCall: 'remote-peer-id',
       micTrackId: 'a-id',
       camTrackId: 'v-id',
@@ -144,6 +145,7 @@ describe('Controls', () => {
           "camTrackId": "v-id",
           "micEnabled": true,
           "micTrackId": "a-id",
+          "sharingScreen": false,
           "unreadMessages": false,
         }
       `);
