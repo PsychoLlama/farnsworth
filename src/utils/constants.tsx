@@ -1,9 +1,7 @@
-import { v4 as uuid } from 'uuid';
-
 // Never displayed to the user. Mainly used for logs.
 export const APP_NAME = 'farnsworth';
 
-export const MY_PARTICIPANT_ID = uuid();
+export const MY_PARTICIPANT_ID = 'self';
 
 // This decides the libp2p relay server. Make sure it exists in your `.env`
 // file.
