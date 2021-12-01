@@ -94,4 +94,12 @@ export default createReducer(initialState, (handleAction) => [
     displayTracks.forEach((trackId: string) => delete state.tracks[trackId]);
     participant.trackIds = deviceTracks;
   }),
+
+  // We only listen to this event on local tracks.
+  handleAction(actions.tracks.markEnded, (state, trackId) => {
+    const participant = state.participants[MY_PARTICIPANT_ID];
+    participant.trackIds = participant.trackIds.filter((id) => id !== trackId);
+
+    delete state.tracks[trackId];
+  }),
 ]);

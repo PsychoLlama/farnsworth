@@ -1,18 +1,24 @@
 import MediaDevices from 'media-devices';
 import context from '../conferencing/global-context';
 import { TrackKind, TrackSource } from '../utils/constants';
+import Logger from '../utils/logger';
+
+const logger = new Logger('devices');
 
 // Put the tracks somewhere useful.
-function addTracksToContext(stream: MediaStream) {
-  stream.getTracks().forEach((track) => {
+function addTracksToContext(tracks: Array<MediaStreamTrack>) {
+  tracks.forEach((track) => {
     context.tracks.set(track.id, track);
   });
 }
 
 // Send the new tracks to every open WebRTC connection.
-function sendTracksToAllParticipants(stream: MediaStream, source: TrackSource) {
+function sendTracksToAllParticipants(
+  tracks: Array<MediaStreamTrack>,
+  source: TrackSource,
+) {
   Array.from(context.connections.values()).forEach((conn) => {
-    stream.getTracks().forEach((track) => conn.addTrack(track, source));
+    tracks.forEach((track) => conn.addTrack(track, source));
   });
 }
 
@@ -39,8 +45,11 @@ export async function requestMediaDevices() {
     },
   });
 
-  addTracksToContext(stream);
-  sendTracksToAllParticipants(stream, TrackSource.Device);
+  const tracks = stream.getTracks();
+  tracks.forEach(removeTrackWhenEnded);
+
+  addTracksToContext(tracks);
+  sendTracksToAllParticipants(tracks, TrackSource.Device);
 
   return stream.getTracks().map(getTrackMetadata);
 }
@@ -52,8 +61,32 @@ export async function shareScreen() {
     video: true,
   });
 
-  addTracksToContext(stream);
-  sendTracksToAllParticipants(stream, TrackSource.Display);
+  const tracks = stream.getTracks();
+  tracks.forEach(removeTrackWhenEnded);
+
+  addTracksToContext(tracks);
+  sendTracksToAllParticipants(tracks, TrackSource.Display);
 
   return stream.getTracks().map(getTrackMetadata);
+}
+
+/**
+ * The 'track.onended' event only fires for certain events generally outside
+ * your control, like unplugging the camera or pressing the browser's built-in
+ * "Stop sharing" button on a screen share.
+ *
+ * Because of the way RTP transceivers operate, it is impractical to transmit
+ * the "ended" event to the remote peer without risking damage to inbound
+ * tracks as well. Thus, this event only happens for local tracks.
+ *
+ * See this article for more details:
+ * https://blog.mozilla.org/webrtc/rtcrtptransceiver-explored/
+ */
+function removeTrackWhenEnded(track: MediaStreamTrack) {
+  track.onended = async function removeTrackFromRedux() {
+    logger.warn('Track ended unexpectedly:', track.id);
+
+    const { default: sdk } = await import('../utils/sdk');
+    sdk.tracks.markEnded(track.id);
+  };
 }

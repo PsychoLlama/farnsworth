@@ -211,6 +211,31 @@ describe('Tracks reducer', () => {
     });
   });
 
+  describe('tracks.markEnded()', () => {
+    it('removes the track', () => {
+      const { store } = setup();
+
+      store.dispatch(
+        actions.tools.patch((state) => {
+          state.participants[MY_PARTICIPANT_ID].trackIds = ['video-id'];
+          state.tracks['video-id'] = {
+            kind: TrackKind.Video,
+            source: TrackSource.Device,
+            local: true,
+            enabled: true,
+          };
+        }),
+      );
+
+      store.dispatch(actions.tracks.markEnded('video-id'));
+
+      expect(store.getState().tracks).toEqual({});
+      expect(store.getState().participants[MY_PARTICIPANT_ID].trackIds).toEqual(
+        [],
+      );
+    });
+  });
+
   describe('connections.close()', () => {
     it('deletes the corresponding tracks', () => {
       const { store } = setup();

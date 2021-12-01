@@ -8,3 +8,4 @@ export const resume = createAction('tracks/resume', effects.tracks.resume);
 export const toggle = createAction('tracks/toggle', effects.tracks.toggle);
 export const markPaused = createAction<TrackKind>('tracks/mark-paused');
 export const markResumed = createAction<TrackKind>('tracks/mark-resumed');
+export const markEnded = createAction<string>('tracks/mark-ended');

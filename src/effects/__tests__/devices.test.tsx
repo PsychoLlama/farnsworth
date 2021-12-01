@@ -3,9 +3,11 @@ import * as effects from '../';
 import { TrackKind } from '../../utils/constants';
 import context from '../../conferencing/global-context';
 import ConnectionManager from '../../conferencing/webrtc';
+import sdk from '../../utils/sdk';
 
 jest.mock('media-devices');
 jest.mock('../../conferencing/webrtc');
+jest.mock('../../utils/sdk');
 
 const MockMediaDevices: jest.Mocked<typeof MediaDevices> = MediaDevices as any;
 
@@ -88,6 +90,17 @@ describe('Device effects', () => {
       await effects.devices.requestMediaDevices();
 
       expect(conn.addTrack).toHaveBeenCalledTimes(2);
+    });
+
+    it('removes the track when it ends unexpectedly', async () => {
+      const [track] = mockDeviceList([
+        { label: 'Camera', kind: TrackKind.Video },
+      ]);
+
+      await effects.devices.requestMediaDevices();
+      await track.onended(new Event('ended'));
+
+      expect(sdk.tracks.markEnded).toHaveBeenCalledWith(track.id);
     });
   });
 
