@@ -13,6 +13,7 @@ describe('Controls', () => {
   const setup = renderer(Controls, {
     getDefaultProps: () => ({
       togglePhonebook: jest.fn(),
+      toggleSettings: jest.fn(),
       shareScreen: jest.fn(),
       stopSharingScreen: jest.fn(),
       toggleChat: jest.fn(),
@@ -122,6 +123,14 @@ describe('Controls', () => {
     const { findByTestId } = setup({ supportsScreenSharing: false });
 
     expect(findByTestId('toggle-screen-share').exists()).toBe(false);
+  });
+
+  it('toggles the settings panel when you click the button', () => {
+    const { findByTestId, props } = setup();
+
+    findByTestId('toggle-settings').simulate('click');
+
+    expect(props.toggleSettings).toHaveBeenCalled();
   });
 
   describe('mapStateToProps', () => {

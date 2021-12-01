@@ -8,6 +8,7 @@ import {
   FiVideoOff,
   FiPhone,
   FiAirplay,
+  FiSliders,
   FiMessageSquare,
 } from 'react-icons/fi';
 import { connect } from 'react-redux';
@@ -44,6 +45,13 @@ export class Controls extends React.Component<Props> {
     return (
       <Container>
         <ControlGroup data-left>
+          <Control
+            data-test="toggle-settings"
+            onClick={this.props.toggleSettings}
+          >
+            <FiSliders />
+          </Control>
+
           {activeCall && (
             <Control
               data-test="toggle-chat"
@@ -133,6 +141,7 @@ export class Controls extends React.Component<Props> {
 
 interface Props {
   togglePhonebook: typeof actions.phonebook.toggle;
+  toggleSettings: typeof actions.settings.toggle;
   shareScreen: typeof actions.devices.shareScreen;
   stopSharingScreen: typeof actions.devices.stopSharingScreen;
   toggleChat: typeof actions.chat.toggle;
@@ -225,6 +234,7 @@ const EndCallIcon = styled(FiPhone)`
 
 const mapDispatchToProps = {
   togglePhonebook: actions.phonebook.toggle,
+  toggleSettings: actions.settings.toggle,
   leaveCall: actions.call.leave,
   shareScreen: actions.devices.shareScreen,
   stopSharingScreen: actions.devices.stopSharingScreen,

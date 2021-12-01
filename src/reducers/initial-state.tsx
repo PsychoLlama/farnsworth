@@ -20,6 +20,8 @@ export enum PanelView {
   None = 'none',
   /** Chat messages */
   Chat = 'chat',
+  /** Device management and advanced settings */
+  Settings = 'settings',
 }
 
 /**
