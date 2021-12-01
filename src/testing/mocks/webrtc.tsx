@@ -40,6 +40,8 @@ export class MockRTCPeerConnection
   addEventListener = this.on;
   removeEventListener = this.off;
 
+  getSenders = jest.fn(() => []);
+
   // --- unimplemented ---
   remoteDescription = null;
   currentLocalDescription = null;
@@ -54,7 +56,6 @@ export class MockRTCPeerConnection
   setConfiguration = jest.fn();
   getTransceivers = jest.fn();
   getReceivers = jest.fn();
-  getSenders = jest.fn();
   getStats = jest.fn();
 
   dispatchEvent = jest.fn();
@@ -99,4 +100,17 @@ export class MockRTCDataChannel extends EventEmitter implements RTCDataChannel {
 
   // --- unimplemented ---
   dispatchEvent = jest.fn();
+}
+
+export class MockRTCRtpSender implements RTCRtpSender {
+  replaceTrack = jest.fn((track) => (this.track = track));
+  dtmf = null;
+  track = null;
+
+  // --- unimplemented ---
+  transport = null;
+  getParameters = jest.fn();
+  setParameters = jest.fn();
+  getStats = jest.fn();
+  setStreams = jest.fn();
 }

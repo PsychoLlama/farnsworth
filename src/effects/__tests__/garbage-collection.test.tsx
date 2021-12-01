@@ -18,11 +18,15 @@ describe('Garbage collection effects', () => {
       const track = new MediaStreamTrack();
       context.tracks.set(track.id, track);
 
+      const conn = new ConnectionManager({} as any);
+      context.connections.set('remote-peer', conn);
+
       // Clean state: no referenced tracks, so delete everything.
       effects.gc.discardUnusedTracks(initialState);
 
       expect(track.stop).toHaveBeenCalled();
       expect(context.tracks.size).toBe(0);
+      expect(conn.removeTrack).toHaveBeenCalledWith(track);
     });
 
     it('does not remove referenced tracks', () => {

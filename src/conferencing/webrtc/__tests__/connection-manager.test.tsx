@@ -11,7 +11,10 @@ import {
   RtcSignalingState,
   TrackSource,
 } from '../../../utils/constants';
-import { MockRTCPeerConnection } from '../../../testing/mocks/webrtc';
+import {
+  MockRTCPeerConnection,
+  MockRTCRtpSender,
+} from '../../../testing/mocks/webrtc';
 import sdk from '../../../utils/sdk';
 
 jest.mock('../../../utils/sdk');
@@ -245,7 +248,11 @@ describe('ConnectionManager', () => {
 
       mgr.addTrack(track, TrackSource.Device);
 
-      expect(pc.addTrack).toHaveBeenCalledWith(track);
+      expect(pc.addTrack).toHaveBeenCalledWith(
+        track,
+        expect.any(MediaStream),
+        expect.any(MediaStream),
+      );
     });
 
     it('adds a stream association for display tracks', () => {
@@ -255,6 +262,30 @@ describe('ConnectionManager', () => {
       mgr.addTrack(track, TrackSource.Display);
 
       expect(pc.addTrack).toHaveBeenCalledWith(track, expect.any(MediaStream));
+    });
+  });
+
+  describe('removeTrack', () => {
+    it('removes the track from the corresponding RTP sender', () => {
+      const { mgr, pc } = setup();
+      const track = new MockMediaStreamTrack();
+      const sender = new MockRTCRtpSender();
+      sender.replaceTrack(track);
+
+      mgr.addTrack(track, TrackSource.Display);
+      pc.getSenders.mockReturnValue([sender]);
+
+      mgr.removeTrack(track);
+
+      expect(pc.removeTrack).toHaveBeenCalledWith(sender);
+    });
+
+    it('ignores the request if the track is not already being sent', () => {
+      const { mgr, pc } = setup();
+
+      mgr.removeTrack(new MockMediaStreamTrack());
+
+      expect(pc.removeTrack).not.toHaveBeenCalled();
     });
   });
 });

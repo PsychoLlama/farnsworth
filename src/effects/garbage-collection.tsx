@@ -30,6 +30,7 @@ export function discardUnusedTracks(state: State) {
     })
     .forEach(function discardTrack(track) {
       logger.debug('Deleting dereferenced track:', track.id);
+      removeTrackFromAllConnections(track);
       context.tracks.delete(track.id);
       track.stop();
     });
@@ -46,4 +47,12 @@ export function discardUnusedConnections(state: State) {
       context.connections.delete(peerId);
       conn.close();
     });
+}
+
+// `.removeTrack(...)` is graceful. Even if we weren't sending the track, the
+// function will handle it just fine.
+function removeTrackFromAllConnections(track: MediaStreamTrack) {
+  Array.from(context.connections.values()).forEach((conn) => {
+    conn.removeTrack(track);
+  });
 }

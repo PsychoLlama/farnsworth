@@ -76,7 +76,22 @@ export default class ConnectionManager {
     if (source === TrackSource.Display) {
       this.pc.addTrack(track, new MediaStream());
     } else {
-      this.pc.addTrack(track);
+      this.pc.addTrack(track, new MediaStream(), new MediaStream());
+    }
+  }
+
+  /**
+   * Detatches a track from the WebRTC connection. If we aren't already
+   * sending the track, this is a no-op.
+   */
+  removeTrack(track: MediaStreamTrack) {
+    const sender = this.pc
+      .getSenders()
+      .find((sender) => sender.track === track);
+
+    if (sender) {
+      logger.debug('Removing track:', track.id);
+      this.pc.removeTrack(sender);
     }
   }
 
