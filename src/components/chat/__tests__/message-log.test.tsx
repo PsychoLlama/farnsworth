@@ -53,6 +53,18 @@ describe('MessageLog', () => {
     expect(findByTestId('chat-message').at(1).prop('data-local')).toBe(false);
   });
 
+  it('scrolls into view on a new message', () => {
+    const { output, findByTestId } = setup({ messages: [] });
+
+    const anchor = findByTestId('scroll-anchor').getElement();
+    const ref = { scrollIntoView: jest.fn() };
+    (anchor as any).ref(ref);
+
+    expect(ref.scrollIntoView).toHaveBeenCalledTimes(1);
+    output.setProps({ messages: [createMsg()] });
+    expect(ref.scrollIntoView).toHaveBeenCalledTimes(2);
+  });
+
   describe('mapStateToProps', () => {
     function setup(patch: (state: State) => void | State) {
       const state = produce(initialState, patch);

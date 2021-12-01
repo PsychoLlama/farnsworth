@@ -6,10 +6,19 @@ import { State, ChatMessage } from '../../reducers/initial-state';
 import * as css from '../../utils/css';
 
 export class MessageLog extends React.Component<Props> {
+  scrollTarget: null | HTMLSpanElement = null;
+
+  componentDidUpdate({ messages }: Props) {
+    if (messages.length < this.props.messages.length) {
+      this.scrollTarget.scrollIntoView({ behavior: 'smooth' });
+    }
+  }
+
   render() {
     return (
       <Container aria-atomic aria-live="polite">
         {this.props.messages.map(this.renderMessage)}
+        <span data-test="scroll-anchor" ref={this.setScrollTarget} />
       </Container>
     );
   }
@@ -41,6 +50,13 @@ export class MessageLog extends React.Component<Props> {
         </MessageBody>
       </Message>
     );
+  };
+
+  // As soon as it mounts, start at the bottom of the message list, then
+  // scroll each message into view as you send it.
+  setScrollTarget = (target: null | HTMLSpanElement) => {
+    this.scrollTarget = target;
+    target?.scrollIntoView();
   };
 }
 
