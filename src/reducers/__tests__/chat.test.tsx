@@ -1,6 +1,7 @@
 import createStore from '../../utils/create-store';
 import * as actions from '../../actions';
 import { MY_PARTICIPANT_ID } from '../../utils/constants';
+import { PanelView } from '../initial-state';
 
 describe('Chat reducer', () => {
   describe('open', () => {
@@ -8,8 +9,8 @@ describe('Chat reducer', () => {
       const store = createStore();
       store.dispatch(actions.chat.open());
 
-      expect(store.getState().chat).toMatchObject({
-        open: true,
+      expect(store.getState().panel).toMatchObject({
+        view: PanelView.Chat,
       });
     });
 
@@ -33,8 +34,8 @@ describe('Chat reducer', () => {
       store.dispatch(actions.chat.open());
       store.dispatch(actions.chat.close());
 
-      expect(store.getState().chat).toMatchObject({
-        open: false,
+      expect(store.getState().panel).toMatchObject({
+        view: PanelView.None,
       });
     });
   });
@@ -43,9 +44,9 @@ describe('Chat reducer', () => {
     it('toggles the chat panel', () => {
       const store = createStore();
       store.dispatch(actions.chat.toggle());
-      expect(store.getState().chat).toMatchObject({ open: true });
+      expect(store.getState().panel).toMatchObject({ view: PanelView.Chat });
       store.dispatch(actions.chat.toggle());
-      expect(store.getState().chat).toMatchObject({ open: false });
+      expect(store.getState().panel).toMatchObject({ view: PanelView.None });
     });
 
     // Opening or closing, it doesn't matter. Any change should clear it.
@@ -53,7 +54,7 @@ describe('Chat reducer', () => {
       const store = createStore();
       store.dispatch(
         actions.tools.patch((state) => {
-          state.chat.open = false;
+          state.panel.view = PanelView.None;
           state.chat.unreadMessages = true;
         }),
       );
@@ -81,7 +82,7 @@ describe('Chat reducer', () => {
   });
 
   describe('call.leave', () => {
-    it('clears the unread message notice', () => {
+    it('closes the chat panel and clears the unread notice', () => {
       const store = createStore();
       store.dispatch(
         actions.tools.patch((state) => {
@@ -92,6 +93,9 @@ describe('Chat reducer', () => {
       store.dispatch(actions.call.leave(MY_PARTICIPANT_ID));
 
       expect(store.getState().chat).toHaveProperty('unreadMessages', false);
+      expect(store.getState().panel).toMatchObject({
+        view: PanelView.None,
+      });
     });
   });
 });

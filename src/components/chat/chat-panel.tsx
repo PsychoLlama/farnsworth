@@ -2,7 +2,7 @@ import React from 'react';
 import { connect } from 'react-redux';
 import styled from 'styled-components';
 import { FiX } from 'react-icons/fi';
-import { State } from '../../reducers/initial-state';
+import { State, PanelView } from '../../reducers/initial-state';
 import * as css from '../../utils/css';
 import { Button } from '../core';
 import * as actions from '../../actions';
@@ -79,7 +79,7 @@ const CloseButton = styled(Button.Base)`
 
 export function mapStateToProps(state: State) {
   return {
-    showChatPanel: state.chat.open,
+    showChatPanel: state.panel.view === PanelView.Chat,
   };
 }
 

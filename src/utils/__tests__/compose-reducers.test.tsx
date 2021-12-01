@@ -18,7 +18,7 @@ describe('composeReducers', () => {
 
     function r2(state: State) {
       return produce(state, (draft) => {
-        draft.chat.open = true;
+        draft.chat.unreadMessages = true;
       });
     }
 
@@ -26,7 +26,7 @@ describe('composeReducers', () => {
 
     expect(reducer(initialState, { type: 'any' })).toMatchObject({
       phonebook: { open: true },
-      chat: { open: true },
+      chat: { unreadMessages: true },
     });
   });
 });

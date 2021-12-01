@@ -7,11 +7,11 @@ describe('Tool actions', () => {
       const store = createStore();
       store.dispatch(
         actions.tools.patch((state) => {
-          state.chat.open = true;
+          state.phonebook.open = true;
         }),
       );
 
-      expect(store.getState().chat).toHaveProperty('open', true);
+      expect(store.getState().phonebook).toHaveProperty('open', true);
     });
   });
 });

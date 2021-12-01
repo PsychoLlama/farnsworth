@@ -6,6 +6,22 @@ import {
 } from '../utils/constants';
 import { Route } from '../utils/router';
 
+export interface ChatMessage {
+  /** ISO 8601 */
+  sentDate: string;
+  /** Peer ID */
+  author: string;
+  /** Message body */
+  body: string;
+}
+
+export enum PanelView {
+  /** Panel is closed */
+  None = 'none',
+  /** Chat messages */
+  Chat = 'chat',
+}
+
 /**
  * Note: Redux state doesn't contain complex objects like media streams or
  * WebRTC connections, but it does contain IDs pointing to those resources.
@@ -63,15 +79,13 @@ export interface State {
   };
 
   // Manages calling and frequent contacts.
-  phonebook: {
-    open: boolean;
-  };
+  phonebook: { open: boolean };
 
   // Manages the chat panel.
-  chat: {
-    open: boolean;
-    unreadMessages: boolean;
-  };
+  chat: { unreadMessages: boolean };
+
+  // Manages the sidebar panel.
+  panel: { view: PanelView };
 }
 
 const initialState: State = {
@@ -95,22 +109,9 @@ const initialState: State = {
     },
   },
   tracks: {},
-  phonebook: {
-    open: false,
-  },
-  chat: {
-    open: false,
-    unreadMessages: false,
-  },
+  phonebook: { open: false },
+  chat: { unreadMessages: false },
+  panel: { view: PanelView.None },
 };
-
-export interface ChatMessage {
-  /** ISO 8601 */
-  sentDate: string;
-  /** Peer ID */
-  author: string;
-  /** Message body */
-  body: string;
-}
 
 export default initialState;
