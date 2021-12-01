@@ -1,3 +1,4 @@
+import { DeviceInfo, DeviceChange } from 'media-devices';
 import {
   TrackKind,
   TrackSource,
@@ -31,6 +32,7 @@ export enum PanelView {
  * See: ../conferencing/global-context
  */
 export interface State {
+  /** The current browser URL. */
   route: Route;
 
   relay: null | {
@@ -44,21 +46,34 @@ export interface State {
      */
     localId: string;
 
-    // The current relay server's multiaddr.
+    /** The current relay server's multiaddr. */
     server: string;
   };
 
+  /**
+   * Indicates if you're in a call with someone else, even while temporarily
+   * disconnected.
+   */
   call: null | {
     peerId: string;
   };
 
+  /**
+   * Contains information about every participant in a call, both local and
+   * remote.
+   */
   participants: {
     [participantId: string]: {
       isMe: boolean;
+
+      /** All the tracks owned by this participant. */
       trackIds: Array<string>;
+
+      /** Contains metadata about our network connection with this participant. */
       connection: {
         state: ConnectionState;
       };
+
       chat: {
         /**
          * The entire message history. Note, this may grow to an untenable
@@ -69,24 +84,39 @@ export interface State {
     };
   };
 
-  // Contains both local and foreign media track metadata, both audio and
-  // video.
+  /** Contains metadata about every media track, both local and remote. */
   tracks: {
     [trackId: string]: {
-      source: TrackSource;
       kind: TrackKind;
+      source: TrackSource;
+
+      /** Whether this is "paused", which has different meanings in WebRTC. */
       enabled: boolean;
+
+      /** 'true' if the track was created by us. */
       local: boolean;
     };
   };
 
-  // Manages calling and frequent contacts.
+  /** Manages the set of available audio/video devices. */
+  sources: {
+    /** A list of ways the device list changed since the last query. */
+    changes: Array<DeviceChange>;
+
+    /** All (known) A/V sources supported by this browser. */
+    available: {
+      audio: Array<DeviceInfo>;
+      video: Array<DeviceInfo>;
+    };
+  };
+
+  /** Manages calling features, like frequent contacts and invite URLs. */
   phonebook: { open: boolean };
 
-  // Manages the chat panel.
+  /** Manages global chat state. */
   chat: { unreadMessages: boolean };
 
-  // Manages the sidebar panel.
+  /** Manages the state of the sidebar/panel UI. */
   panel: { view: PanelView };
 }
 
@@ -111,6 +141,13 @@ const initialState: State = {
     },
   },
   tracks: {},
+  sources: {
+    changes: [],
+    available: {
+      audio: [],
+      video: [],
+    },
+  },
   phonebook: { open: false },
   chat: { unreadMessages: false },
   panel: { view: PanelView.None },
