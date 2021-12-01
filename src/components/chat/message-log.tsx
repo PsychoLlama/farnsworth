@@ -85,7 +85,7 @@ const MessageBody = styled.p`
   white-space: pre-wrap;
   overflow-wrap: break-word;
 
-  // Should be about 2/3 the width of <ChatPanel>.
+  // Should be about 2/3 the width of the containing panel.
   max-width: 200px;
 
   &[data-local='true'] {
