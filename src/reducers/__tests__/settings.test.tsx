@@ -1,12 +1,12 @@
-import createStore from '../../utils/create-store';
-import * as actions from '../../actions';
+import setup from '../../testing/redux';
 import { PanelView } from '../initial-state';
 
 describe('Settings reducer', () => {
   describe('open', () => {
     it('opens the settings panel', () => {
-      const store = createStore();
-      store.dispatch(actions.settings.open());
+      const { store, sdk } = setup();
+
+      sdk.settings.open();
 
       expect(store.getState().panel).toHaveProperty('view', PanelView.Settings);
     });
@@ -14,15 +14,11 @@ describe('Settings reducer', () => {
 
   describe('close', () => {
     it('closes the settings panel', () => {
-      const store = createStore();
+      const { store, sdk } = setup((state) => {
+        state.panel.view = PanelView.Settings;
+      });
 
-      store.dispatch(
-        actions.tools.patch((state) => {
-          state.panel.view = PanelView.Settings;
-        }),
-      );
-
-      store.dispatch(actions.settings.close());
+      sdk.settings.close();
 
       expect(store.getState().panel).toHaveProperty('view', PanelView.None);
     });
@@ -30,20 +26,17 @@ describe('Settings reducer', () => {
 
   describe('toggle', () => {
     it('toggles the settings panel', () => {
-      const store = createStore();
-      store.dispatch(
-        actions.tools.patch((state) => {
-          state.panel.view = PanelView.Chat;
-        }),
-      );
+      const { store, sdk } = setup((state) => {
+        state.panel.view = PanelView.Chat;
+      });
 
-      store.dispatch(actions.settings.toggle());
+      sdk.settings.toggle();
       expect(store.getState().panel).toHaveProperty('view', PanelView.Settings);
 
-      store.dispatch(actions.settings.toggle());
+      sdk.settings.toggle();
       expect(store.getState().panel).toHaveProperty('view', PanelView.None);
 
-      store.dispatch(actions.settings.toggle());
+      sdk.settings.toggle();
       expect(store.getState().panel).toHaveProperty('view', PanelView.Settings);
     });
   });
