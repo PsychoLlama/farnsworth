@@ -131,7 +131,7 @@
     "localforage": "1.10.0",
     "media-devices": "0.2.0",
     "multiaddr": "10.0.1",
-    "peer-id": "0.15.4",
+    "peer-id": "0.16.0",
     "react": "17.0.2",
     "react-dom": "17.0.2",
     "react-icons": "4.3.1",
