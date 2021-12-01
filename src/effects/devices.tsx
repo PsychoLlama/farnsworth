@@ -1,6 +1,6 @@
 import MediaDevices from 'media-devices';
 import context from '../conferencing/global-context';
-import { TrackKind, TrackSource } from '../utils/constants';
+import { TrackKind, TrackSource, MY_PARTICIPANT_ID } from '../utils/constants';
 import Logger from '../utils/logger';
 
 const logger = new Logger('devices');
@@ -87,6 +87,6 @@ function removeTrackWhenEnded(track: MediaStreamTrack) {
     logger.warn('Track ended unexpectedly:', track.id);
 
     const { default: sdk } = await import('../utils/sdk');
-    sdk.tracks.markEnded(track.id);
+    sdk.tracks.remove({ trackId: track.id, peerId: MY_PARTICIPANT_ID });
   };
 }

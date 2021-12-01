@@ -96,8 +96,8 @@ export default createReducer(initialState, (handleAction) => [
   }),
 
   // We only listen to this event on local tracks.
-  handleAction(actions.tracks.markEnded, (state, trackId) => {
-    const participant = state.participants[MY_PARTICIPANT_ID];
+  handleAction(actions.tracks.remove, (state, { trackId, peerId }) => {
+    const participant = state.participants[peerId];
     participant.trackIds = participant.trackIds.filter((id) => id !== trackId);
 
     delete state.tracks[trackId];

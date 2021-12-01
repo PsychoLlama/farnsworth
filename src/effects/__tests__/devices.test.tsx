@@ -1,6 +1,6 @@
 import MediaDevices from 'media-devices';
 import * as effects from '../';
-import { TrackKind } from '../../utils/constants';
+import { TrackKind, MY_PARTICIPANT_ID } from '../../utils/constants';
 import context from '../../conferencing/global-context';
 import ConnectionManager from '../../conferencing/webrtc';
 import sdk from '../../utils/sdk';
@@ -100,7 +100,10 @@ describe('Device effects', () => {
       await effects.devices.requestMediaDevices();
       await track.onended(new Event('ended'));
 
-      expect(sdk.tracks.markEnded).toHaveBeenCalledWith(track.id);
+      expect(sdk.tracks.remove).toHaveBeenCalledWith({
+        trackId: track.id,
+        peerId: MY_PARTICIPANT_ID,
+      });
     });
   });
 

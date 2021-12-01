@@ -41,7 +41,7 @@ export default class ConnectionManager {
 
     this.signaler.subscribe(this.processMessage);
     this.pc = new RTCPeerConnection(DEFAULT_PC_CONFIG);
-    this.pc.ontrack = this.emitTrackEvent;
+    this.pc.ontrack = this.emitTrackAddedEvent;
     this.pc.onicecandidate = this.sendIceCandidate;
     this.pc.onnegotiationneeded = this.updateLocalSession;
 
@@ -106,11 +106,14 @@ export default class ConnectionManager {
     this.pc.close();
   }
 
-  private emitTrackEvent = async ({ track, streams }: RTCTrackEvent) => {
+  private emitTrackAddedEvent = async ({ track, streams }: RTCTrackEvent) => {
     logger.debug(`Incoming remote ${track.kind} track`);
 
     const source =
       streams.length === 1 ? TrackSource.Display : TrackSource.Device;
+
+    const [stream] = streams;
+    stream.onremovetrack = this.emitTrackRemovedEvent;
 
     const { default: sdk } = await import('../../utils/sdk');
     sdk.tracks.add({
@@ -118,6 +121,13 @@ export default class ConnectionManager {
       source,
       track,
     });
+  };
+
+  private emitTrackRemovedEvent = async (event: MediaStreamTrackEvent) => {
+    logger.debug('Remote track was removed:', event.track.id);
+
+    const { default: sdk } = await import('../../utils/sdk');
+    sdk.tracks.remove({ trackId: event.track.id, peerId: this.remoteId });
   };
 
   private sendIceCandidate = ({ candidate }: RTCPeerConnectionIceEvent) => {

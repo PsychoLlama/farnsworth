@@ -211,7 +211,7 @@ describe('Tracks reducer', () => {
     });
   });
 
-  describe('tracks.markEnded()', () => {
+  describe('tracks.remove()', () => {
     it('removes the track', () => {
       const { store } = setup();
 
@@ -227,7 +227,12 @@ describe('Tracks reducer', () => {
         }),
       );
 
-      store.dispatch(actions.tracks.markEnded('video-id'));
+      store.dispatch(
+        actions.tracks.remove({
+          trackId: 'video-id',
+          peerId: MY_PARTICIPANT_ID,
+        }),
+      );
 
       expect(store.getState().tracks).toEqual({});
       expect(store.getState().participants[MY_PARTICIPANT_ID].trackIds).toEqual(

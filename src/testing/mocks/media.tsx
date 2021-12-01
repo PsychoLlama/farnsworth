@@ -66,3 +66,15 @@ export class MockMediaStreamTrack
   onunmute = null;
   onisolationchange = null;
 }
+
+export class MockMediaStreamTrackEvent
+  extends Event
+  implements MediaStreamTrackEvent
+{
+  constructor(type: string, init: MediaStreamTrackEventInit) {
+    super(type, init);
+    this.track = init.track;
+  }
+
+  track = null;
+}

@@ -218,7 +218,10 @@ describe('ConnectionManager', () => {
       const { pc, config } = setup();
       const track = new MockMediaStreamTrack();
 
-      await pc.ontrack({ track, streams: [] });
+      await pc.ontrack({
+        streams: [new MediaStream(), new MediaStream()],
+        track,
+      });
 
       expect(sdk.tracks.add).toHaveBeenCalledWith({
         peerId: config.remoteId,
@@ -231,12 +234,28 @@ describe('ConnectionManager', () => {
       const { pc, config } = setup();
       const track = new MockMediaStreamTrack();
 
-      await pc.ontrack({ track, streams: [new MediaStream()] });
+      await pc.ontrack({ streams: [new MediaStream()], track });
 
       expect(sdk.tracks.add).toHaveBeenCalledWith({
         peerId: config.remoteId,
         source: TrackSource.Display,
         track,
+      });
+    });
+
+    it('marks the track removed when the stream is disassociated', async () => {
+      const { pc, config } = setup();
+      const track = new MockMediaStreamTrack();
+
+      const stream = new MediaStream();
+      await pc.ontrack({ streams: [stream], track });
+
+      const event = new MediaStreamTrackEvent('removetrack', { track });
+      await stream.onremovetrack(event);
+
+      expect(sdk.tracks.remove).toHaveBeenCalledWith({
+        peerId: config.remoteId,
+        trackId: track.id,
       });
     });
   });
