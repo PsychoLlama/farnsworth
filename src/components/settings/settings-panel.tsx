@@ -11,6 +11,7 @@ import { TrackKind, MY_PARTICIPANT_ID } from '../../utils/constants';
 export class SettingsPanel extends React.Component<Props> {
   audioInputId = uuid();
   videoInputId = uuid();
+  forceTurnCheckboxId = uuid();
 
   render() {
     const {
@@ -48,6 +49,10 @@ export class SettingsPanel extends React.Component<Props> {
             {this.props.videoSources.map(this.renderVideoOption)}
           </Dropdown>
         </InputGroup>
+
+        <details open>
+          <Summary>Advanced settings</Summary>
+        </details>
       </Container>
     );
   }
@@ -134,6 +139,10 @@ const Dropdown = styled.select`
     opacity: 0.5;
     cursor: not-allowed;
   }
+`;
+
+const Summary = styled.summary`
+  cursor: default;
 `;
 
 export function mapStateToProps(state: State) {

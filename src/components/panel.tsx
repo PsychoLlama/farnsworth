@@ -133,7 +133,6 @@ const Tab = styled(Button.Base).attrs({ role: 'tab' })`
   display: flex;
   justify-content: center;
   padding: 1rem 0;
-  cursor: pointer;
   border-bottom: 3px solid transparent;
   font-weight: bold;
   transition-timing-function: ease-out;
@@ -141,8 +140,10 @@ const Tab = styled(Button.Base).attrs({ role: 'tab' })`
   transition-duration: 100ms;
   font-size: 100%;
 
+  :hover,
   :focus {
     outline: none;
+    background-color: ${css.color('primary-overlay')};
   }
 
   &[aria-selected='true'] {
