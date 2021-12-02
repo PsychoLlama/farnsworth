@@ -34,16 +34,28 @@ function getTrackMetadata(track: MediaStreamTrack) {
   };
 }
 
-export async function requestMediaDevices() {
-  const stream = await MediaDevices.getUserMedia({
-    audio: true,
+/**
+ * Ask the browser for local mic/camera feeds. The media stream constraints are
+ * applied with defaults.
+ */
+export async function requestMediaDevices(query: MediaStreamConstraints) {
+  const constraints: MediaStreamConstraints = {};
 
-    // Prefer videos in 16:9 aspect ratio.
-    video: {
+  if (query.audio) {
+    constraints.audio = query.audio;
+  }
+
+  if (query.video) {
+    constraints.video = {
+      // Prefer videos in 16:9 aspect ratio.
       height: { ideal: 720 },
       width: { ideal: 1280 },
-    },
-  });
+      ...Object(query.video),
+    };
+  }
+
+  logger.debug('Requesting new tracks:', constraints);
+  const stream = await MediaDevices.getUserMedia(constraints);
 
   const tracks = stream.getTracks();
   tracks.forEach(removeTrackWhenEnded);

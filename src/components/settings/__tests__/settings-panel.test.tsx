@@ -4,7 +4,7 @@ import { SettingsPanel, mapStateToProps } from '../settings-panel';
 import initialState from '../../../reducers/initial-state';
 
 describe('SettingsPanel', () => {
-  function createSource(override: Partial<DeviceInfo>): DeviceInfo {
+  function createSource(override?: Partial<DeviceInfo>): DeviceInfo {
     return {
       kind: DeviceKind.AudioInput,
       label: 'Device Label',
@@ -16,6 +16,7 @@ describe('SettingsPanel', () => {
 
   const setup = renderer(SettingsPanel, {
     getDefaultProps: () => ({
+      changeDevice: jest.fn(),
       audioSources: [createSource({ kind: DeviceKind.AudioInput })],
       videoSources: [
         createSource({ kind: DeviceKind.VideoInput }),
@@ -41,6 +42,23 @@ describe('SettingsPanel', () => {
 
     expect(findByTestId('choose-audio-source').prop('disabled')).toBe(true);
     expect(findByTestId('choose-video-source').prop('disabled')).toBe(true);
+  });
+
+  it('gets the new device when you request it', () => {
+    const { findByTestId, props } = setup({
+      videoSources: [createSource()],
+    });
+
+    const [video] = props.videoSources;
+    findByTestId('choose-video-source').simulate('change', {
+      currentTarget: { value: video.deviceId },
+    });
+
+    expect(props.changeDevice).toHaveBeenCalledWith({
+      video: {
+        deviceId: { exact: video.deviceId },
+      },
+    });
   });
 
   describe('mapStateToProps', () => {

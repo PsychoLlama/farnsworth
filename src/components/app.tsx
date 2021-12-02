@@ -18,7 +18,10 @@ export class App extends React.Component<Props> {
     }
 
     await Promise.allSettled([
-      this.props.requestMediaDevices(),
+      this.props.requestMediaDevices({
+        audio: true,
+        video: true,
+      }),
 
       // Opens a connection to the relay server.
       this.props.connectToServer(SERVER_ADDRESS),

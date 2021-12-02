@@ -5,6 +5,8 @@ import styled from 'styled-components';
 import { v4 as uuid } from 'uuid';
 import { State } from '../../reducers/initial-state';
 import * as css from '../../utils/css';
+import * as actions from '../../actions';
+import { TrackKind } from '../../utils/constants';
 
 export class SettingsPanel extends React.Component<Props> {
   audioInputId = uuid();
@@ -21,6 +23,7 @@ export class SettingsPanel extends React.Component<Props> {
             data-test="choose-audio-source"
             id={this.audioInputId}
             disabled={audioSources.length === 0}
+            onChange={this.chooseAudioTrack}
           >
             {this.props.audioSources.map(this.renderAudioOption)}
           </Dropdown>
@@ -32,6 +35,7 @@ export class SettingsPanel extends React.Component<Props> {
             data-test="choose-video-source"
             id={this.videoInputId}
             disabled={videoSources.length === 0}
+            onChange={this.chooseVideoTrack}
           >
             {this.props.videoSources.map(this.renderVideoOption)}
           </Dropdown>
@@ -42,7 +46,11 @@ export class SettingsPanel extends React.Component<Props> {
 
   renderAudioOption = (device: DeviceInfo) => {
     return (
-      <option key={device.deviceId} data-test="audio-source-option">
+      <option
+        value={device.deviceId}
+        key={device.deviceId}
+        data-test="audio-source-option"
+      >
         {device.label}
       </option>
     );
@@ -50,14 +58,31 @@ export class SettingsPanel extends React.Component<Props> {
 
   renderVideoOption = (device: DeviceInfo) => {
     return (
-      <option key={device.deviceId} data-test="video-source-option">
+      <option
+        value={device.deviceId}
+        key={device.deviceId}
+        data-test="video-source-option"
+      >
         {device.label}
       </option>
     );
   };
+
+  buildTrackQuery =
+    (kind: TrackKind) => (event: React.ChangeEvent<HTMLSelectElement>) => {
+      const { value } = event.currentTarget;
+
+      this.props.changeDevice({
+        [kind]: { deviceId: { exact: value } },
+      });
+    };
+
+  chooseAudioTrack = this.buildTrackQuery(TrackKind.Audio);
+  chooseVideoTrack = this.buildTrackQuery(TrackKind.Video);
 }
 
 interface Props {
+  changeDevice: typeof actions.devices.requestMediaDevices;
   audioSources: Array<DeviceInfo>;
   videoSources: Array<DeviceInfo>;
 }
@@ -115,4 +140,8 @@ export function mapStateToProps(state: State) {
   };
 }
 
-export default connect(mapStateToProps)(SettingsPanel);
+const mapDispatchToProps = {
+  changeDevice: actions.devices.requestMediaDevices,
+};
+
+export default connect(mapStateToProps, mapDispatchToProps)(SettingsPanel);
