@@ -5562,7 +5562,7 @@ levn@~0.3.0:
     prelude-ls "~1.1.2"
     type-check "~0.3.2"
 
-libp2p-crypto@^0.19.0, libp2p-crypto@^0.19.4, libp2p-crypto@^0.19.5:
+libp2p-crypto@^0.19.0:
   version "0.19.7"
   resolved "https://registry.yarnpkg.com/libp2p-crypto/-/libp2p-crypto-0.19.7.tgz#e96a95bd430e672a695209fe0fbd2bcbd348bc35"
   integrity sha512-Qb5o/3WFKF2j6mYSt4UBPyi2kbKl3jYV0podBJoJCw70DlpM5Xc+oh3fFY9ToSunu8aSQQ5GY8nutjXgX/uGRA==
@@ -5593,10 +5593,10 @@ libp2p-crypto@^0.21.0:
     protobufjs "^6.11.2"
     uint8arrays "^3.0.0"
 
-libp2p-interfaces@^1.0.0:
-  version "1.2.0"
-  resolved "https://registry.yarnpkg.com/libp2p-interfaces/-/libp2p-interfaces-1.2.0.tgz#d0b67ad9549a27c362fe27c0156e1b6ca311b422"
-  integrity sha512-LJFBLgrMlJkQ0PkcH27Mb0RTjY7THCXvHTboz5zxx6xvop0E11BmMd1+5yLfVgr1mhjuXU+qmA+JoOtfZL0jAw==
+libp2p-interfaces@^2.0.1:
+  version "2.0.2"
+  resolved "https://registry.yarnpkg.com/libp2p-interfaces/-/libp2p-interfaces-2.0.2.tgz#12ca91df4e8079b061fb05f6de1f9122c782f029"
+  integrity sha512-wDLJMJ37l2zcmYW2s2P0mn3ypCf4Cu2DiWOQXpDtaJ+S4mEkiFtcgNaiG9/wVeYzQsG5c+8Le4rMyp+uesDk6A==
   dependencies:
     abort-controller "^3.0.0"
     abortable-iterator "^3.0.0"
@@ -5605,11 +5605,11 @@ libp2p-interfaces@^1.0.0:
     it-length-prefixed "^5.0.2"
     it-pipe "^1.1.0"
     it-pushable "^1.4.2"
-    libp2p-crypto "^0.19.5"
+    libp2p-crypto "^0.21.0"
     multiaddr "^10.0.0"
     multiformats "^9.1.2"
     p-queue "^6.6.2"
-    peer-id "^0.15.0"
+    peer-id "^0.16.0"
     protobufjs "^6.10.2"
     uint8arrays "^3.0.0"
 
@@ -5678,10 +5678,10 @@ libp2p-websockets@0.16.2:
     p-defer "^3.0.0"
     p-timeout "^4.1.0"
 
-libp2p@0.34.0:
-  version "0.34.0"
-  resolved "https://registry.yarnpkg.com/libp2p/-/libp2p-0.34.0.tgz#3da5acb240c1a74e80b35be99d42e68eda82fd15"
-  integrity sha512-jynwrozoIfzt2FfRFno7yschy0vG3TeEh+IVED0wt65bVDAvgiyT+HZPqY3mYotsZHcunW5kHoiT/9uPBUJbaw==
+libp2p@0.35.0:
+  version "0.35.0"
+  resolved "https://registry.yarnpkg.com/libp2p/-/libp2p-0.35.0.tgz#ece8ab4b1c926dd29c0f0509b36f6ea0c1e7542a"
+  integrity sha512-hQgwdQQROPy/pufMOC7XYoiBCZq48Jc0zRm0K9xy34uk1sHk7V/KWVdHiMrAD09HJ2kQUk0AL8Y4esbJYtaZCw==
   dependencies:
     "@motrix/nat-api" "^0.3.1"
     "@vascosantos/moving-average" "^1.1.0"
@@ -5708,8 +5708,8 @@ libp2p@0.34.0:
     it-merge "^1.0.0"
     it-pipe "^1.1.0"
     it-take "^1.0.0"
-    libp2p-crypto "^0.19.4"
-    libp2p-interfaces "^1.0.0"
+    libp2p-crypto "^0.21.0"
+    libp2p-interfaces "^2.0.1"
     libp2p-utils "^0.4.0"
     mafmt "^10.0.0"
     merge-options "^3.0.4"
@@ -5722,14 +5722,14 @@ libp2p@0.34.0:
     p-fifo "^1.0.0"
     p-retry "^4.4.0"
     p-settle "^4.1.1"
-    peer-id "^0.15.0"
+    peer-id "^0.16.0"
     private-ip "^2.1.0"
     protobufjs "^6.10.2"
     retimer "^3.0.0"
     sanitize-filename "^1.6.3"
     set-delayed-interval "^1.0.0"
     streaming-iterables "^6.0.0"
-    timeout-abort-controller "^1.1.1"
+    timeout-abort-controller "^2.0.0"
     uint8arrays "^3.0.0"
     varint "^6.0.0"
     wherearewe "^1.0.0"
@@ -6142,7 +6142,7 @@ nanoid@^3.0.2, nanoid@^3.1.20, nanoid@^3.1.30:
   resolved "https://registry.yarnpkg.com/nanoid/-/nanoid-3.1.30.tgz#63f93cc548d2a113dc5dfbc63bfa09e2b9b64362"
   integrity sha512-zJpuPDwOv8D2zq2WRoMe1HsfZthVewpel9CAvTfc/2mBD1uUT/agc5f7GHGWXlYkFvi1mVxe4IjvP2HNrop7nQ==
 
-native-abort-controller@^1.0.3:
+native-abort-controller@^1.0.3, native-abort-controller@^1.0.4:
   version "1.0.4"
   resolved "https://registry.yarnpkg.com/native-abort-controller/-/native-abort-controller-1.0.4.tgz#39920155cc0c18209ff93af5bc90be856143f251"
   integrity sha512-zp8yev7nxczDJMoP6pDxyD20IU0T22eX8VwN2ztDccKvSZhRaV33yP1BGwKSZfXuqWUzsXopVFjBdau9OOAwMQ==
@@ -6643,7 +6643,7 @@ pbkdf2@^3.0.3:
     safe-buffer "^5.0.1"
     sha.js "^2.4.8"
 
-peer-id@0.16.0:
+peer-id@0.16.0, peer-id@^0.16.0:
   version "0.16.0"
   resolved "https://registry.yarnpkg.com/peer-id/-/peer-id-0.16.0.tgz#0913062cfa4378707fe69c949b5720b3efadbf32"
   integrity sha512-EmL7FurFUduU9m1PS9cfJ5TAuCvxKQ7DKpfx3Yj6IKWyBRtosriFuOag/l3ni/dtPgPLwiA4R9IvpL7hsDLJuQ==
@@ -7514,11 +7514,6 @@ ret@~0.1.10:
   resolved "https://registry.yarnpkg.com/ret/-/ret-0.1.15.tgz#b8a4825d5bdb1fc3f6f53c2bc33f81388681c7bc"
   integrity sha512-TTlYpa+OL+vMMNG24xSlQGEJ3B/RzEfUlLct7b5G/ytav+wPrplCpVMFuwzXbkecJrb6IYo1iFb0S9v37754mg==
 
-retimer@^2.0.0:
-  version "2.0.0"
-  resolved "https://registry.yarnpkg.com/retimer/-/retimer-2.0.0.tgz#e8bd68c5e5a8ec2f49ccb5c636db84c04063bbca"
-  integrity sha512-KLXY85WkEq2V2bKex/LOO1ViXVn2KGYe4PYysAdYdjmraYIUsVkXu8O4am+8+5UbaaGl1qho4aqAAPHNQ4GSbg==
-
 retimer@^3.0.0:
   version "3.0.0"
   resolved "https://registry.yarnpkg.com/retimer/-/retimer-3.0.0.tgz#98b751b1feaf1af13eb0228f8ea68b8f9da530df"
@@ -8161,13 +8156,14 @@ through@^2.3.8:
   resolved "https://registry.yarnpkg.com/through/-/through-2.3.8.tgz#0dd4c9ffaabc357960b1b724115d7e0e86a2e1f5"
   integrity sha1-DdTJ/6q8NXlgsbckEV1+Doai4fU=
 
-timeout-abort-controller@^1.1.1:
-  version "1.1.1"
-  resolved "https://registry.yarnpkg.com/timeout-abort-controller/-/timeout-abort-controller-1.1.1.tgz#2c3c3c66f13c783237987673c276cbd7a9762f29"
-  integrity sha512-BsF9i3NAJag6T0ZEjki9j654zoafI2X6ayuNd6Tp8+Ul6Tr5s4jo973qFeiWrRSweqvskC+AHDKUmIW4b7pdhQ==
+timeout-abort-controller@^2.0.0:
+  version "2.0.0"
+  resolved "https://registry.yarnpkg.com/timeout-abort-controller/-/timeout-abort-controller-2.0.0.tgz#d6a59209132e520413092dd4b4d71eaaf5887feb"
+  integrity sha512-2FAPXfzTPYEgw27bQGTHc0SzrbmnU2eso4qo172zMLZzaGqeu09PFa5B2FCUHM1tflgRqPgn5KQgp6+Vex4uNA==
   dependencies:
     abort-controller "^3.0.0"
-    retimer "^2.0.0"
+    native-abort-controller "^1.0.4"
+    retimer "^3.0.0"
 
 timers-browserify@^2.0.11:
   version "2.0.12"
