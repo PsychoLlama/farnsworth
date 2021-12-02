@@ -47,6 +47,21 @@ describe('Sources reducer', () => {
         video: [video],
       });
     });
+
+    it('filters devices with duplicate IDs', async () => {
+      const { store, sdk } = setup();
+
+      const [video] = mockDeviceList([
+        { kind: DeviceKind.VideoInput, deviceId: 'same-id' },
+        { kind: DeviceKind.VideoInput, deviceId: 'same-id' },
+      ]);
+
+      await sdk.devices.list();
+
+      expect(store.getState().sources.available).toMatchObject({
+        video: [video],
+      });
+    });
   });
 
   describe('devices.observe()', () => {

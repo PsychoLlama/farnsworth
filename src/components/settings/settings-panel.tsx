@@ -42,7 +42,7 @@ export class SettingsPanel extends React.Component<Props> {
 
   renderAudioOption = (device: DeviceInfo) => {
     return (
-      <option key={this.getId(device)} data-test="audio-source-option">
+      <option key={device.deviceId} data-test="audio-source-option">
         {device.label}
       </option>
     );
@@ -50,14 +50,10 @@ export class SettingsPanel extends React.Component<Props> {
 
   renderVideoOption = (device: DeviceInfo) => {
     return (
-      <option key={this.getId(device)} data-test="video-source-option">
+      <option key={device.deviceId} data-test="video-source-option">
         {device.label}
       </option>
     );
-  };
-
-  getId = (device: DeviceInfo) => {
-    return `${device.groupId}:${device.deviceId}`;
   };
 }
 
