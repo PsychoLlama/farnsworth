@@ -1,3 +1,4 @@
+import { FiX } from 'react-icons/fi';
 import { DeviceInfo } from 'media-devices';
 import React from 'react';
 import { connect } from 'react-redux';
@@ -7,6 +8,7 @@ import { State } from '../../reducers/initial-state';
 import * as css from '../../utils/css';
 import * as actions from '../../actions';
 import { TrackKind, MY_PARTICIPANT_ID } from '../../utils/constants';
+import { Button } from '../core';
 
 export class SettingsPanel extends React.Component<Props> {
   audioInputId = uuid();
@@ -18,10 +20,18 @@ export class SettingsPanel extends React.Component<Props> {
       videoSources,
       selectedAudioDeviceId,
       selectedVideoDeviceId,
+      close,
     } = this.props;
 
     return (
       <Container>
+        <Header>
+          <Title>Settings</Title>
+          <CloseButton data-test="close-settings" onClick={close}>
+            <FiX aria-label="Close settings" />
+          </CloseButton>
+        </Header>
+
         <InputGroup>
           <InputTitle htmlFor={this.audioInputId}>Audio devices</InputTitle>
           <Dropdown
@@ -81,6 +91,7 @@ export class SettingsPanel extends React.Component<Props> {
 
 interface Props {
   changeDevice: typeof actions.devices.requestMediaDevices;
+  close: typeof actions.settings.close;
   audioSources: Array<DeviceInfo>;
   videoSources: Array<DeviceInfo>;
   selectedAudioDeviceId: string;
@@ -90,7 +101,6 @@ interface Props {
 const Container = styled.div`
   display: grid;
   grid-row-gap: 2rem;
-  padding: 1rem;
   max-width: 315px;
 
   @media screen and (max-width: ${css.breakpoint.mobile}) {
@@ -98,10 +108,30 @@ const Container = styled.div`
   }
 `;
 
+const Header = styled.header`
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1rem;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+  background-color: ${css.color('background')};
+`;
+
+const Title = styled.h2`
+  margin: 0;
+`;
+
+const CloseButton = styled(Button.Base)`
+  font-size: 1.5rem;
+  display: flex;
+  align-items: center;
+`;
+
 const InputGroup = styled.div`
   display: flex;
   flex-direction: column;
   overflow: hidden;
+  padding: 0 1rem;
 `;
 
 const InputTitle = styled.label`
@@ -162,6 +192,7 @@ export function mapStateToProps(state: State) {
 
 const mapDispatchToProps = {
   changeDevice: actions.devices.requestMediaDevices,
+  close: actions.settings.close,
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(SettingsPanel);
