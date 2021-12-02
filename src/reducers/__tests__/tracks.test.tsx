@@ -79,11 +79,11 @@ describe('Tracks reducer', () => {
       });
     });
 
-    it('replaces existing tracks of the same kind', async () => {
+    it('replaces existing tracks of the same kind and source', async () => {
       mockedDeviceEffects.requestMediaDevices.mockResolvedValue([
         {
-          kind: TrackKind.Audio,
-          trackId: 'new-audio',
+          kind: TrackKind.Video,
+          trackId: 'new-video',
           enabled: true,
           deviceId: 'mic',
           groupId: 'webcam',
@@ -92,18 +92,28 @@ describe('Tracks reducer', () => {
       ]);
 
       const { store, sdk } = setup((state) => {
-        state.participants[MY_PARTICIPANT_ID].trackIds = ['audio', 'video'];
+        state.participants[MY_PARTICIPANT_ID].trackIds = [
+          'audio',
+          'video',
+          'screen',
+        ];
+
         state.tracks = {
           audio: factories.Track({ kind: TrackKind.Audio }),
           video: factories.Track({ kind: TrackKind.Video }),
+          screen: factories.Track({
+            kind: TrackKind.Video,
+            source: TrackSource.Display,
+          }),
         };
       });
 
-      await sdk.devices.requestMediaDevices({ audio: true });
+      await sdk.devices.requestMediaDevices({ video: true });
 
       expect(store.getState().tracks).toEqual({
-        'new-audio': expect.anything(),
-        video: expect.anything(),
+        'new-video': expect.anything(),
+        screen: expect.anything(),
+        audio: expect.anything(),
       });
     });
   });

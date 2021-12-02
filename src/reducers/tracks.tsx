@@ -141,7 +141,7 @@ function removeLocalTracksOfKind(kind: TrackKind, state: State) {
   // close out the other one.
   self.trackIds.forEach((trackId) => {
     const track = state.tracks[trackId];
-    if (track.kind === kind) {
+    if (track.kind === kind && track.source === TrackSource.Device) {
       delete state.tracks[trackId];
       myTracks.delete(trackId);
     }
