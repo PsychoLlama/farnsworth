@@ -1,7 +1,6 @@
 export interface Theme {
   background: string;
   foreground: string;
-  overlay: string;
   text: string;
   black: string;
   primary: string;
@@ -11,6 +10,8 @@ export interface Theme {
   danger: string;
   info: string;
   white: string;
+  overlay: string;
+  'primary-overlay': string;
 }
 
 export const OneDark: Theme = {
@@ -26,21 +27,23 @@ export const OneDark: Theme = {
   danger: '#C678DD',
   info: '#56B6C2',
   white: '#ABB2BF',
+  'primary-overlay': '#61AFEF33',
 };
 
 export const OneLight: Theme = {
-  background: '#fafafa',
-  foreground: '#383a42',
+  background: '#FAFAFA',
+  foreground: '#383A42',
   overlay: '#FAFAFACC',
-  text: '#383a42',
-  black: '#696c77',
-  tertiary: '#50a14f',
-  quaternary: '#c18401',
-  primary: '#4078f2',
-  secondary: '#e45649',
-  danger: '#a626a4',
-  info: '#0184bc',
-  white: '#a0a1a7',
+  text: '#383A42',
+  black: '#696C77',
+  tertiary: '#50A14F',
+  quaternary: '#C18401',
+  primary: '#4078F2',
+  secondary: '#E45649',
+  danger: '#A626A4',
+  info: '#0184BC',
+  white: '#A0A1A7',
+  'primary-overlay': '#4078F233',
 };
 
 // Variable names must stay in sync with `css.color(...)` utility.
@@ -49,7 +52,6 @@ export function exportToCss(theme: Theme) {
     --color-background: ${theme.background};
     --color-foreground: ${theme.foreground};
     --color-text: ${theme.text};
-    --color-overlay: ${theme.overlay};
 
     --color-black: ${theme.black};
     --color-white: ${theme.white};
@@ -60,5 +62,8 @@ export function exportToCss(theme: Theme) {
     --color-quaternary: ${theme.quaternary};
     --color-danger: ${theme.danger};
     --color-info: ${theme.info};
+
+    --color-overlay: ${theme.overlay};
+    --color-primary-overlay: ${theme['primary-overlay']};
   `;
 }

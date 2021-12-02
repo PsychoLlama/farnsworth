@@ -8,6 +8,3 @@ export const sendMessage = createAction(
 );
 
 export const receiveMessage = createAction<ChatMessage>('chat/receive-message');
-export const open = createAction('chat/open');
-export const close = createAction('chat/close');
-export const toggle = createAction('chat/toggle');

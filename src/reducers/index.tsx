@@ -6,8 +6,8 @@ import route from './route';
 import call from './call';
 import chat from './chat';
 import tools from './tools';
-import settings from './settings';
 import devices from './devices';
+import panel from './panel';
 
 export default [
   participants,
@@ -16,8 +16,8 @@ export default [
   call,
   relay,
   route,
+  panel,
   phonebook,
   chat,
-  settings,
   tools,
 ];

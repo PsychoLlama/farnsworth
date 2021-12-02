@@ -14,10 +14,9 @@ describe('Controls', () => {
   const setup = renderer(Controls, {
     getDefaultProps: () => ({
       togglePhonebook: jest.fn(),
-      toggleSettings: jest.fn(),
+      togglePanel: jest.fn(),
       shareScreen: jest.fn(),
       stopSharingScreen: jest.fn(),
-      toggleChat: jest.fn(),
       pauseTrack: jest.fn(),
       resumeTrack: jest.fn(),
       leaveCall: jest.fn(),
@@ -87,12 +86,6 @@ describe('Controls', () => {
     expect(findByTestId('toggle-audio').prop('disabled')).toBe(true);
   });
 
-  it('hides the chat toggle if no call is in progress', () => {
-    const { findByTestId } = setup({ activeCall: null });
-
-    expect(findByTestId('toggle-chat').exists()).toBe(false);
-  });
-
   it('only shows the "leave call" button when a call is in progress', () => {
     const { findByTestId: active } = setup({ activeCall: 'p-id' });
     const { findByTestId: inactive } = setup({ activeCall: null });
@@ -126,12 +119,12 @@ describe('Controls', () => {
     expect(findByTestId('toggle-screen-share').exists()).toBe(false);
   });
 
-  it('toggles the settings panel when you click the button', () => {
+  it('toggles the panel when you click the button', () => {
     const { findByTestId, props } = setup();
 
-    findByTestId('toggle-settings').simulate('click');
+    findByTestId('toggle-panel').simulate('click');
 
-    expect(props.toggleSettings).toHaveBeenCalled();
+    expect(props.togglePanel).toHaveBeenCalled();
   });
 
   describe('mapStateToProps', () => {

@@ -16,8 +16,8 @@ describe('SettingsPanel', () => {
 
   const setup = renderer(SettingsPanel, {
     getDefaultProps: () => ({
+      panelId: 'settings-panel',
       changeDevice: jest.fn(),
-      close: jest.fn(),
       selectedAudioDeviceId: 'a-id',
       selectedVideoDeviceId: 'v-id',
       audioSources: [createSource({ kind: DeviceKind.AudioInput })],
@@ -74,14 +74,6 @@ describe('SettingsPanel', () => {
 
     expect(findByTestId('choose-audio-source').prop('value')).toBe('a-active');
     expect(findByTestId('choose-video-source').prop('value')).toBe('v-active');
-  });
-
-  it('closes the panel when you click the close button', () => {
-    const { findByTestId, props } = setup();
-
-    findByTestId('close-settings').simulate('click');
-
-    expect(props.close).toHaveBeenCalled();
   });
 
   describe('mapStateToProps', () => {

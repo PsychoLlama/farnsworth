@@ -8,8 +8,7 @@ import {
   FiVideoOff,
   FiPhone,
   FiAirplay,
-  FiSliders,
-  FiMessageSquare,
+  FiMoreHorizontal,
 } from 'react-icons/fi';
 import { connect } from 'react-redux';
 import * as css from '../../utils/css';
@@ -32,6 +31,7 @@ export class Controls extends React.Component<Props> {
   render() {
     const {
       togglePhonebook,
+      togglePanel,
       micEnabled,
       camEnabled,
       micTrackId,
@@ -46,21 +46,12 @@ export class Controls extends React.Component<Props> {
       <Container>
         <ControlGroup data-left>
           <Control
-            data-test="toggle-settings"
-            onClick={this.props.toggleSettings}
+            data-test="toggle-panel"
+            data-unread={unreadMessages}
+            onClick={togglePanel}
           >
-            <FiSliders />
+            <FiMoreHorizontal />
           </Control>
-
-          {activeCall && (
-            <Control
-              data-test="toggle-chat"
-              onClick={this.props.toggleChat}
-              data-unread={unreadMessages}
-            >
-              <FiMessageSquare />
-            </Control>
-          )}
         </ControlGroup>
 
         <ControlGroup>
@@ -141,10 +132,9 @@ export class Controls extends React.Component<Props> {
 
 interface Props {
   togglePhonebook: typeof actions.phonebook.toggle;
-  toggleSettings: typeof actions.settings.toggle;
+  togglePanel: typeof actions.panel.toggle;
   shareScreen: typeof actions.devices.shareScreen;
   stopSharingScreen: typeof actions.devices.stopSharingScreen;
-  toggleChat: typeof actions.chat.toggle;
   pauseTrack: typeof actions.tracks.pause;
   resumeTrack: typeof actions.tracks.resume;
   leaveCall: typeof actions.call.leave;
@@ -232,17 +222,6 @@ const EndCallIcon = styled(FiPhone)`
   transform-origin: center;
 `;
 
-const mapDispatchToProps = {
-  togglePhonebook: actions.phonebook.toggle,
-  toggleSettings: actions.settings.toggle,
-  leaveCall: actions.call.leave,
-  shareScreen: actions.devices.shareScreen,
-  stopSharingScreen: actions.devices.stopSharingScreen,
-  toggleChat: actions.chat.toggle,
-  pauseTrack: actions.tracks.pause,
-  resumeTrack: actions.tracks.resume,
-};
-
 export function mapStateToProps(state: State) {
   const participant = state.participants[MY_PARTICIPANT_ID];
 
@@ -271,5 +250,15 @@ export function mapStateToProps(state: State) {
     camEnabled,
   };
 }
+
+const mapDispatchToProps = {
+  togglePhonebook: actions.phonebook.toggle,
+  togglePanel: actions.panel.toggle,
+  leaveCall: actions.call.leave,
+  shareScreen: actions.devices.shareScreen,
+  stopSharingScreen: actions.devices.stopSharingScreen,
+  pauseTrack: actions.tracks.pause,
+  resumeTrack: actions.tracks.resume,
+};
 
 export default connect(mapStateToProps, mapDispatchToProps)(Controls);

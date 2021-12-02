@@ -6,7 +6,7 @@ describe('SDK', () => {
     const store = createStore();
     jest.spyOn(store, 'dispatch');
 
-    createSdk(store).settings.toggle();
+    createSdk(store).panel.toggle();
     expect(store.dispatch).toHaveBeenCalled();
   });
 });

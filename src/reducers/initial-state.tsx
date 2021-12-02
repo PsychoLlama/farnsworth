@@ -138,7 +138,10 @@ export interface State {
   chat: { unreadMessages: boolean };
 
   /** Manages the state of the sidebar/panel UI. */
-  panel: { view: PanelView };
+  panel: {
+    lastView: PanelView;
+    view: PanelView;
+  };
 }
 
 const initialState: State = {
@@ -171,7 +174,10 @@ const initialState: State = {
   },
   phonebook: { open: false },
   chat: { unreadMessages: false },
-  panel: { view: PanelView.None },
+  panel: {
+    lastView: PanelView.Chat,
+    view: PanelView.None,
+  },
 };
 
 export default initialState;
