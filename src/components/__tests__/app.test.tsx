@@ -8,6 +8,8 @@ describe('App', () => {
     getDefaultProps: () => ({
       requestMediaDevices: jest.fn(),
       connectToServer: jest.fn(),
+      loadDeviceList: jest.fn(),
+      observeDeviceList: jest.fn() as any, // Imperative action creator.
       appInitialized: false,
     }),
   });
