@@ -2,7 +2,7 @@ import React from 'react';
 import { connect } from 'react-redux';
 import styled from 'styled-components';
 import { FiX } from 'react-icons/fi';
-import { State } from '../../reducers/initial-state';
+import { State, PanelView } from '../../reducers/initial-state';
 import * as css from '../../utils/css';
 import { Button } from '../core';
 import * as actions from '../../actions';
@@ -39,23 +39,11 @@ interface Props {
   close: typeof actions.chat.close;
 }
 
-const Container = styled.aside.attrs({ role: 'complementary' })`
+const Container = styled.div`
   display: flex;
-  background-color: ${css.color('background')};
   flex-direction: column;
-  min-width: 315px;
-  box-shadow: inset 0 -4px 4px -4px rgba(0, 0, 0, 0.4);
-
-  @media screen and (max-width: ${css.breakpoint.mobile}) {
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background-color: ${css.color('overlay')};
-    min-width: 0;
-    box-shadow: none;
-  }
+  flex-grow: 1;
+  overflow: hidden;
 `;
 
 const Header = styled.header`
@@ -79,7 +67,7 @@ const CloseButton = styled(Button.Base)`
 
 export function mapStateToProps(state: State) {
   return {
-    showChatPanel: state.chat.open,
+    showChatPanel: state.panel.view === PanelView.Chat,
   };
 }
 

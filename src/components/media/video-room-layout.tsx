@@ -8,7 +8,7 @@ import Controls from './controls';
 import Phonebook from '../phonebook';
 import { MY_PARTICIPANT_ID, TrackSource } from '../../utils/constants';
 import * as css from '../../utils/css';
-import ChatPanel from '../chat';
+import Panel from '../panel';
 
 export class VideoRoomLayout extends React.Component<Props> {
   render() {
@@ -26,7 +26,7 @@ export class VideoRoomLayout extends React.Component<Props> {
               )}
               <Phonebook />
             </VideoLayout>
-            <ChatPanel />
+            <Panel />
           </Row>
           <Controls />
         </Column>

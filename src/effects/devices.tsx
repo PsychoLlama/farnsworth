@@ -1,4 +1,4 @@
-import MediaDevices from 'media-devices';
+import MediaDevices, { DeviceInfo, DeviceChange } from 'media-devices';
 import context from '../conferencing/global-context';
 import { TrackKind, TrackSource, MY_PARTICIPANT_ID } from '../utils/constants';
 import Logger from '../utils/logger';
@@ -29,21 +29,34 @@ function getTrackMetadata(track: MediaStreamTrack) {
   return {
     trackId: track.id,
     kind: track.kind as TrackKind,
-    deviceId: settings.deviceId,
     enabled: track.enabled,
+    deviceId: settings.deviceId ?? null,
+    groupId: settings.groupId ?? null,
   };
 }
 
-export async function requestMediaDevices() {
-  const stream = await MediaDevices.getUserMedia({
-    audio: true,
+/**
+ * Ask the browser for local mic/camera feeds. The media stream constraints are
+ * applied with defaults.
+ */
+export async function requestMediaDevices(query: MediaStreamConstraints) {
+  const constraints: MediaStreamConstraints = {};
 
-    // Prefer videos in 16:9 aspect ratio.
-    video: {
+  if (query.audio) {
+    constraints.audio = query.audio;
+  }
+
+  if (query.video) {
+    constraints.video = {
+      // Prefer videos in 16:9 aspect ratio.
       height: { ideal: 720 },
       width: { ideal: 1280 },
-    },
-  });
+      ...Object(query.video),
+    };
+  }
+
+  logger.debug('Requesting new tracks:', constraints);
+  const stream = await MediaDevices.getUserMedia(constraints);
 
   const tracks = stream.getTracks();
   tracks.forEach(removeTrackWhenEnded);
@@ -89,4 +102,26 @@ function removeTrackWhenEnded(track: MediaStreamTrack) {
     const { default: sdk } = await import('../utils/sdk');
     sdk.tracks.remove({ trackId: track.id, peerId: MY_PARTICIPANT_ID });
   };
+}
+
+export interface DeviceChangeset {
+  changes: Array<DeviceChange>;
+  devices: Array<DeviceInfo>;
+}
+
+/**
+ * Observes the device list and yields every changeset as an asynchronous
+ * stream. Never exits.
+ *
+ * Warning: only one instance of this observer can be active at a time.
+ * Calling it twice will detach the last and it will never yield again.
+ */
+export async function* observe() {
+  function waitForChange() {
+    return new Promise<DeviceChangeset>((resolve) => {
+      MediaDevices.ondevicechange = resolve;
+    });
+  }
+
+  while (true) yield waitForChange();
 }

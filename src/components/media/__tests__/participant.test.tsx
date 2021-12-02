@@ -9,6 +9,7 @@ import {
 } from '../../../utils/constants';
 import initialState, { State } from '../../../reducers/initial-state';
 import MediaView from '../media-view';
+import * as factories from '../../../testing/factories';
 
 describe('Participant', () => {
   const setup = renderer(Participant, {
@@ -55,19 +56,15 @@ describe('Participant', () => {
     it('grabs the participant A/V tracks', () => {
       const { props } = setup((state) => {
         state.participants[MY_PARTICIPANT_ID].trackIds = ['a-id', 'v-id'];
-        state.tracks['a-id'] = {
+        state.tracks['a-id'] = factories.Track({
           kind: TrackKind.Audio,
           source: TrackSource.Device,
-          enabled: true,
-          local: true,
-        };
+        });
 
-        state.tracks['v-id'] = {
+        state.tracks['v-id'] = factories.Track({
           kind: TrackKind.Video,
           source: TrackSource.Device,
-          enabled: true,
-          local: true,
-        };
+        });
       });
 
       expect(props).toMatchObject({
@@ -80,18 +77,14 @@ describe('Participant', () => {
       const state = produce(initialState, (state) => {
         state.participants[MY_PARTICIPANT_ID].trackIds = ['dev-id', 'dis-id'];
         state.tracks = {
-          'dev-id': {
+          'dev-id': factories.Track({
             source: TrackSource.Device,
             kind: TrackKind.Video,
-            local: true,
-            enabled: true,
-          },
-          'dis-id': {
+          }),
+          'dis-id': factories.Track({
             source: TrackSource.Display,
             kind: TrackKind.Video,
-            local: true,
-            enabled: true,
-          },
+          }),
         };
       });
 

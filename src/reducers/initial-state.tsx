@@ -1,3 +1,4 @@
+import { DeviceInfo, DeviceChange } from 'media-devices';
 import {
   TrackKind,
   TrackSource,
@@ -6,6 +7,24 @@ import {
 } from '../utils/constants';
 import { Route } from '../utils/router';
 
+export interface ChatMessage {
+  /** ISO 8601 */
+  sentDate: string;
+  /** Peer ID */
+  author: string;
+  /** Message body */
+  body: string;
+}
+
+export enum PanelView {
+  /** Panel is closed */
+  None = 'none',
+  /** Chat messages */
+  Chat = 'chat',
+  /** Device management and advanced settings */
+  Settings = 'settings',
+}
+
 /**
  * Note: Redux state doesn't contain complex objects like media streams or
  * WebRTC connections, but it does contain IDs pointing to those resources.
@@ -13,6 +32,7 @@ import { Route } from '../utils/router';
  * See: ../conferencing/global-context
  */
 export interface State {
+  /** The current browser URL. */
   route: Route;
 
   relay: null | {
@@ -26,21 +46,34 @@ export interface State {
      */
     localId: string;
 
-    // The current relay server's multiaddr.
+    /** The current relay server's multiaddr. */
     server: string;
   };
 
+  /**
+   * Indicates if you're in a call with someone else, even while temporarily
+   * disconnected.
+   */
   call: null | {
     peerId: string;
   };
 
+  /**
+   * Contains information about every participant in a call, both local and
+   * remote.
+   */
   participants: {
     [participantId: string]: {
       isMe: boolean;
+
+      /** All the tracks owned by this participant. */
       trackIds: Array<string>;
+
+      /** Contains metadata about our network connection with this participant. */
       connection: {
         state: ConnectionState;
       };
+
       chat: {
         /**
          * The entire message history. Note, this may grow to an untenable
@@ -51,27 +84,55 @@ export interface State {
     };
   };
 
-  // Contains both local and foreign media track metadata, both audio and
-  // video.
+  /** Contains metadata about every media track, both local and remote. */
   tracks: {
     [trackId: string]: {
-      source: TrackSource;
+      /** Audio vs video. */
       kind: TrackKind;
+
+      /** The type of content this track provides (e.g. camera vs screen). */
+      source: TrackSource;
+
+      /** Whether this is "paused", which has different meanings in WebRTC. */
       enabled: boolean;
+
+      /** 'true' if the track was created by us. */
       local: boolean;
+
+      /**
+       * The device this track originates from. Null for remote or display
+       * tracks.
+       */
+      deviceId: null | string;
+
+      /**
+       * The hardware group this track originates from. Null for remote or
+       * display tracks.
+       */
+      groupId: null | string;
     };
   };
 
-  // Manages calling and frequent contacts.
-  phonebook: {
-    open: boolean;
+  /** Manages the set of available audio/video devices. */
+  sources: {
+    /** A list of ways the device list changed since the last query. */
+    changes: Array<DeviceChange>;
+
+    /** All (known) A/V sources supported by this browser. */
+    available: {
+      audio: Array<DeviceInfo>;
+      video: Array<DeviceInfo>;
+    };
   };
 
-  // Manages the chat panel.
-  chat: {
-    open: boolean;
-    unreadMessages: boolean;
-  };
+  /** Manages calling features, like frequent contacts and invite URLs. */
+  phonebook: { open: boolean };
+
+  /** Manages global chat state. */
+  chat: { unreadMessages: boolean };
+
+  /** Manages the state of the sidebar/panel UI. */
+  panel: { view: PanelView };
 }
 
 const initialState: State = {
@@ -95,22 +156,16 @@ const initialState: State = {
     },
   },
   tracks: {},
-  phonebook: {
-    open: false,
+  sources: {
+    changes: [],
+    available: {
+      audio: [],
+      video: [],
+    },
   },
-  chat: {
-    open: false,
-    unreadMessages: false,
-  },
+  phonebook: { open: false },
+  chat: { unreadMessages: false },
+  panel: { view: PanelView.None },
 };
-
-export interface ChatMessage {
-  /** ISO 8601 */
-  sentDate: string;
-  /** Peer ID */
-  author: string;
-  /** Message body */
-  body: string;
-}
 
 export default initialState;

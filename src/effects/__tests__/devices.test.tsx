@@ -49,7 +49,10 @@ describe('Device effects', () => {
         { label: 'Camera', kind: TrackKind.Video },
       ]);
 
-      await effects.devices.requestMediaDevices();
+      await effects.devices.requestMediaDevices({
+        audio: true,
+        video: true,
+      });
 
       expect(context.tracks.get(tracks[0].id)).toBe(tracks[0]);
       expect(context.tracks.get(tracks[1].id)).toBe(tracks[1]);
@@ -61,20 +64,25 @@ describe('Device effects', () => {
         { label: 'Camera', kind: TrackKind.Video },
       ]);
 
-      const result = await effects.devices.requestMediaDevices();
+      const result = await effects.devices.requestMediaDevices({
+        audio: true,
+        video: true,
+      });
 
       expect(result).toEqual([
         {
           kind: TrackKind.Audio,
-          deviceId: expect.any(String),
           trackId: expect.any(String),
           enabled: expect.any(Boolean),
+          deviceId: expect.any(String),
+          groupId: expect.any(String),
         },
         {
           kind: TrackKind.Video,
-          deviceId: expect.any(String),
           trackId: expect.any(String),
           enabled: expect.any(Boolean),
+          deviceId: expect.any(String),
+          groupId: expect.any(String),
         },
       ]);
     });
@@ -87,7 +95,10 @@ describe('Device effects', () => {
 
       const conn = new ConnectionManager({} as any); // Mock. Params are ignored.
       context.connections.set('remote-id', conn);
-      await effects.devices.requestMediaDevices();
+      await effects.devices.requestMediaDevices({
+        audio: true,
+        video: true,
+      });
 
       expect(conn.addTrack).toHaveBeenCalledTimes(2);
     });
@@ -97,12 +108,23 @@ describe('Device effects', () => {
         { label: 'Camera', kind: TrackKind.Video },
       ]);
 
-      await effects.devices.requestMediaDevices();
+      await effects.devices.requestMediaDevices({ video: true });
       await track.onended(new Event('ended'));
 
       expect(sdk.tracks.remove).toHaveBeenCalledWith({
         trackId: track.id,
         peerId: MY_PARTICIPANT_ID,
+      });
+    });
+
+    it('only queries the devices you ask for', async () => {
+      mockDeviceList([{ label: 'Camera', kind: TrackKind.Video }]);
+
+      await effects.devices.requestMediaDevices({ video: true });
+
+      expect(MediaDevices.getUserMedia).toHaveBeenCalledWith({
+        // No 'audio' field.
+        video: expect.anything(),
       });
     });
   });
@@ -116,11 +138,32 @@ describe('Device effects', () => {
       expect(newTracks).toEqual([
         {
           kind: TrackKind.Video,
-          deviceId: expect.any(String),
           trackId: expect.any(String),
           enabled: expect.any(Boolean),
+          deviceId: expect.any(String),
+          groupId: expect.any(String),
         },
       ]);
+    });
+  });
+
+  describe('observe', () => {
+    it('asynchronously yields every device changeset', async () => {
+      const observer = effects.devices.observe();
+      const createUpdate = () => ({
+        changes: [],
+        devices: [],
+      });
+
+      const update1 = createUpdate();
+      const p1 = observer.next();
+      MediaDevices.ondevicechange?.(update1);
+      expect((await p1).value).toBe(update1);
+
+      const update2 = createUpdate();
+      const p2 = observer.next();
+      MediaDevices.ondevicechange?.(update2);
+      expect((await p2).value).toBe(update2);
     });
   });
 });

@@ -17,10 +17,26 @@ export class App extends React.Component<Props> {
       return;
     }
 
-    this.props.requestMediaDevices();
+    await Promise.allSettled([
+      this.props.requestMediaDevices({
+        audio: true,
+        video: true,
+      }),
 
-    // Opens a connection to the relay server.
-    this.props.connectToServer(SERVER_ADDRESS);
+      // Opens a connection to the relay server.
+      this.props.connectToServer(SERVER_ADDRESS),
+    ]);
+
+    // If GUM is successful, the output of `loadDeviceList()` might be
+    // different as browsers reveal more device information after the first
+    // successful query. But we still want to grab them even if it fails.
+    //
+    // Similarly, `enumerateDeviceList()` can fail for unexpected and
+    // nonsensical reasons. That's okay. It will correct itself after the next
+    // device change event, courtesy of `observe()`.
+    await Promise.allSettled([this.props.loadDeviceList()]);
+
+    this.props.observeDeviceList();
   }
 
   render() {
@@ -43,6 +59,8 @@ const Container = styled.div`
 
 interface Props {
   requestMediaDevices: typeof actions.devices.requestMediaDevices;
+  loadDeviceList: typeof actions.devices.list;
+  observeDeviceList: typeof actions.devices.observe;
   connectToServer: typeof actions.connections.listen;
   appInitialized: boolean;
 }
@@ -57,6 +75,8 @@ export function mapStateToProps(state: State) {
 const mapDispatchToProps = {
   requestMediaDevices: actions.devices.requestMediaDevices,
   connectToServer: actions.connections.listen,
+  loadDeviceList: actions.devices.list,
+  observeDeviceList: actions.devices.observe,
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(App);

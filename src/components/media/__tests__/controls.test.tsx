@@ -8,11 +8,13 @@ import {
   TrackKind,
   TrackSource,
 } from '../../../utils/constants';
+import * as factories from '../../../testing/factories';
 
 describe('Controls', () => {
   const setup = renderer(Controls, {
     getDefaultProps: () => ({
       togglePhonebook: jest.fn(),
+      toggleSettings: jest.fn(),
       shareScreen: jest.fn(),
       stopSharingScreen: jest.fn(),
       toggleChat: jest.fn(),
@@ -124,6 +126,14 @@ describe('Controls', () => {
     expect(findByTestId('toggle-screen-share').exists()).toBe(false);
   });
 
+  it('toggles the settings panel when you click the button', () => {
+    const { findByTestId, props } = setup();
+
+    findByTestId('toggle-settings').simulate('click');
+
+    expect(props.toggleSettings).toHaveBeenCalled();
+  });
+
   describe('mapStateToProps', () => {
     function setup(patchState: (state: State) => void) {
       const state = produce(initialState, patchState);
@@ -138,18 +148,14 @@ describe('Controls', () => {
     it('returns the expected props', () => {
       const { props } = setup((state) => {
         state.tracks = {
-          'a-id': {
+          'a-id': factories.Track({
             kind: TrackKind.Audio,
             source: TrackSource.Device,
-            enabled: true,
-            local: true,
-          },
-          'v-id': {
+          }),
+          'v-id': factories.Track({
             kind: TrackKind.Video,
             source: TrackSource.Device,
-            enabled: true,
-            local: true,
-          },
+          }),
         };
 
         state.participants[MY_PARTICIPANT_ID].trackIds = Object.keys(

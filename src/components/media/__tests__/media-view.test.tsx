@@ -9,6 +9,7 @@ import {
   TrackSource,
 } from '../../../utils/constants';
 import initialState, { State } from '../../../reducers/initial-state';
+import * as factories from '../../../testing/factories';
 
 describe('MediaView', () => {
   beforeEach(() => {
@@ -237,12 +238,10 @@ describe('MediaView', () => {
 
     it('returns the expected props', () => {
       const { props } = setup((state) => {
-        state.tracks['v-id'] = {
+        state.tracks['v-id'] = factories.Track({
           kind: TrackKind.Video,
           source: TrackSource.Device,
-          enabled: true,
-          local: true,
-        };
+        });
       });
 
       expect(props).toMatchInlineSnapshot(`

@@ -10,6 +10,7 @@ import {
   TrackKind,
   TrackSource,
 } from '../../utils/constants';
+import * as factories from '../../testing/factories';
 
 jest.mock('../../conferencing/webrtc');
 
@@ -47,19 +48,15 @@ describe('Track effects', () => {
             videoTrack.id,
           );
 
-          state.tracks[audioTrack.id] = {
+          state.tracks[audioTrack.id] = factories.Track({
             kind: TrackKind.Audio,
             source: TrackSource.Device,
-            enabled: true,
-            local: true,
-          };
+          });
 
-          state.tracks[videoTrack.id] = {
+          state.tracks[videoTrack.id] = factories.Track({
             kind: TrackKind.Video,
             source: TrackSource.Display,
-            enabled: true,
-            local: true,
-          };
+          });
         }),
       };
     }
