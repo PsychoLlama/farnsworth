@@ -71,6 +71,10 @@ const Container = styled.div`
   grid-row-gap: 2rem;
   padding: 1rem;
   max-width: 315px;
+
+  @media screen and (max-width: ${css.breakpoint.mobile}) {
+    max-width: none;
+  }
 `;
 
 const InputGroup = styled.div`
