@@ -6,6 +6,9 @@
   outputs = { self, nixpkgs, flake-utils }:
     flake-utils.lib.eachDefaultSystem (system: {
       devShell = with nixpkgs.legacyPackages.${system};
-        mkShell { nativeBuildInputs = [ python3 nodejs-16_x yarn ]; };
+        mkShell {
+          nativeBuildInputs =
+            [ python3 nodejs-16_x (yarn.override { nodejs = nodejs-16_x; }) ];
+        };
     });
 }
