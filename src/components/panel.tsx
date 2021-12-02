@@ -116,7 +116,8 @@ const Header = styled.header`
   justify-content: space-between;
   align-items: center;
   padding: 1rem;
-  border-bottom: 3px solid ${css.color('primary-overlay')};
+  background-color: ${css.color('background')};
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
 `;
 
 const Title = styled.h2`
