@@ -24,10 +24,14 @@ describe('Panel', () => {
   });
 
   it('switches tabs when you click the other tab', () => {
-    const { findByTestId, props } = setup();
+    const { output, findByTestId, props } = setup({
+      view: PanelView.Settings,
+    });
 
     findByTestId('show-chat').simulate('click');
     expect(props.showChat).toHaveBeenCalled();
+
+    output.setProps({ view: PanelView.Chat });
 
     findByTestId('show-settings').simulate('click');
     expect(props.showSettings).toHaveBeenCalled();
@@ -37,8 +41,20 @@ describe('Panel', () => {
     const { findByTestId: chat } = setup({ view: PanelView.Chat });
     const { findByTestId: settings } = setup({ view: PanelView.Settings });
 
-    expect(chat('show-chat').prop('data-active')).toBe(true);
-    expect(settings('show-settings').prop('data-active')).toBe(true);
+    expect(chat('show-chat').prop('aria-selected')).toBe(true);
+    expect(settings('show-settings').prop('aria-selected')).toBe(true);
+  });
+
+  it('opens the corresponding panel on focus', () => {
+    const { output, findByTestId, props } = setup({ view: PanelView.Chat });
+
+    findByTestId('show-settings').simulate('focus');
+    expect(props.showSettings).toHaveBeenCalled();
+
+    output.setProps({ view: PanelView.Settings });
+
+    findByTestId('show-chat').simulate('focus');
+    expect(props.showChat).toHaveBeenCalled();
   });
 
   describe('mapStateToProps', () => {

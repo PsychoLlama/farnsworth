@@ -86,12 +86,6 @@ describe('Controls', () => {
     expect(findByTestId('toggle-audio').prop('disabled')).toBe(true);
   });
 
-  it('hides the chat toggle if no call is in progress', () => {
-    const { findByTestId } = setup({ activeCall: null });
-
-    expect(findByTestId('toggle-chat').exists()).toBe(false);
-  });
-
   it('only shows the "leave call" button when a call is in progress', () => {
     const { findByTestId: active } = setup({ activeCall: 'p-id' });
     const { findByTestId: inactive } = setup({ activeCall: null });

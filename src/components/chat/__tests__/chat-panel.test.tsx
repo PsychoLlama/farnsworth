@@ -3,7 +3,9 @@ import renderer from '../../../testing/renderer';
 
 describe('ChatPanel', () => {
   const setup = renderer(ChatPanel, {
-    getDefaultProps: () => ({}),
+    getDefaultProps: () => ({
+      panelId: 'chat-panel',
+    }),
   });
 
   it('renders', () => {

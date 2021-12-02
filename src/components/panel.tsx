@@ -2,12 +2,17 @@ import React from 'react';
 import { connect } from 'react-redux';
 import styled from 'styled-components';
 import { State, PanelView } from '../reducers/initial-state';
+import { v4 as uuid } from 'uuid';
 import ChatPanel from './chat/chat-panel';
 import SettingsPanel from './settings/settings-panel';
 import * as css from '../utils/css';
 import * as actions from '../actions';
+import { Button } from './core';
 
 export class Panel extends React.Component<Props> {
+  chatPanelId = uuid();
+  settingsPanelId = uuid();
+
   render() {
     const { view } = this.props;
     const child = this.renderSubView();
@@ -17,15 +22,19 @@ export class Panel extends React.Component<Props> {
         <Tabs>
           <Tab
             data-test="show-chat"
-            data-active={view === PanelView.Chat}
-            onClick={this.props.showChat}
+            aria-selected={view === PanelView.Chat}
+            onClick={this.switchToChat}
+            aria-controls={this.chatPanelId}
+            onFocus={this.switchToChat}
           >
             Chat
           </Tab>
           <Tab
             data-test="show-settings"
-            data-active={view === PanelView.Settings}
-            onClick={this.props.showSettings}
+            aria-selected={view === PanelView.Settings}
+            onClick={this.switchToSettings}
+            aria-controls={this.settingsPanelId}
+            onFocus={this.switchToSettings}
           >
             Settings
           </Tab>
@@ -38,13 +47,25 @@ export class Panel extends React.Component<Props> {
   renderSubView() {
     switch (this.props.view) {
       case PanelView.Chat:
-        return <ChatPanel />;
+        return <ChatPanel panelId={this.chatPanelId} />;
       case PanelView.Settings:
-        return <SettingsPanel />;
+        return <SettingsPanel panelId={this.settingsPanelId} />;
       default:
         return null;
     }
   }
+
+  switchToChat = () => {
+    if (this.props.view !== PanelView.Chat) {
+      this.props.showChat();
+    }
+  };
+
+  switchToSettings = () => {
+    if (this.props.view !== PanelView.Settings) {
+      this.props.showSettings();
+    }
+  };
 }
 
 interface Props {
@@ -72,12 +93,12 @@ const Container = styled.aside.attrs({ role: 'complementary' })`
   }
 `;
 
-const Tabs = styled.nav`
+const Tabs = styled.nav.attrs({ role: 'tablist' })`
   display: grid;
   grid-template-columns: repeat(2, 1fr);
 `;
 
-const Tab = styled.a`
+const Tab = styled(Button.Base).attrs({ role: 'tab' })`
   display: flex;
   justify-content: center;
   padding: 1rem 0;
@@ -85,15 +106,23 @@ const Tab = styled.a`
   cursor: pointer;
   border-bottom: 3px solid transparent;
   font-weight: bold;
-  transition: color 100ms ease-out;
+  transition-timing-function: ease-out;
+  transition-property: color, background-color;
+  transition-duration: 100ms;
+  font-size: 100%;
 
-  &[data-active='true'] {
-    border-color: ${css.color('primary')};
-    color: ${css.color('primary')};
+  :focus {
+    outline: none;
   }
 
-  &[data-active='false'] {
-    border-color: ${css.color('white')};
+  &[aria-selected='true'] {
+    border-color: ${css.color('primary')};
+    color: ${css.color('primary')};
+    background-color: ${css.color('primary-overlay')};
+  }
+
+  &[aria-selected='false'] {
+    border-color: ${css.color('primary-overlay')};
   }
 `;
 

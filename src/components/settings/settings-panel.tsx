@@ -14,6 +14,7 @@ export class SettingsPanel extends React.Component<Props> {
 
   render() {
     const {
+      panelId,
       audioSources,
       videoSources,
       selectedAudioDeviceId,
@@ -21,7 +22,7 @@ export class SettingsPanel extends React.Component<Props> {
     } = this.props;
 
     return (
-      <Container>
+      <Container id={panelId}>
         <InputGroup>
           <InputTitle htmlFor={this.audioInputId}>Audio devices</InputTitle>
           <Dropdown
@@ -85,6 +86,7 @@ interface Props {
   videoSources: Array<DeviceInfo>;
   selectedAudioDeviceId: string;
   selectedVideoDeviceId: string;
+  panelId: string;
 }
 
 const Container = styled.div`

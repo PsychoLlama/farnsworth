@@ -16,6 +16,7 @@ describe('SettingsPanel', () => {
 
   const setup = renderer(SettingsPanel, {
     getDefaultProps: () => ({
+      panelId: 'settings-panel',
       changeDevice: jest.fn(),
       selectedAudioDeviceId: 'a-id',
       selectedVideoDeviceId: 'v-id',

@@ -3,16 +3,20 @@ import styled from 'styled-components';
 import MessageLog from './message-log';
 import MessageComposer from './message-composer';
 
-export class ChatPanel extends React.Component {
+export class ChatPanel extends React.Component<Props> {
   render() {
     return (
-      <Container>
+      <Container id={this.props.panelId}>
         <MessageLog />
 
         <MessageComposer />
       </Container>
     );
   }
+}
+
+interface Props {
+  panelId: string;
 }
 
 const Container = styled.div`
