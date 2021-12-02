@@ -5,12 +5,34 @@ import { State, PanelView } from '../reducers/initial-state';
 import ChatPanel from './chat/chat-panel';
 import SettingsPanel from './settings/settings-panel';
 import * as css from '../utils/css';
+import * as actions from '../actions';
 
 export class Panel extends React.Component<Props> {
   render() {
+    const { view } = this.props;
     const child = this.renderSubView();
 
-    return child ? <Container>{child}</Container> : null;
+    return child ? (
+      <Container>
+        <Tabs>
+          <Tab
+            data-test="show-chat"
+            data-active={view === PanelView.Chat}
+            onClick={this.props.showChat}
+          >
+            Chat
+          </Tab>
+          <Tab
+            data-test="show-settings"
+            data-active={view === PanelView.Settings}
+            onClick={this.props.showSettings}
+          >
+            Settings
+          </Tab>
+        </Tabs>
+        {child}
+      </Container>
+    ) : null;
   }
 
   renderSubView() {
@@ -27,6 +49,8 @@ export class Panel extends React.Component<Props> {
 
 interface Props {
   view: PanelView;
+  showChat: typeof actions.panel.showChat;
+  showSettings: typeof actions.panel.showSettings;
 }
 
 const Container = styled.aside.attrs({ role: 'complementary' })`
@@ -48,10 +72,40 @@ const Container = styled.aside.attrs({ role: 'complementary' })`
   }
 `;
 
+const Tabs = styled.nav`
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+`;
+
+const Tab = styled.a`
+  display: flex;
+  justify-content: center;
+  padding: 1rem 0;
+  flex-grow: 1;
+  cursor: pointer;
+  border-bottom: 3px solid transparent;
+  font-weight: bold;
+  transition: color 100ms ease-out;
+
+  &[data-active='true'] {
+    border-color: ${css.color('primary')};
+    color: ${css.color('primary')};
+  }
+
+  &[data-active='false'] {
+    border-color: ${css.color('white')};
+  }
+`;
+
 export function mapStateToProps(state: State) {
   return {
     view: state.panel.view,
   };
 }
 
-export default connect(mapStateToProps)(Panel);
+const mapDispatchToProps = {
+  showChat: actions.panel.showChat,
+  showSettings: actions.panel.showSettings,
+};
+
+export default connect(mapStateToProps, mapDispatchToProps)(Panel);

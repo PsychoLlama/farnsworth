@@ -68,4 +68,34 @@ describe('Panel reducer', () => {
       expect(store.getState().panel).toHaveProperty('view', PanelView.Settings);
     });
   });
+
+  describe('panel.showChat()', () => {
+    it('shows the chat panel', () => {
+      const { store, sdk } = setup((state) => {
+        state.panel.lastView = PanelView.Settings;
+      });
+
+      sdk.panel.showChat();
+
+      expect(store.getState().panel).toMatchObject({
+        lastView: PanelView.Chat,
+        view: PanelView.Chat,
+      });
+    });
+  });
+
+  describe('panel.showSettings()', () => {
+    it('shows the settings panel', () => {
+      const { store, sdk } = setup((state) => {
+        state.panel.lastView = PanelView.Chat;
+      });
+
+      sdk.panel.showSettings();
+
+      expect(store.getState().panel).toMatchObject({
+        lastView: PanelView.Settings,
+        view: PanelView.Settings,
+      });
+    });
+  });
 });

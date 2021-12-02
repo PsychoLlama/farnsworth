@@ -8,6 +8,8 @@ describe('Panel', () => {
   const setup = renderer(Panel, {
     getDefaultProps: () => ({
       view: PanelView.Chat,
+      showChat: jest.fn(),
+      showSettings: jest.fn(),
     }),
   });
 
@@ -19,6 +21,24 @@ describe('Panel', () => {
     expect(chat.find(ChatPanel).exists()).toBe(true);
     expect(settings.find(SettingsPanel).exists()).toBe(true);
     expect(none.isEmptyRender()).toBe(true);
+  });
+
+  it('switches tabs when you click the other tab', () => {
+    const { findByTestId, props } = setup();
+
+    findByTestId('show-chat').simulate('click');
+    expect(props.showChat).toHaveBeenCalled();
+
+    findByTestId('show-settings').simulate('click');
+    expect(props.showSettings).toHaveBeenCalled();
+  });
+
+  it('indicates which panel is active', () => {
+    const { findByTestId: chat } = setup({ view: PanelView.Chat });
+    const { findByTestId: settings } = setup({ view: PanelView.Settings });
+
+    expect(chat('show-chat').prop('data-active')).toBe(true);
+    expect(settings('show-settings').prop('data-active')).toBe(true);
   });
 
   describe('mapStateToProps', () => {
