@@ -12,18 +12,6 @@ describe('Settings reducer', () => {
     });
   });
 
-  describe('close', () => {
-    it('closes the settings panel', () => {
-      const { store, sdk } = setup((state) => {
-        state.panel.view = PanelView.Settings;
-      });
-
-      sdk.settings.close();
-
-      expect(store.getState().panel).toHaveProperty('view', PanelView.None);
-    });
-  });
-
   describe('toggle', () => {
     it('toggles the settings panel', () => {
       const { store, sdk } = setup((state) => {

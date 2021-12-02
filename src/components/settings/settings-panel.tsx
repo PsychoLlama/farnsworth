@@ -91,7 +91,7 @@ export class SettingsPanel extends React.Component<Props> {
 
 interface Props {
   changeDevice: typeof actions.devices.requestMediaDevices;
-  close: typeof actions.settings.close;
+  close: typeof actions.panel.close;
   audioSources: Array<DeviceInfo>;
   videoSources: Array<DeviceInfo>;
   selectedAudioDeviceId: string;
@@ -192,7 +192,7 @@ export function mapStateToProps(state: State) {
 
 const mapDispatchToProps = {
   changeDevice: actions.devices.requestMediaDevices,
-  close: actions.settings.close,
+  close: actions.panel.close,
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(SettingsPanel);

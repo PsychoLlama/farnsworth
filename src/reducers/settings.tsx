@@ -7,10 +7,6 @@ export default createReducer(initialState, (handleAction) => [
     state.panel.view = PanelView.Settings;
   }),
 
-  handleAction(actions.settings.close, (state) => {
-    state.panel.view = PanelView.None;
-  }),
-
   handleAction(actions.settings.toggle, (state) => {
     if (state.panel.view !== PanelView.Settings) {
       state.panel.view = PanelView.Settings;

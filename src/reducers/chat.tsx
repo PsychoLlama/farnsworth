@@ -8,10 +8,6 @@ export default createReducer(initialState, (handleAction) => [
     state.chat.unreadMessages = false;
   }),
 
-  handleAction(actions.chat.close, (state) => {
-    state.panel.view = PanelView.None;
-  }),
-
   handleAction(actions.chat.toggle, (state) => {
     state.chat.unreadMessages = false;
 

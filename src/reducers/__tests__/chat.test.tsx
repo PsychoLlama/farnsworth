@@ -28,18 +28,6 @@ describe('Chat reducer', () => {
     });
   });
 
-  describe('close', () => {
-    it('closes the chat panel', () => {
-      const store = createStore();
-      store.dispatch(actions.chat.open());
-      store.dispatch(actions.chat.close());
-
-      expect(store.getState().panel).toMatchObject({
-        view: PanelView.None,
-      });
-    });
-  });
-
   describe('toggle', () => {
     it('toggles the chat panel', () => {
       const store = createStore();
