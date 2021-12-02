@@ -6,14 +6,19 @@ import { v4 as uuid } from 'uuid';
 import { State } from '../../reducers/initial-state';
 import * as css from '../../utils/css';
 import * as actions from '../../actions';
-import { TrackKind } from '../../utils/constants';
+import { TrackKind, MY_PARTICIPANT_ID } from '../../utils/constants';
 
 export class SettingsPanel extends React.Component<Props> {
   audioInputId = uuid();
   videoInputId = uuid();
 
   render() {
-    const { audioSources, videoSources } = this.props;
+    const {
+      audioSources,
+      videoSources,
+      selectedAudioDeviceId,
+      selectedVideoDeviceId,
+    } = this.props;
 
     return (
       <Container>
@@ -24,6 +29,7 @@ export class SettingsPanel extends React.Component<Props> {
             id={this.audioInputId}
             disabled={audioSources.length === 0}
             onChange={this.chooseAudioTrack}
+            value={selectedAudioDeviceId}
           >
             {this.props.audioSources.map(this.renderAudioOption)}
           </Dropdown>
@@ -36,6 +42,7 @@ export class SettingsPanel extends React.Component<Props> {
             id={this.videoInputId}
             disabled={videoSources.length === 0}
             onChange={this.chooseVideoTrack}
+            value={selectedVideoDeviceId}
           >
             {this.props.videoSources.map(this.renderVideoOption)}
           </Dropdown>
@@ -44,29 +51,20 @@ export class SettingsPanel extends React.Component<Props> {
     );
   }
 
-  renderAudioOption = (device: DeviceInfo) => {
+  createRenderer = (kind: TrackKind) => (device: DeviceInfo) => {
     return (
       <option
         value={device.deviceId}
         key={device.deviceId}
-        data-test="audio-source-option"
+        data-test={`${kind}-source-option`}
       >
         {device.label}
       </option>
     );
   };
 
-  renderVideoOption = (device: DeviceInfo) => {
-    return (
-      <option
-        value={device.deviceId}
-        key={device.deviceId}
-        data-test="video-source-option"
-      >
-        {device.label}
-      </option>
-    );
-  };
+  renderVideoOption = this.createRenderer(TrackKind.Video);
+  renderAudioOption = this.createRenderer(TrackKind.Audio);
 
   buildTrackQuery =
     (kind: TrackKind) => (event: React.ChangeEvent<HTMLSelectElement>) => {
@@ -85,6 +83,8 @@ interface Props {
   changeDevice: typeof actions.devices.requestMediaDevices;
   audioSources: Array<DeviceInfo>;
   videoSources: Array<DeviceInfo>;
+  selectedAudioDeviceId: string;
+  selectedVideoDeviceId: string;
 }
 
 const Container = styled.div`
@@ -134,9 +134,29 @@ const Dropdown = styled.select`
 `;
 
 export function mapStateToProps(state: State) {
+  const { audio, video } = state.sources.available;
+
+  const localTracksByDeviceId = state.participants[MY_PARTICIPANT_ID].trackIds
+    .map((id) => state.tracks[id])
+    .reduce((tracks, track) => {
+      tracks.set(track.deviceId, track);
+      return tracks;
+    }, new Map());
+
+  const selectedAudioDeviceId =
+    audio.find((device) => localTracksByDeviceId.has(device.deviceId))
+      ?.deviceId ?? '';
+
+  const selectedVideoDeviceId =
+    video.find((device) => localTracksByDeviceId.has(device.deviceId))
+      ?.deviceId ?? '';
+
   return {
-    audioSources: state.sources.available.audio,
-    videoSources: state.sources.available.video,
+    audioSources: audio,
+    videoSources: video,
+    activeTracks: state.participants[MY_PARTICIPANT_ID].trackIds,
+    selectedAudioDeviceId,
+    selectedVideoDeviceId,
   };
 }
 

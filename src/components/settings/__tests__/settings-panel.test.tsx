@@ -17,6 +17,8 @@ describe('SettingsPanel', () => {
   const setup = renderer(SettingsPanel, {
     getDefaultProps: () => ({
       changeDevice: jest.fn(),
+      selectedAudioDeviceId: 'a-id',
+      selectedVideoDeviceId: 'v-id',
       audioSources: [createSource({ kind: DeviceKind.AudioInput })],
       videoSources: [
         createSource({ kind: DeviceKind.VideoInput }),
@@ -61,13 +63,28 @@ describe('SettingsPanel', () => {
     });
   });
 
+  it('shows which devices are currently selected', () => {
+    const { findByTestId } = setup({
+      audioSources: [createSource(), createSource({ deviceId: 'a-active' })],
+      videoSources: [createSource(), createSource({ deviceId: 'v-active' })],
+      selectedAudioDeviceId: 'a-active',
+      selectedVideoDeviceId: 'v-active',
+    });
+
+    expect(findByTestId('choose-audio-source').prop('value')).toBe('a-active');
+    expect(findByTestId('choose-video-source').prop('value')).toBe('v-active');
+  });
+
   describe('mapStateToProps', () => {
     it('returns the expected props', () => {
       const props = mapStateToProps(initialState);
 
       expect(props).toMatchInlineSnapshot(`
         Object {
+          "activeTracks": Array [],
           "audioSources": Array [],
+          "selectedAudioDeviceId": "",
+          "selectedVideoDeviceId": "",
           "videoSources": Array [],
         }
       `);
