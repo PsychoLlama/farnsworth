@@ -1,6 +1,7 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import styled from 'styled-components';
+import { FiX } from 'react-icons/fi';
 import { State, PanelView } from '../reducers/initial-state';
 import { v4 as uuid } from 'uuid';
 import ChatPanel from './chat/chat-panel';
@@ -14,31 +15,46 @@ export class Panel extends React.Component<Props> {
   settingsPanelId = uuid();
 
   render() {
-    const { view } = this.props;
+    const { view, callActive } = this.props;
     const child = this.renderSubView();
 
     return child ? (
       <Container>
-        <Tabs>
-          <Tab
-            data-test="show-chat"
-            aria-selected={view === PanelView.Chat}
-            onClick={this.switchToChat}
-            aria-controls={this.chatPanelId}
-            onFocus={this.switchToChat}
-          >
-            Chat
-          </Tab>
-          <Tab
-            data-test="show-settings"
-            aria-selected={view === PanelView.Settings}
-            onClick={this.switchToSettings}
-            aria-controls={this.settingsPanelId}
-            onFocus={this.switchToSettings}
-          >
-            Settings
-          </Tab>
-        </Tabs>
+        {callActive ? (
+          <Tabs>
+            {callActive && (
+              <Tab
+                data-test="show-chat"
+                aria-selected={view === PanelView.Chat}
+                onClick={this.switchToChat}
+                aria-controls={this.chatPanelId}
+                onFocus={this.switchToChat}
+              >
+                Chat
+              </Tab>
+            )}
+            <Tab
+              data-test="show-settings"
+              aria-selected={view === PanelView.Settings}
+              onClick={this.switchToSettings}
+              aria-controls={this.settingsPanelId}
+              onFocus={this.switchToSettings}
+            >
+              Settings
+            </Tab>
+          </Tabs>
+        ) : (
+          <Header>
+            <Title>Settings</Title>
+            <CloseButton
+              aria-label="Close panel"
+              data-test="close-panel"
+              onClick={this.props.close}
+            >
+              <FiX />
+            </CloseButton>
+          </Header>
+        )}
         {child}
       </Container>
     ) : null;
@@ -69,9 +85,11 @@ export class Panel extends React.Component<Props> {
 }
 
 interface Props {
+  callActive: boolean;
   view: PanelView;
   showChat: typeof actions.panel.showChat;
   showSettings: typeof actions.panel.showSettings;
+  close: typeof actions.panel.close;
 }
 
 const Container = styled.aside.attrs({ role: 'complementary' })`
@@ -93,6 +111,18 @@ const Container = styled.aside.attrs({ role: 'complementary' })`
   }
 `;
 
+const Header = styled.header`
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1rem;
+  border-bottom: 3px solid ${css.color('primary-overlay')};
+`;
+
+const Title = styled.h2`
+  margin: 0;
+`;
+
 const Tabs = styled.nav.attrs({ role: 'tablist' })`
   display: grid;
   grid-template-columns: repeat(2, 1fr);
@@ -102,7 +132,6 @@ const Tab = styled(Button.Base).attrs({ role: 'tab' })`
   display: flex;
   justify-content: center;
   padding: 1rem 0;
-  flex-grow: 1;
   cursor: pointer;
   border-bottom: 3px solid transparent;
   font-weight: bold;
@@ -126,15 +155,22 @@ const Tab = styled(Button.Base).attrs({ role: 'tab' })`
   }
 `;
 
+const CloseButton = styled(Button.Base)`
+  display: flex;
+  font-size: 1.5rem;
+`;
+
 export function mapStateToProps(state: State) {
   return {
     view: state.panel.view,
+    callActive: state.call !== null,
   };
 }
 
 const mapDispatchToProps = {
   showChat: actions.panel.showChat,
   showSettings: actions.panel.showSettings,
+  close: actions.panel.close,
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(Panel);

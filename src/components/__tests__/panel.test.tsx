@@ -7,9 +7,11 @@ import SettingsPanel from '../settings/settings-panel';
 describe('Panel', () => {
   const setup = renderer(Panel, {
     getDefaultProps: () => ({
+      callActive: true,
       view: PanelView.Chat,
       showChat: jest.fn(),
       showSettings: jest.fn(),
+      close: jest.fn(),
     }),
   });
 
@@ -57,12 +59,30 @@ describe('Panel', () => {
     expect(props.showChat).toHaveBeenCalled();
   });
 
+  it('hides the chat panel unless a call is active', () => {
+    const { findByTestId } = setup({
+      view: PanelView.Settings,
+      callActive: false,
+    });
+
+    expect(findByTestId('show-chat').exists()).toBe(false);
+  });
+
+  it('closes the panel when you click the close button', () => {
+    const { findByTestId, props } = setup({ callActive: false });
+
+    findByTestId('close-panel').simulate('click');
+
+    expect(props.close).toHaveBeenCalled();
+  });
+
   describe('mapStateToProps', () => {
     it('grabs the necessary props', () => {
       const props = mapStateToProps(initialState);
 
       expect(props).toMatchInlineSnapshot(`
         Object {
+          "callActive": false,
           "view": "none",
         }
       `);
