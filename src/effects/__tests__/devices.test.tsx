@@ -72,15 +72,17 @@ describe('Device effects', () => {
       expect(result).toEqual([
         {
           kind: TrackKind.Audio,
-          deviceId: expect.any(String),
           trackId: expect.any(String),
           enabled: expect.any(Boolean),
+          deviceId: expect.any(String),
+          groupId: expect.any(String),
         },
         {
           kind: TrackKind.Video,
-          deviceId: expect.any(String),
           trackId: expect.any(String),
           enabled: expect.any(Boolean),
+          deviceId: expect.any(String),
+          groupId: expect.any(String),
         },
       ]);
     });
@@ -136,9 +138,10 @@ describe('Device effects', () => {
       expect(newTracks).toEqual([
         {
           kind: TrackKind.Video,
-          deviceId: expect.any(String),
           trackId: expect.any(String),
           enabled: expect.any(Boolean),
+          deviceId: expect.any(String),
+          groupId: expect.any(String),
         },
       ]);
     });

@@ -4,6 +4,7 @@ import context from '../../conferencing/global-context';
 import * as effects from '../';
 import { TrackKind, TrackSource } from '../../utils/constants';
 import ConnectionManager from '../../conferencing/webrtc';
+import * as factories from '../../testing/factories';
 
 jest.mock('../../conferencing/webrtc');
 
@@ -34,12 +35,11 @@ describe('Garbage collection effects', () => {
       context.tracks.set(track.id, track);
 
       const state = produce(initialState, (state) => {
-        state.tracks[track.id] = {
+        state.tracks[track.id] = factories.Track({
           kind: track.kind as TrackKind,
           source: TrackSource.Device,
           enabled: track.enabled,
-          local: false,
-        };
+        });
       });
 
       // All tracks are referenced. Don't discard anything.

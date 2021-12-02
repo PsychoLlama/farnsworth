@@ -29,8 +29,9 @@ function getTrackMetadata(track: MediaStreamTrack) {
   return {
     trackId: track.id,
     kind: track.kind as TrackKind,
-    deviceId: settings.deviceId,
     enabled: track.enabled,
+    deviceId: settings.deviceId ?? null,
+    groupId: settings.groupId ?? null,
   };
 }
 

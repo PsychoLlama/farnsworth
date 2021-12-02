@@ -34,7 +34,8 @@ export class MockMediaStreamTrack
   extends EventEmitter
   implements MediaStreamTrack
 {
-  _deviceId = uuid();
+  private _deviceId = uuid();
+  private _groupId = uuid();
 
   // --- implemented ---
   id = uuid();
@@ -51,6 +52,7 @@ export class MockMediaStreamTrack
 
   getSettings = jest.fn(() => ({
     deviceId: this._deviceId,
+    groupId: this._groupId,
     width: 640,
     height: 480,
   }));

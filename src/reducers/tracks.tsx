@@ -12,6 +12,8 @@ export default createReducer(initialState, (handleAction) => [
         source: TrackSource.Device,
         enabled: track.enabled,
         local: true,
+        groupId: track.groupId,
+        deviceId: track.deviceId,
       };
     });
   }),
@@ -22,6 +24,8 @@ export default createReducer(initialState, (handleAction) => [
       source: track.source,
       enabled: track.enabled,
       local: false,
+      groupId: null,
+      deviceId: null,
     };
   }),
 
@@ -75,6 +79,8 @@ export default createReducer(initialState, (handleAction) => [
         source: TrackSource.Display,
         enabled: track.enabled,
         local: true,
+        deviceId: track.deviceId,
+        groupId: track.groupId,
       };
     });
   }),

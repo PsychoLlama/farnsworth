@@ -87,7 +87,10 @@ export interface State {
   /** Contains metadata about every media track, both local and remote. */
   tracks: {
     [trackId: string]: {
+      /** Audio vs video. */
       kind: TrackKind;
+
+      /** The type of content this track provides (e.g. camera vs screen). */
       source: TrackSource;
 
       /** Whether this is "paused", which has different meanings in WebRTC. */
@@ -95,6 +98,18 @@ export interface State {
 
       /** 'true' if the track was created by us. */
       local: boolean;
+
+      /**
+       * The device this track originates from. Null for remote or display
+       * tracks.
+       */
+      deviceId: null | string;
+
+      /**
+       * The hardware group this track originates from. Null for remote or
+       * display tracks.
+       */
+      groupId: null | string;
     };
   };
 

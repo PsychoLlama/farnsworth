@@ -8,6 +8,7 @@ import {
   TrackKind,
   TrackSource,
 } from '../../../utils/constants';
+import * as factories from '../../../testing/factories';
 
 describe('Controls', () => {
   const setup = renderer(Controls, {
@@ -147,18 +148,14 @@ describe('Controls', () => {
     it('returns the expected props', () => {
       const { props } = setup((state) => {
         state.tracks = {
-          'a-id': {
+          'a-id': factories.Track({
             kind: TrackKind.Audio,
             source: TrackSource.Device,
-            enabled: true,
-            local: true,
-          },
-          'v-id': {
+          }),
+          'v-id': factories.Track({
             kind: TrackKind.Video,
             source: TrackSource.Device,
-            enabled: true,
-            local: true,
-          },
+          }),
         };
 
         state.participants[MY_PARTICIPANT_ID].trackIds = Object.keys(

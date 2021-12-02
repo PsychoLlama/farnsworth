@@ -8,6 +8,7 @@ import {
   TrackKind,
 } from '../../../utils/constants';
 import Participant from '../participant';
+import * as factories from '../../../testing/factories';
 
 describe('VideoRoomLayout', () => {
   const setup = renderer(VideoRoomLayout, {
@@ -48,12 +49,11 @@ describe('VideoRoomLayout', () => {
 
     it('returns the correct props', () => {
       const { props } = setup((state) => {
-        state.tracks.display = {
+        state.tracks.display = factories.Track({
           source: TrackSource.Display,
           kind: TrackKind.Video,
-          enabled: true,
           local: false,
-        };
+        });
       });
 
       expect(props).toEqual({

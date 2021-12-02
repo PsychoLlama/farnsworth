@@ -7,6 +7,7 @@ import {
   TrackSource,
   MY_PARTICIPANT_ID,
 } from '../../utils/constants';
+import * as factories from '../../testing/factories';
 
 jest.mock('../../effects/connections');
 jest.mock('../../effects/devices');
@@ -30,14 +31,16 @@ describe('Tracks reducer', () => {
       {
         kind: TrackKind.Audio,
         trackId: 'first',
-        deviceId: 'mic',
         enabled: true,
+        deviceId: 'mic',
+        groupId: 'webcam',
       },
       {
         kind: TrackKind.Video,
         trackId: 'second',
-        deviceId: 'cam',
         enabled: true,
+        deviceId: 'cam',
+        groupId: 'webcam',
       },
     ]);
   });
@@ -45,18 +48,22 @@ describe('Tracks reducer', () => {
   describe('devices.requestMediaDevices()', () => {
     it('adds the new tracks', async () => {
       const { store } = setup();
-      await store.dispatch(actions.devices.requestMediaDevices());
+      await store.dispatch(actions.devices.requestMediaDevices({}));
 
       expect(store.getState().tracks).toMatchInlineSnapshot(`
         Object {
           "first": Object {
+            "deviceId": "mic",
             "enabled": true,
+            "groupId": "webcam",
             "kind": "audio",
             "local": true,
             "source": "device",
           },
           "second": Object {
+            "deviceId": "cam",
             "enabled": true,
+            "groupId": "webcam",
             "kind": "video",
             "local": true,
             "source": "device",
@@ -68,7 +75,7 @@ describe('Tracks reducer', () => {
     it('puts the track IDs on tha participant', async () => {
       const { store } = setup();
 
-      await store.dispatch(actions.devices.requestMediaDevices());
+      await store.dispatch(actions.devices.requestMediaDevices({}));
 
       const { participants } = store.getState();
       expect(participants[MY_PARTICIPANT_ID]).toMatchObject({
@@ -218,12 +225,10 @@ describe('Tracks reducer', () => {
       store.dispatch(
         actions.tools.patch((state) => {
           state.participants[MY_PARTICIPANT_ID].trackIds = ['video-id'];
-          state.tracks['video-id'] = {
+          state.tracks['video-id'] = factories.Track({
             kind: TrackKind.Video,
             source: TrackSource.Device,
-            local: true,
-            enabled: true,
-          };
+          });
         }),
       );
 
@@ -296,8 +301,9 @@ describe('Tracks reducer', () => {
         {
           trackId: track.id,
           kind: track.kind as TrackKind,
-          deviceId: track.getSettings().deviceId,
           enabled: track.enabled,
+          deviceId: track.getSettings().deviceId,
+          groupId: track.getSettings().groupId,
         },
       ]);
 
@@ -320,8 +326,9 @@ describe('Tracks reducer', () => {
         {
           trackId: track.id,
           kind: track.kind as TrackKind,
-          deviceId: track.getSettings().deviceId,
           enabled: track.enabled,
+          deviceId: track.getSettings().deviceId,
+          groupId: track.getSettings().groupId,
         },
       ]);
 
