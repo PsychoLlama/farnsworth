@@ -1,5 +1,6 @@
 import setup from '../../testing/redux';
 import { PanelView } from '../initial-state';
+import * as factories from '../../testing/factories';
 
 describe('Panel reducer', () => {
   describe('panel.open()', () => {
@@ -117,6 +118,32 @@ describe('Panel reducer', () => {
         lastView: PanelView.Settings,
         view: PanelView.Settings,
       });
+    });
+  });
+
+  describe('call.leave()', () => {
+    it('closes the panel if you had chat open', () => {
+      const { store, sdk } = setup((state) => {
+        state.panel.view = PanelView.Chat;
+        state.call = { peerId: 'remote-id' };
+        state.participants[state.call.peerId] = factories.Participant();
+      });
+
+      sdk.call.leave('remote-id');
+
+      expect(store.getState().panel).toHaveProperty('view', PanelView.None);
+    });
+
+    it('leaves the panel open if you were looking at settings', () => {
+      const { store, sdk } = setup((state) => {
+        state.panel.view = PanelView.Settings;
+        state.call = { peerId: 'remote-id' };
+        state.participants[state.call.peerId] = factories.Participant();
+      });
+
+      sdk.call.leave('remote-id');
+
+      expect(store.getState().panel).toHaveProperty('view', PanelView.Settings);
     });
   });
 });

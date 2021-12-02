@@ -11,6 +11,5 @@ export default createReducer(initialState, (handleAction) => [
 
   handleAction(actions.call.leave, (state) => {
     state.chat.unreadMessages = false;
-    state.panel.view = PanelView.None;
   }),
 ]);
