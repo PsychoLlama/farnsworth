@@ -26,6 +26,7 @@ describe('Tracks reducer', () => {
         enabled: true,
         deviceId: 'mic',
         groupId: 'webcam',
+        facingMode: null,
       },
       {
         kind: TrackKind.Video,
@@ -33,6 +34,7 @@ describe('Tracks reducer', () => {
         enabled: true,
         deviceId: 'cam',
         groupId: 'webcam',
+        facingMode: 'user',
       },
     ]);
   });
@@ -47,6 +49,7 @@ describe('Tracks reducer', () => {
           "first": Object {
             "deviceId": "mic",
             "enabled": true,
+            "facingMode": null,
             "groupId": "webcam",
             "kind": "audio",
             "local": true,
@@ -55,6 +58,7 @@ describe('Tracks reducer', () => {
           "second": Object {
             "deviceId": "cam",
             "enabled": true,
+            "facingMode": "user",
             "groupId": "webcam",
             "kind": "video",
             "local": true,
@@ -83,6 +87,7 @@ describe('Tracks reducer', () => {
           enabled: true,
           deviceId: 'mic',
           groupId: 'webcam',
+          facingMode: 'user',
         },
       ]);
 
@@ -323,6 +328,7 @@ describe('Tracks reducer', () => {
           enabled: track.enabled,
           deviceId: track.getSettings().deviceId,
           groupId: track.getSettings().groupId,
+          facingMode: null,
         },
       ]);
 
@@ -348,6 +354,7 @@ describe('Tracks reducer', () => {
           enabled: track.enabled,
           deviceId: track.getSettings().deviceId,
           groupId: track.getSettings().groupId,
+          facingMode: null,
         },
       ]);
 

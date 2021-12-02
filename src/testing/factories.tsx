@@ -12,6 +12,7 @@ export function Track(override: Partial<Track>): Track {
     local: true,
     kind: TrackKind.Video,
     source: TrackSource.Device,
+    facingMode: null,
     ...override,
   };
 }

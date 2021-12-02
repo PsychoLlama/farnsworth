@@ -76,6 +76,7 @@ describe('Device effects', () => {
           enabled: expect.any(Boolean),
           deviceId: expect.any(String),
           groupId: expect.any(String),
+          facingMode: null,
         },
         {
           kind: TrackKind.Video,
@@ -83,6 +84,7 @@ describe('Device effects', () => {
           enabled: expect.any(Boolean),
           deviceId: expect.any(String),
           groupId: expect.any(String),
+          facingMode: null,
         },
       ]);
     });
@@ -142,6 +144,7 @@ describe('Device effects', () => {
           enabled: expect.any(Boolean),
           deviceId: expect.any(String),
           groupId: expect.any(String),
+          facingMode: null,
         },
       ]);
     });

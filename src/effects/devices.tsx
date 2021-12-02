@@ -32,6 +32,7 @@ function getTrackMetadata(track: MediaStreamTrack) {
     enabled: track.enabled,
     deviceId: settings.deviceId ?? null,
     groupId: settings.groupId ?? null,
+    facingMode: (settings.facingMode as VideoFacingModeEnum) ?? null,
   };
 }
 

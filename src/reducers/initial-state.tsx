@@ -110,6 +110,12 @@ export interface State {
        * display tracks.
        */
       groupId: null | string;
+
+      /**
+       * Generally only defined on mobile devices. Indicates which way the
+       * camera is pointing.
+       */
+      facingMode: null | VideoFacingModeEnum;
     };
   };
 

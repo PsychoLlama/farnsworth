@@ -34,6 +34,7 @@ export default createReducer(initialState, (handleAction) => [
         local: true,
         groupId: track.groupId,
         deviceId: track.deviceId,
+        facingMode: track.facingMode,
       };
     });
   }),
@@ -46,6 +47,7 @@ export default createReducer(initialState, (handleAction) => [
       local: false,
       groupId: null,
       deviceId: null,
+      facingMode: null,
     };
   }),
 
@@ -101,6 +103,7 @@ export default createReducer(initialState, (handleAction) => [
         local: true,
         deviceId: track.deviceId,
         groupId: track.groupId,
+        facingMode: null,
       };
     });
   }),
