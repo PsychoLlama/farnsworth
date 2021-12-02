@@ -5,8 +5,26 @@ import { MY_PARTICIPANT_ID, TrackSource } from '../utils/constants';
 
 export default createReducer(initialState, (handleAction) => [
   handleAction(actions.devices.requestMediaDevices, (state, newTracks) => {
+    const self = state.participants[MY_PARTICIPANT_ID];
+    const newTrackKinds = new Set(newTracks.map((track) => track.kind));
+    const myTracks = new Set(self.trackIds);
+
+    // If we just added a video track but we've already got a video track,
+    // close out the other one.
+    self.trackIds.forEach((trackId) => {
+      const track = state.tracks[trackId];
+      if (newTrackKinds.has(track.kind)) {
+        delete state.tracks[trackId];
+        myTracks.delete(trackId);
+      }
+    });
+
+    // Update our track list in case we had to remove any.
+    self.trackIds = Array.from(myTracks);
+
+    // Add the new tracks.
     newTracks.forEach((track) => {
-      state.participants[MY_PARTICIPANT_ID].trackIds.push(track.trackId);
+      self.trackIds.push(track.trackId);
       state.tracks[track.trackId] = {
         kind: track.kind,
         source: TrackSource.Device,

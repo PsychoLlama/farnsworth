@@ -1,4 +1,3 @@
-import createStore from '../../utils/create-store';
 import * as actions from '../../actions';
 import * as connEffects from '../../effects/connections';
 import * as deviceEffects from '../../effects/devices';
@@ -8,6 +7,7 @@ import {
   MY_PARTICIPANT_ID,
 } from '../../utils/constants';
 import * as factories from '../../testing/factories';
+import setup from '../../testing/redux';
 
 jest.mock('../../effects/connections');
 jest.mock('../../effects/devices');
@@ -17,14 +17,6 @@ const mockedDeviceEffects: jest.Mocked<typeof deviceEffects> =
   deviceEffects as any;
 
 describe('Tracks reducer', () => {
-  function setup() {
-    const store = createStore();
-
-    return {
-      store,
-    };
-  }
-
   beforeEach(() => {
     mockedConnEffects.close.mockImplementation((id) => id);
     mockedDeviceEffects.requestMediaDevices.mockResolvedValue([
@@ -80,6 +72,33 @@ describe('Tracks reducer', () => {
       const { participants } = store.getState();
       expect(participants[MY_PARTICIPANT_ID]).toMatchObject({
         trackIds: ['first', 'second'],
+      });
+    });
+
+    it('replaces existing tracks of the same kind', async () => {
+      mockedDeviceEffects.requestMediaDevices.mockResolvedValue([
+        {
+          kind: TrackKind.Audio,
+          trackId: 'new-audio',
+          enabled: true,
+          deviceId: 'mic',
+          groupId: 'webcam',
+        },
+      ]);
+
+      const { store, sdk } = setup((state) => {
+        state.participants[MY_PARTICIPANT_ID].trackIds = ['audio', 'video'];
+        state.tracks = {
+          audio: factories.Track({ kind: TrackKind.Audio }),
+          video: factories.Track({ kind: TrackKind.Video }),
+        };
+      });
+
+      await sdk.devices.requestMediaDevices({ audio: true });
+
+      expect(store.getState().tracks).toEqual({
+        'new-audio': expect.anything(),
+        video: expect.anything(),
       });
     });
   });
