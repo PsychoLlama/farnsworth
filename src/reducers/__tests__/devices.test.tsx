@@ -1,5 +1,11 @@
-import MediaDevices, { DeviceInfo, DeviceKind } from 'media-devices';
+import MediaDevices, {
+  DeviceInfo,
+  DeviceKind,
+  DeviceChange,
+  OperationType,
+} from 'media-devices';
 import setup from '../../testing/redux';
+import * as actions from '../../actions';
 
 jest.mock('media-devices');
 
@@ -36,6 +42,33 @@ describe('Sources reducer', () => {
 
       await sdk.devices.list();
 
+      expect(store.getState().sources.available).toMatchObject({
+        audio: [audio],
+        video: [video],
+      });
+    });
+  });
+
+  describe('devices.observe()', () => {
+    it('puts the device list', async () => {
+      const { store } = setup();
+
+      const devices = mockDeviceList([
+        { kind: DeviceKind.AudioInput },
+        { kind: DeviceKind.VideoInput },
+        { kind: DeviceKind.AudioOutput },
+      ]);
+
+      const [audio, video] = devices;
+      const changes = [
+        { type: OperationType.Add, device: audio } as DeviceChange,
+      ];
+
+      store.dispatch(
+        actions.devices.observe.actionFactory.success({ devices, changes }),
+      );
+
+      expect(store.getState().sources.changes).toBe(changes);
       expect(store.getState().sources.available).toMatchObject({
         audio: [audio],
         video: [video],

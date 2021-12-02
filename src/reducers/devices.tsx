@@ -9,6 +9,16 @@ export default createReducer(initialState, (handleAction) => [
     state.sources.available.audio = kind(DeviceKind.AudioInput);
     state.sources.available.video = kind(DeviceKind.VideoInput);
   }),
+
+  handleAction(
+    actions.devices.observe.actionFactory,
+    (state, { devices, changes }) => {
+      const kind = createFilter(devices);
+      state.sources.available.audio = kind(DeviceKind.AudioInput);
+      state.sources.available.video = kind(DeviceKind.VideoInput);
+      state.sources.changes = changes;
+    },
+  ),
 ]);
 
 function createFilter(devices: Array<DeviceInfo>) {

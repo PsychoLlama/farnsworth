@@ -123,4 +123,24 @@ describe('Device effects', () => {
       ]);
     });
   });
+
+  describe('observe', () => {
+    it('asynchronously yields every device changeset', async () => {
+      const observer = effects.devices.observe();
+      const createUpdate = () => ({
+        changes: [],
+        devices: [],
+      });
+
+      const update1 = createUpdate();
+      const p1 = observer.next();
+      MediaDevices.ondevicechange?.(update1);
+      expect((await p1).value).toBe(update1);
+
+      const update2 = createUpdate();
+      const p2 = observer.next();
+      MediaDevices.ondevicechange?.(update2);
+      expect((await p2).value).toBe(update2);
+    });
+  });
 });

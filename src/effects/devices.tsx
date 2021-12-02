@@ -1,4 +1,4 @@
-import MediaDevices from 'media-devices';
+import MediaDevices, { DeviceInfo, DeviceChange } from 'media-devices';
 import context from '../conferencing/global-context';
 import { TrackKind, TrackSource, MY_PARTICIPANT_ID } from '../utils/constants';
 import Logger from '../utils/logger';
@@ -89,4 +89,26 @@ function removeTrackWhenEnded(track: MediaStreamTrack) {
     const { default: sdk } = await import('../utils/sdk');
     sdk.tracks.remove({ trackId: track.id, peerId: MY_PARTICIPANT_ID });
   };
+}
+
+export interface DeviceChangeset {
+  changes: Array<DeviceChange>;
+  devices: Array<DeviceInfo>;
+}
+
+/**
+ * Observes the device list and yields every changeset as an asynchronous
+ * stream. Never exits.
+ *
+ * Warning: only one instance of this observer can be active at a time.
+ * Calling it twice will detach the last and it will never yield again.
+ */
+export async function* observe() {
+  function waitForChange() {
+    return new Promise<DeviceChangeset>((resolve) => {
+      MediaDevices.ondevicechange = resolve;
+    });
+  }
+
+  while (true) yield waitForChange();
 }

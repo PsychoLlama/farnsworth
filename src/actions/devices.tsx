@@ -20,3 +20,12 @@ export const list = createAction.async(
   'devices/list',
   MediaDevices.enumerateDevices,
 );
+
+export async function* observe() {
+  for await (const changeset of effects.devices.observe()) {
+    yield observe.actionFactory.success(changeset);
+  }
+}
+
+observe.actionFactory =
+  createAction.factory<effects.devices.DeviceChangeset>('devices/observe');
