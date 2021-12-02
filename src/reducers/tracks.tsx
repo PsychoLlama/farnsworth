@@ -1,30 +1,32 @@
 import { createReducer } from 'retreon';
-import initialState from './initial-state';
+import initialState, { State } from './initial-state';
 import * as actions from '../actions';
-import { MY_PARTICIPANT_ID, TrackSource } from '../utils/constants';
+import { MY_PARTICIPANT_ID, TrackSource, TrackKind } from '../utils/constants';
 
 export default createReducer(initialState, (handleAction) => [
-  handleAction(actions.devices.requestMediaDevices, (state, newTracks) => {
-    const self = state.participants[MY_PARTICIPANT_ID];
-    const newTrackKinds = new Set(newTracks.map((track) => track.kind));
-    const myTracks = new Set(self.trackIds);
-
-    // If we just added a video track but we've already got a video track,
-    // close out the other one.
-    self.trackIds.forEach((trackId) => {
-      const track = state.tracks[trackId];
-      if (newTrackKinds.has(track.kind)) {
-        delete state.tracks[trackId];
-        myTracks.delete(trackId);
+  // Some platforms have strict limits on concurrent tracks. For example,
+  // mobile won't let you create more than 1 video at a time. This optimistic
+  // handler removes the existing track, clearing resources for the new one.
+  //
+  // It would be neat to support more than one track concurrently on supported
+  // platforms for a more graceful stream cutover, but that can be added in
+  // the future.
+  handleAction.optimistic(
+    actions.devices.requestMediaDevices,
+    (state, query) => {
+      if (query.audio) {
+        removeLocalTracksOfKind(TrackKind.Audio, state);
       }
-    });
 
-    // Update our track list in case we had to remove any.
-    self.trackIds = Array.from(myTracks);
+      if (query.video) {
+        removeLocalTracksOfKind(TrackKind.Video, state);
+      }
+    },
+  ),
 
-    // Add the new tracks.
+  handleAction(actions.devices.requestMediaDevices, (state, newTracks) => {
     newTracks.forEach((track) => {
-      self.trackIds.push(track.trackId);
+      state.participants[MY_PARTICIPANT_ID].trackIds.push(track.trackId);
       state.tracks[track.trackId] = {
         kind: track.kind,
         source: TrackSource.Device,
@@ -127,3 +129,21 @@ export default createReducer(initialState, (handleAction) => [
     delete state.tracks[trackId];
   }),
 ]);
+
+function removeLocalTracksOfKind(kind: TrackKind, state: State) {
+  const self = state.participants[MY_PARTICIPANT_ID];
+  const myTracks = new Set(self.trackIds);
+
+  // If we just added a video track but we've already got a video track,
+  // close out the other one.
+  self.trackIds.forEach((trackId) => {
+    const track = state.tracks[trackId];
+    if (track.kind === kind) {
+      delete state.tracks[trackId];
+      myTracks.delete(trackId);
+    }
+  });
+
+  // Update our track list in case we had to remove any.
+  self.trackIds = Array.from(myTracks);
+}
