@@ -7,3 +7,4 @@ export * as chat from './chat';
 export * as call from './call';
 export * as tools from './tools';
 export * as panel from './panel';
+export * as settings from './settings';

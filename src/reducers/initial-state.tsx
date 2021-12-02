@@ -25,6 +25,17 @@ export enum PanelView {
   Settings = 'settings',
 }
 
+export interface Settings {
+  /** Only offer ICE candidates using our configured TURN relays. */
+  forceTurnRelay: boolean;
+
+  /** Whether to use the application's default ICE servers. */
+  useDefaultIceServers: boolean;
+
+  /** A list of custom user-defined TURN/STUN servers. */
+  iceServers: Array<RTCIceServer>;
+}
+
 /**
  * Note: Redux state doesn't contain complex objects like media streams or
  * WebRTC connections, but it does contain IDs pointing to those resources.
@@ -137,6 +148,8 @@ export interface State {
   /** Manages global chat state. */
   chat: { unreadMessages: boolean };
 
+  settings: Settings;
+
   /** Manages the state of the sidebar/panel UI. */
   panel: {
     lastView: PanelView;
@@ -174,6 +187,11 @@ const initialState: State = {
   },
   phonebook: { open: false },
   chat: { unreadMessages: false },
+  settings: {
+    forceTurnRelay: false,
+    useDefaultIceServers: true,
+    iceServers: [],
+  },
   panel: {
     lastView: PanelView.Chat,
     view: PanelView.None,
