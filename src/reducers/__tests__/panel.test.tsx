@@ -67,6 +67,17 @@ describe('Panel reducer', () => {
 
       expect(store.getState().panel).toHaveProperty('view', PanelView.Settings);
     });
+
+    it('clears the unread chat count when toggling to the chat panel', () => {
+      const { store, sdk } = setup((state) => {
+        state.call = { peerId: 'remote-peer' };
+        state.chat.unreadMessages = true;
+      });
+
+      sdk.panel.toggle();
+
+      expect(store.getState().chat).toHaveProperty('unreadMessages', false);
+    });
   });
 
   describe('panel.showChat()', () => {
@@ -81,6 +92,16 @@ describe('Panel reducer', () => {
         lastView: PanelView.Chat,
         view: PanelView.Chat,
       });
+    });
+
+    it('clears the unread badge', () => {
+      const { store, sdk } = setup((state) => {
+        state.chat.unreadMessages = true;
+      });
+
+      sdk.panel.showChat();
+
+      expect(store.getState().chat).toHaveProperty('unreadMessages', false);
     });
   });
 

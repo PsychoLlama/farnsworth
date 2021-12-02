@@ -20,6 +20,7 @@ export default createReducer(initialState, (handleAction) => [
   handleAction(actions.panel.showChat, (state) => {
     state.panel.lastView = PanelView.Chat;
     state.panel.view = PanelView.Chat;
+    state.chat.unreadMessages = false;
   }),
 
   handleAction(actions.panel.showSettings, (state) => {
@@ -35,5 +36,9 @@ function openLastReasonableView(state: State) {
     state.panel.view = PanelView.Settings;
   } else {
     state.panel.view = state.panel.lastView;
+  }
+
+  if (state.panel.view === PanelView.Chat) {
+    state.chat.unreadMessages = false;
   }
 }
