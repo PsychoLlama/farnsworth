@@ -25,6 +25,7 @@ describe('MediaView', () => {
       videoEnabled: true,
       isLocal: false,
       connectionState: ConnectionState.Connected,
+      facingMode: 'user' as const,
     }),
   });
 
@@ -246,6 +247,7 @@ describe('MediaView', () => {
 
       expect(props).toMatchInlineSnapshot(`
         Object {
+          "facingMode": null,
           "videoEnabled": true,
         }
       `);

@@ -29,12 +29,12 @@ export class MediaView extends React.Component<Props, State> {
   }
 
   render() {
-    const { isLocal, sourceType } = this.props;
+    const { isLocal, sourceType, facingMode } = this.props;
 
     return (
       <Container>
         <VideoStream
-          data-local={isLocal}
+          data-mirror={isLocal && facingMode !== 'environment'}
           data-screen={sourceType === TrackSource.Display}
           ref={this.attachMediaStream}
           onCanPlay={this.play}
@@ -155,6 +155,7 @@ interface OwnProps {
 
 interface Props extends OwnProps {
   videoEnabled: boolean;
+  facingMode: null | VideoFacingModeEnum;
 }
 
 interface State {
@@ -192,14 +193,17 @@ const VideoStream = styled.video`
 
   // People are used to seeing their own faces in a mirror. Replicate the
   // effect for local video streams.
-  &[data-local='true'] {
+  &[data-mirror='true'] {
     transform: rotateY(180deg);
   }
 `;
 
 export function mapStateToProps(state: ReduxState, props: OwnProps) {
+  const videoTrack = state.tracks[props.videoTrackId];
+
   return {
-    videoEnabled: state.tracks[props.videoTrackId]?.enabled ?? false,
+    videoEnabled: videoTrack?.enabled ?? false,
+    facingMode: videoTrack?.facingMode ?? null,
   };
 }
 
