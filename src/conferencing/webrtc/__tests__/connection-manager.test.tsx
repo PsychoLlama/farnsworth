@@ -21,7 +21,7 @@ jest.mock('../../../utils/sdk');
 jest.mock('../data-channel-messenger');
 
 describe('ConnectionManager', () => {
-  function setup(override?: Partial<Config>) {
+  async function setup(override?: Partial<Config>) {
     const stream = new Stream();
     const signaler = Libp2pMessenger.from(stream);
 
@@ -35,7 +35,7 @@ describe('ConnectionManager', () => {
       ...override,
     };
 
-    const mgr = new ConnectionManager(config);
+    const mgr = await ConnectionManager.create(config);
 
     return {
       config,
@@ -49,8 +49,8 @@ describe('ConnectionManager', () => {
     };
   }
 
-  it('sends ICE candidates to the remote peer', () => {
-    const { pc, signaler } = setup();
+  it('sends ICE candidates to the remote peer', async () => {
+    const { pc, signaler } = await setup();
 
     const candidate = { mock: 'ICE-candidate' };
     pc.onicecandidate({ candidate });
@@ -62,7 +62,7 @@ describe('ConnectionManager', () => {
   });
 
   it('negotiates session details when required', async () => {
-    const { pc, signaler } = setup();
+    const { pc, signaler } = await setup();
 
     expect(pc.setLocalDescription).not.toHaveBeenCalled();
     await pc.onnegotiationneeded();
@@ -75,7 +75,7 @@ describe('ConnectionManager', () => {
   });
 
   it('sets the remote description for incoming offers', async () => {
-    const { pc, onMessage } = setup();
+    const { pc, onMessage } = await setup();
     const description = { type: 'answer' };
 
     await onMessage({
@@ -87,7 +87,7 @@ describe('ConnectionManager', () => {
   });
 
   it('adds remote ICE candidates', async () => {
-    const { pc, onMessage } = setup();
+    const { pc, onMessage } = await setup();
     const candidate = { mock: 'ice-candidate' };
 
     await onMessage({
@@ -99,15 +99,15 @@ describe('ConnectionManager', () => {
   });
 
   it('ignores malformed messages', async () => {
-    const { onMessage } = setup();
+    const { onMessage } = await setup();
 
     await expect(onMessage(null)).resolves.toBeUndefined();
     await expect(onMessage({})).resolves.toBeUndefined();
     await expect(onMessage({ type: '???' })).resolves.toBeUndefined();
   });
 
-  it('responds to session offers (inbound calls)', async () => {
-    const { onMessage, pc } = setup();
+  it('responds to session offers async (inbound calls)', async () => {
+    const { onMessage, pc } = await setup();
 
     await onMessage({
       type: MessageType.SessionDescription,
@@ -118,7 +118,7 @@ describe('ConnectionManager', () => {
   });
 
   it('ignores remote offers during a conflict if impolite', async () => {
-    const { onMessage, pc } = setup({ localId: 'z', remoteId: 'a' });
+    const { onMessage, pc } = await setup({ localId: 'z', remoteId: 'a' });
 
     pc.onnegotiationneeded(); // No 'await' - test concurrent conditions.
     pc.signalingState = RtcSignalingState.HaveLocalOffer;
@@ -133,7 +133,7 @@ describe('ConnectionManager', () => {
   });
 
   it('drops local offers during a conflict if polite', async () => {
-    const { onMessage, pc } = setup({ localId: 'a', remoteId: 'z' });
+    const { onMessage, pc } = await setup({ localId: 'a', remoteId: 'z' });
 
     pc.onnegotiationneeded();
     pc.signalingState = RtcSignalingState.HaveLocalOffer;
@@ -148,7 +148,7 @@ describe('ConnectionManager', () => {
   });
 
   it('ignores offers while outside a stable state if impolite', async () => {
-    const { onMessage, pc } = setup({ localId: 'z', remoteId: 'a' });
+    const { onMessage, pc } = await setup({ localId: 'z', remoteId: 'a' });
 
     await pc.onnegotiationneeded();
     pc.signalingState = RtcSignalingState.HaveLocalOffer;
@@ -166,7 +166,7 @@ describe('ConnectionManager', () => {
   // ICE candidates that are incompatible. Other parts of the protocol help
   // the other side figure it out and correct it remotely.
   it('swallows errors from remote candidates if expecting conflicts', async () => {
-    const { onMessage, pc } = setup({ localId: 'z', remoteId: 'a' });
+    const { onMessage, pc } = await setup({ localId: 'z', remoteId: 'a' });
 
     pc.onnegotiationneeded();
     pc.signalingState = RtcSignalingState.HaveLocalOffer;
@@ -189,7 +189,7 @@ describe('ConnectionManager', () => {
   // started with a conflict, stabilized, then the connection degrates and ICE
   // needs to restart. We should allow the other side to make calls.
   it('resets conflict detectors after signaling stabilizes', async () => {
-    const { onMessage, pc } = setup({ localId: 'z', remoteId: 'a' });
+    const { onMessage, pc } = await setup({ localId: 'z', remoteId: 'a' });
 
     await pc.onnegotiationneeded();
     pc.signalingState = RtcSignalingState.Stable;
@@ -203,7 +203,7 @@ describe('ConnectionManager', () => {
   });
 
   it('closes the connection when instructed', async () => {
-    const { mgr, signaler, pc } = setup();
+    const { mgr, signaler, pc } = await setup();
     jest.spyOn(signaler, 'close');
 
     mgr.close();
@@ -215,7 +215,7 @@ describe('ConnectionManager', () => {
 
   describe('events', () => {
     it('notifies redux of the new track', async () => {
-      const { pc, config } = setup();
+      const { pc, config } = await setup();
       const track = new MockMediaStreamTrack();
 
       await pc.ontrack({
@@ -231,7 +231,7 @@ describe('ConnectionManager', () => {
     });
 
     it('identifies a stream association as being a screen share', async () => {
-      const { pc, config } = setup();
+      const { pc, config } = await setup();
       const track = new MockMediaStreamTrack();
 
       await pc.ontrack({ streams: [new MediaStream()], track });
@@ -244,7 +244,7 @@ describe('ConnectionManager', () => {
     });
 
     it('marks the track removed when the stream is disassociated', async () => {
-      const { pc, config } = setup();
+      const { pc, config } = await setup();
       const track = new MockMediaStreamTrack();
 
       const stream = new MediaStream();
@@ -261,8 +261,8 @@ describe('ConnectionManager', () => {
   });
 
   describe('addTrack', () => {
-    it('adds a track to the peer connection', () => {
-      const { mgr, pc } = setup();
+    it('adds a track to the peer connection', async () => {
+      const { mgr, pc } = await setup();
       const track = new MockMediaStreamTrack();
 
       mgr.addTrack(track, TrackSource.Device);
@@ -274,8 +274,8 @@ describe('ConnectionManager', () => {
       );
     });
 
-    it('adds a stream association for display tracks', () => {
-      const { mgr, pc } = setup();
+    it('adds a stream association for display tracks', async () => {
+      const { mgr, pc } = await setup();
       const track = new MockMediaStreamTrack();
 
       mgr.addTrack(track, TrackSource.Display);
@@ -285,8 +285,8 @@ describe('ConnectionManager', () => {
   });
 
   describe('removeTrack', () => {
-    it('removes the track from the corresponding RTP sender', () => {
-      const { mgr, pc } = setup();
+    it('removes the track from the corresponding RTP sender', async () => {
+      const { mgr, pc } = await setup();
       const track = new MockMediaStreamTrack();
       const sender = new MockRTCRtpSender();
       sender.replaceTrack(track);
@@ -299,8 +299,8 @@ describe('ConnectionManager', () => {
       expect(pc.removeTrack).toHaveBeenCalledWith(sender);
     });
 
-    it('ignores the request if the track is not already being sent', () => {
-      const { mgr, pc } = setup();
+    it('ignores the request if the track is not already being sent', async () => {
+      const { mgr, pc } = await setup();
 
       mgr.removeTrack(new MockMediaStreamTrack());
 

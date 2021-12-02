@@ -8,6 +8,7 @@ export const MY_PARTICIPANT_ID = 'self';
 export const SERVER_ADDRESS = process.env.RELAY_SERVER_ADDRESS;
 
 // A semicolon delimited list of STUN servers to use during signaling.
+// TODO: Change this to ICE_SERVERS and add support for user/pass values.
 export const STUN_SERVERS = (process.env.STUN_SERVERS ?? '')
   .split(';')
   .filter(Boolean);

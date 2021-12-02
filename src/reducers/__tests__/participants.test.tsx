@@ -33,11 +33,16 @@ describe('Participants reducer', () => {
 
   beforeEach(() => {
     mockedChatEffects.sendMessage.mockImplementation((e) => e);
-    (ConnectionManager as any).mockImplementation(function (ctx: any) {
-      this.remoteId = ctx.remoteId;
+    (ConnectionManager.create as any).mockImplementation(function (ctx: any) {
+      const mgr = new ConnectionManager({} as any);
+      mgr.remoteId = ctx.remoteId;
+
+      return mgr;
     });
 
-    const mgr = new ConnectionManager({} as any);
+    // This is an absolute hack. I need to remove effects from these reducers
+    // anyway.
+    const mgr = (ConnectionManager as any).create({}) as ConnectionManager;
     mgr.remoteId = 'remote-peer';
     context.connections.clear();
     context.connections.set('remote-peer', mgr);
