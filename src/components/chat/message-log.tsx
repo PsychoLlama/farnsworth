@@ -10,14 +10,22 @@ export class MessageLog extends React.Component<Props> {
 
   componentDidUpdate({ messages }: Props) {
     if (messages.length < this.props.messages.length) {
-      this.scrollTarget.scrollIntoView({ behavior: 'smooth' });
+      this.scrollTarget?.scrollIntoView({ behavior: 'smooth' });
     }
   }
 
   render() {
+    const { messages } = this.props;
+
+    if (messages.length === 0) {
+      return (
+        <NoMessages data-test="message-placeholder">No messages.</NoMessages>
+      );
+    }
+
     return (
       <Container aria-atomic aria-live="polite">
-        {this.props.messages.map(this.renderMessage)}
+        {messages.map(this.renderMessage)}
         <span data-test="scroll-anchor" ref={this.setScrollTarget} />
       </Container>
     );
@@ -64,6 +72,16 @@ interface Props {
   messages: Array<ChatMessage>;
   localId: string;
 }
+
+const NoMessages = styled.p`
+  display: flex;
+  flex-grow: 1;
+  justify-content: center;
+  align-items: center;
+  font-style: italic;
+  opacity: 0.5;
+  margin: 0;
+`;
 
 const Container = styled.ol.attrs({ role: 'log' })`
   display: flex;

@@ -127,6 +127,7 @@ const Title = styled.h2`
 const Tabs = styled.nav.attrs({ role: 'tablist' })`
   display: grid;
   grid-template-columns: repeat(2, 1fr);
+  background-color: ${css.color('background')};
 `;
 
 const Tab = styled(Button.Base).attrs({ role: 'tab' })`

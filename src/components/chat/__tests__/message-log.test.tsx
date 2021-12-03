@@ -54,15 +54,23 @@ describe('MessageLog', () => {
   });
 
   it('scrolls into view on a new message', () => {
-    const { output, findByTestId } = setup({ messages: [] });
+    const { output, findByTestId } = setup({ messages: [createMsg()] });
 
     const anchor = findByTestId('scroll-anchor').getElement();
     const ref = { scrollIntoView: jest.fn() };
     (anchor as any).ref(ref);
 
     expect(ref.scrollIntoView).toHaveBeenCalledTimes(1);
-    output.setProps({ messages: [createMsg()] });
+    output.setProps({ messages: [createMsg(), createMsg()] });
     expect(ref.scrollIntoView).toHaveBeenCalledTimes(2);
+  });
+
+  it('adds a placeholder if there are no messages', () => {
+    const { findByTestId, output } = setup({ messages: [] });
+
+    expect(findByTestId('message-placeholder').exists()).toBe(true);
+    output.setProps({ messages: [createMsg()] });
+    expect(findByTestId('message-placeholder').exists()).toBe(false);
   });
 
   describe('mapStateToProps', () => {
