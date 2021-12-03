@@ -62,7 +62,6 @@ export class SettingsPanel extends React.Component<Props> {
         <details
           data-test="advanced-settings"
           onToggle={this.loadSettingsWhenOpened}
-          open
         >
           <Summary>Advanced settings</Summary>
 

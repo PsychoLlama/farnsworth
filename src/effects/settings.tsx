@@ -1,8 +1,11 @@
 import localforage from 'localforage';
 import StorageKey from '../utils/storage-keys';
 import initialState, { Settings } from '../reducers/initial-state';
+import Logger from '../utils/logger';
 
 const DEFAULT_SETTINGS = initialState.settings;
+
+const logger = new Logger('settings');
 
 /**
  * Load the application settings from disk.
@@ -27,6 +30,8 @@ export async function load(): Promise<Settings> {
  * Update some or all of the settings and save the changes to disk.
  */
 export async function update(updates: Partial<Settings>) {
+  logger.debug('Updating WebRTC settings:', updates);
+
   const oldSettings = await load();
 
   await localforage.setItem(StorageKey.Settings, {
