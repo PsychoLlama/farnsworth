@@ -95,9 +95,11 @@ interface Props {
 const Container = styled.div`
   display: grid;
   grid-row-gap: 2rem;
+  grid-auto-rows: max-content;
   max-width: 315px;
   padding: 1rem;
   box-sizing: border-box;
+  overflow: auto;
 
   @media screen and (max-width: ${css.breakpoint.mobile}) {
     max-width: none;
