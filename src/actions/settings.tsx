@@ -6,3 +6,8 @@ export const update = createAction.async(
   'settings/update',
   effects.settings.update,
 );
+
+export const reset = createAction.async(
+  'settings/reset',
+  effects.settings.reset,
+);

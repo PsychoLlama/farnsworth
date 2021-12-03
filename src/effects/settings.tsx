@@ -39,3 +39,9 @@ export async function update(updates: Partial<Settings>) {
     ...updates,
   });
 }
+
+export async function reset() {
+  logger.debug('Clearing WebRTC settings.');
+
+  await localforage.removeItem(StorageKey.Settings);
+}

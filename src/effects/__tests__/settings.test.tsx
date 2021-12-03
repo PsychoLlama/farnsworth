@@ -53,4 +53,14 @@ describe('Settings effects', () => {
       );
     });
   });
+
+  describe('reset', () => {
+    it('deletes the settings', async () => {
+      await effects.settings.reset();
+
+      expect(mockedLocalforage.removeItem).toHaveBeenCalledWith(
+        StorageKey.Settings,
+      );
+    });
+  });
 });

@@ -28,4 +28,16 @@ describe('Settings reducer', () => {
       });
     });
   });
+
+  describe('settings.reset()', () => {
+    it('resets the redux state', async () => {
+      const { store, sdk } = setup((state) => {
+        state.settings.forceTurnRelay = true;
+      });
+
+      await sdk.settings.reset();
+
+      expect(store.getState().settings).toHaveProperty('forceTurnRelay', false);
+    });
+  });
 });

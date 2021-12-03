@@ -6,4 +6,8 @@ export default createReducer(initialState, (handleAction) => [
   handleAction(actions.settings.load, (state, settings) => {
     state.settings = settings;
   }),
+
+  handleAction(actions.settings.reset, (state) => {
+    state.settings = initialState.settings;
+  }),
 ]);
