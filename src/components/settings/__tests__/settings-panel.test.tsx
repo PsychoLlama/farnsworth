@@ -2,8 +2,14 @@ import { DeviceInfo, DeviceKind } from 'media-devices';
 import renderer from '../../../testing/renderer';
 import { SettingsPanel, mapStateToProps } from '../settings-panel';
 import initialState from '../../../reducers/initial-state';
+import { STUN_SERVERS } from '../../../utils/constants';
 
 describe('SettingsPanel', () => {
+  beforeEach(() => {
+    STUN_SERVERS.length = 0;
+    STUN_SERVERS.push('stun.example.com');
+  });
+
   function createSource(override?: Partial<DeviceInfo>): DeviceInfo {
     return {
       kind: DeviceKind.AudioInput,
@@ -25,6 +31,9 @@ describe('SettingsPanel', () => {
         createSource({ kind: DeviceKind.VideoInput }),
         createSource({ kind: DeviceKind.VideoInput }),
       ],
+      forceTurnRelay: false,
+      useDefaultIceServers: true,
+      iceServers: [],
     }),
   });
 
@@ -76,6 +85,19 @@ describe('SettingsPanel', () => {
     expect(findByTestId('choose-video-source').prop('value')).toBe('v-active');
   });
 
+  it('renders every ice server url', () => {
+    const { findByTestId } = setup({
+      iceServers: [
+        { urls: 'stun:stun.example.com' },
+        { urls: ['stun:stun1.example.com', 'stun:stun2.example.com'] },
+      ],
+    });
+
+    expect(findByTestId('ice-server-address').length).toBe(
+      3 + STUN_SERVERS.length,
+    );
+  });
+
   describe('mapStateToProps', () => {
     it('returns the expected props', () => {
       const props = mapStateToProps(initialState);
@@ -84,8 +106,11 @@ describe('SettingsPanel', () => {
         Object {
           "activeTracks": Array [],
           "audioSources": Array [],
+          "forceTurnRelay": false,
+          "iceServers": Array [],
           "selectedAudioDeviceId": "",
           "selectedVideoDeviceId": "",
+          "useDefaultIceServers": true,
           "videoSources": Array [],
         }
       `);

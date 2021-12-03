@@ -6,7 +6,11 @@ import { v4 as uuid } from 'uuid';
 import { State } from '../../reducers/initial-state';
 import * as css from '../../utils/css';
 import * as actions from '../../actions';
-import { TrackKind, MY_PARTICIPANT_ID } from '../../utils/constants';
+import {
+  TrackKind,
+  MY_PARTICIPANT_ID,
+  STUN_SERVERS,
+} from '../../utils/constants';
 
 export class SettingsPanel extends React.Component<Props> {
   audioInputId = uuid();
@@ -20,7 +24,12 @@ export class SettingsPanel extends React.Component<Props> {
       videoSources,
       selectedAudioDeviceId,
       selectedVideoDeviceId,
+      iceServers,
     } = this.props;
+
+    const defaultIceServers = STUN_SERVERS.map((url) => ({
+      urls: `stun:${url}`,
+    }));
 
     return (
       <Container id={panelId}>
@@ -52,6 +61,12 @@ export class SettingsPanel extends React.Component<Props> {
 
         <details open>
           <Summary>Advanced settings</Summary>
+
+          <Subtitle>ICE servers</Subtitle>
+
+          <IceServers>
+            {iceServers.concat(defaultIceServers).map(this.renderIceServer)}
+          </IceServers>
         </details>
       </Container>
     );
@@ -83,6 +98,28 @@ export class SettingsPanel extends React.Component<Props> {
 
   chooseAudioTrack = this.buildTrackQuery(TrackKind.Audio);
   chooseVideoTrack = this.buildTrackQuery(TrackKind.Video);
+
+  renderIceServer = (server: RTCIceServer, index: number) => {
+    // Coerce all URLs to an array.
+    const servers = [].concat(server.urls).map((addr) => {
+      const [type, ...rest] = addr.split(':');
+      const url = rest.join(':');
+      return { type, url };
+    });
+
+    return (
+      <React.Fragment key={index}>
+        {servers.map((server) => (
+          <li
+            data-test="ice-server-address"
+            key={`${index}:${server.type}:${server.url}`}
+          >
+            {server.url} ({server.type})
+          </li>
+        ))}
+      </React.Fragment>
+    );
+  };
 }
 
 interface Props {
@@ -92,6 +129,9 @@ interface Props {
   selectedAudioDeviceId: string;
   selectedVideoDeviceId: string;
   panelId: string;
+  iceServers: State['settings']['iceServers'];
+  forceTurnRelay: boolean;
+  useDefaultIceServers: boolean;
 }
 
 const Container = styled.div`
@@ -145,6 +185,20 @@ const Summary = styled.summary`
   cursor: default;
 `;
 
+const Subtitle = styled.h3`
+  margin: 0;
+  margin-top: 1rem;
+`;
+
+const IceServers = styled.ol`
+  display: grid;
+  grid-row-gap: 0.5rem;
+  margin: 0;
+  padding: 1rem;
+  list-style-type: disc;
+  list-style-position: inside;
+`;
+
 export function mapStateToProps(state: State) {
   const { audio, video } = state.sources.available;
 
@@ -163,12 +217,17 @@ export function mapStateToProps(state: State) {
     video.find((device) => localTracksByDeviceId.has(device.deviceId))
       ?.deviceId ?? '';
 
+  const { useDefaultIceServers, forceTurnRelay, iceServers } = state.settings;
+
   return {
     audioSources: audio,
     videoSources: video,
     activeTracks: state.participants[MY_PARTICIPANT_ID].trackIds,
     selectedAudioDeviceId,
     selectedVideoDeviceId,
+    useDefaultIceServers,
+    forceTurnRelay,
+    iceServers,
   };
 }
 
