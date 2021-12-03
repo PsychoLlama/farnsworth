@@ -59,7 +59,11 @@ export class SettingsPanel extends React.Component<Props> {
           </Dropdown>
         </InputGroup>
 
-        <details open>
+        <details
+          data-test="advanced-settings"
+          onToggle={this.loadSettingsWhenOpened}
+          open
+        >
           <Summary>Advanced settings</Summary>
 
           <Subtitle>ICE servers</Subtitle>
@@ -71,6 +75,14 @@ export class SettingsPanel extends React.Component<Props> {
       </Container>
     );
   }
+
+  loadSettingsWhenOpened = (
+    event: React.SyntheticEvent<HTMLDetailsElement>,
+  ) => {
+    if (event.currentTarget.open) {
+      this.props.loadSettings();
+    }
+  };
 
   createRenderer = (kind: TrackKind) => (device: DeviceInfo) => {
     return (
@@ -124,6 +136,7 @@ export class SettingsPanel extends React.Component<Props> {
 
 interface Props {
   changeDevice: typeof actions.devices.requestMediaDevices;
+  loadSettings: typeof actions.settings.load;
   audioSources: Array<DeviceInfo>;
   videoSources: Array<DeviceInfo>;
   selectedAudioDeviceId: string;
@@ -233,6 +246,7 @@ export function mapStateToProps(state: State) {
 
 const mapDispatchToProps = {
   changeDevice: actions.devices.requestMediaDevices,
+  loadSettings: actions.settings.load,
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(SettingsPanel);

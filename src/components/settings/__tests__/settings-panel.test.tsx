@@ -24,6 +24,7 @@ describe('SettingsPanel', () => {
     getDefaultProps: () => ({
       panelId: 'settings-panel',
       changeDevice: jest.fn(),
+      loadSettings: jest.fn(),
       selectedAudioDeviceId: 'a-id',
       selectedVideoDeviceId: 'v-id',
       audioSources: [createSource({ kind: DeviceKind.AudioInput })],
@@ -96,6 +97,22 @@ describe('SettingsPanel', () => {
     expect(findByTestId('ice-server-address').length).toBe(
       3 + STUN_SERVERS.length,
     );
+  });
+
+  it('loads app settings when you open the advanced panel', () => {
+    const { findByTestId, props } = setup();
+
+    findByTestId('advanced-settings').simulate('toggle', {
+      currentTarget: { open: false },
+    });
+
+    expect(props.loadSettings).not.toHaveBeenCalled();
+
+    findByTestId('advanced-settings').simulate('toggle', {
+      currentTarget: { open: true },
+    });
+
+    expect(props.loadSettings).toHaveBeenCalled();
   });
 
   describe('mapStateToProps', () => {
