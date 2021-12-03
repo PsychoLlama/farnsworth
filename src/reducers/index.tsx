@@ -8,6 +8,7 @@ import chat from './chat';
 import tools from './tools';
 import devices from './devices';
 import panel from './panel';
+import settings from './settings';
 
 export default [
   participants,
@@ -19,5 +20,6 @@ export default [
   panel,
   phonebook,
   chat,
+  settings,
   tools,
 ];

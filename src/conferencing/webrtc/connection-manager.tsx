@@ -3,10 +3,10 @@ import {
   RtcDescriptionType,
   RtcSignalingState,
   TrackSource,
-  STUN_SERVERS,
 } from '../../utils/constants';
 import Logger from '../../utils/logger';
 import DataChannelMessenger from './data-channel-messenger';
+import getWebrtcSettings from './get-webrtc-settings';
 
 const logger = new Logger('ConnectionManager');
 
@@ -29,7 +29,21 @@ export default class ConnectionManager {
   remoteId: string;
   messenger: DataChannelMessenger;
 
-  constructor({ localId, remoteId, signaler }: Config) {
+  static async create(config: Config) {
+    const mgr = new ConnectionManager({
+      ...config,
+      webrtcSettings: await getWebrtcSettings(),
+    });
+
+    return mgr;
+  }
+
+  constructor({
+    localId,
+    remoteId,
+    signaler,
+    webrtcSettings,
+  }: Config & { webrtcSettings: RTCConfiguration }) {
     this.signaler = signaler;
     this.remoteId = remoteId;
 
@@ -40,7 +54,7 @@ export default class ConnectionManager {
     logger.debug(`Signaling mode is '${this.polite ? 'polite' : 'impolite'}'`);
 
     this.signaler.subscribe(this.processMessage);
-    this.pc = new RTCPeerConnection(DEFAULT_PC_CONFIG);
+    this.pc = new RTCPeerConnection(webrtcSettings);
     this.pc.ontrack = this.emitTrackAddedEvent;
     this.pc.onicecandidate = this.sendIceCandidate;
     this.pc.onnegotiationneeded = this.updateLocalSession;
@@ -278,12 +292,6 @@ export enum MessageType {
 type Message =
   | { type: MessageType.IceCandidate; payload: RTCIceCandidate }
   | { type: MessageType.SessionDescription; payload: RTCSessionDescription };
-
-const DEFAULT_PC_CONFIG = {
-  iceServers: STUN_SERVERS.map((addr: string) => ({
-    urls: `stun:${addr}`,
-  })),
-};
 
 declare global {
   interface RTCPeerConnection {

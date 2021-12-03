@@ -28,6 +28,7 @@ describe('Track effects', () => {
         remoteId: peerId,
         localId: 'a',
         signaler: Libp2pMessenger.from(new Stream()),
+        webrtcSettings: {},
       });
 
       context.connections.set(peerId, mgr);
@@ -120,6 +121,7 @@ describe('Track effects', () => {
         signaler: Libp2pMessenger.from(new Stream()),
         remoteId: 'a',
         localId: 'b',
+        webrtcSettings: {},
       });
 
       (mgr as any).messenger = { sendEvent: jest.fn() };
@@ -152,6 +154,7 @@ describe('Track effects', () => {
         signaler: Libp2pMessenger.from(new Stream()),
         remoteId: 'a',
         localId: 'b',
+        webrtcSettings: {},
       });
 
       (mgr as any).messenger = { sendEvent: jest.fn() };

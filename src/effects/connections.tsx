@@ -23,7 +23,7 @@ export async function listen(addr: string) {
   ]);
 
   p2p.handle(SIGNALING_PROTOCOL, async ({ connection, stream }) => {
-    const mgr = new ConnectionManager({
+    const mgr = await ConnectionManager.create({
       localId: context.p2p.peerId.toB58String(),
       remoteId: connection.remotePeer.toB58String(),
       signaler: Libp2pMessenger.from(stream),
@@ -46,7 +46,7 @@ export async function dial(addr: string) {
   assert(context.p2p, 'libp2p is not ready.');
   const connection = await context.p2p.dialProtocol(addr, SIGNALING_PROTOCOL);
 
-  const mgr = new ConnectionManager({
+  const mgr = await ConnectionManager.create({
     localId: context.p2p.peerId.toB58String(),
     remoteId: multiaddr(addr).getPeerId(),
     signaler: Libp2pMessenger.from(connection.stream),
