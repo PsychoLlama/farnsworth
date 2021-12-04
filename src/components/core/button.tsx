@@ -16,7 +16,7 @@ export const Primary = styled(Base)`
   border-radius: ${css.radius};
   color: white;
   font-weight: bold;
-  padding: 1rem;
+  padding: 0.5rem 1rem;
 
   :focus,
   :hover {

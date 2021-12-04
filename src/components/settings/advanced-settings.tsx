@@ -20,7 +20,6 @@ export class AdvancedSettings extends React.Component<Props> {
       <Disclosure
         data-test="advanced-settings"
         onToggle={this.loadSettingsWhenOpened}
-        open
       >
         <Summary>Advanced settings</Summary>
 
