@@ -33,7 +33,7 @@ export interface Settings {
   disableDefaultIceServers: boolean;
 
   /** A list of custom user-defined TURN/STUN servers. */
-  iceServers: Array<RTCIceServer>;
+  customIceServers: Array<RTCIceServer>;
 }
 
 /**
@@ -190,7 +190,7 @@ const initialState: State = {
   settings: {
     forceTurnRelay: false,
     disableDefaultIceServers: false,
-    iceServers: [],
+    customIceServers: [],
   },
   panel: {
     lastView: PanelView.Chat,

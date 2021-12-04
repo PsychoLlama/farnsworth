@@ -45,7 +45,7 @@ describe('getWebrtcSettings', () => {
   it('includes the user-defined ice servers', async () => {
     STUN_SERVERS.push('default-stun.example.com');
     mockedLocalforage.getItem.mockResolvedValue({
-      iceServers: [{ urls: 'stun:custom-stun.example.com' }],
+      customIceServers: [{ urls: 'stun:custom-stun.example.com' }],
     });
 
     await expect(getWebrtcSettings()).resolves.toMatchObject({
@@ -60,7 +60,7 @@ describe('getWebrtcSettings', () => {
     STUN_SERVERS.push('default-stun.example.com');
     mockedLocalforage.getItem.mockResolvedValue({
       disableDefaultIceServers: true,
-      iceServers: [{ urls: 'stun:custom-stun.example.com' }],
+      customIceServers: [{ urls: 'stun:custom-stun.example.com' }],
     });
 
     await expect(getWebrtcSettings()).resolves.toMatchObject({

@@ -8,7 +8,8 @@ import { Switch } from '../core';
 
 export class AdvancedSettings extends React.Component<Props> {
   render() {
-    const { iceServers, forceTurnRelay, disableDefaultIceServers } = this.props;
+    const { customIceServers, forceTurnRelay, disableDefaultIceServers } =
+      this.props;
 
     const defaultIceServers = disableDefaultIceServers
       ? []
@@ -41,7 +42,7 @@ export class AdvancedSettings extends React.Component<Props> {
         <Subtitle>ICE servers</Subtitle>
 
         <IceServers>
-          {iceServers.concat(defaultIceServers).map(this.renderIceServer)}
+          {customIceServers.concat(defaultIceServers).map(this.renderIceServer)}
         </IceServers>
       </details>
     );

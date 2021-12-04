@@ -17,7 +17,7 @@ describe('Settings effects', () => {
 
       expect(settings).toMatchObject({
         forceTurnRelay: false,
-        iceServers: [],
+        customIceServers: [],
       });
     });
 
@@ -31,7 +31,7 @@ describe('Settings effects', () => {
       expect(settings).toEqual({
         forceTurnRelay: true,
         disableDefaultIceServers: false,
-        iceServers: [],
+        customIceServers: [],
       });
     });
   });
@@ -48,7 +48,7 @@ describe('Settings effects', () => {
         {
           forceTurnRelay: true,
           disableDefaultIceServers: true,
-          iceServers: [],
+          customIceServers: [],
         },
       );
     });

@@ -14,7 +14,7 @@ describe('AdvancedSettings', () => {
       updateSettings: jest.fn(),
       forceTurnRelay: false,
       disableDefaultIceServers: false,
-      iceServers: [],
+      customIceServers: [],
     }),
   });
 
@@ -22,7 +22,7 @@ describe('AdvancedSettings', () => {
     STUN_SERVERS.push('default-stun.example.com');
 
     const { findByTestId } = setup({
-      iceServers: [
+      customIceServers: [
         { urls: 'stun:stun.example.com' },
         { urls: ['stun:stun1.example.com', 'stun:stun2.example.com'] },
       ],
@@ -38,7 +38,7 @@ describe('AdvancedSettings', () => {
 
     const { findByTestId } = setup({
       disableDefaultIceServers: true,
-      iceServers: [{ urls: 'stun:stun.example.com' }],
+      customIceServers: [{ urls: 'stun:stun.example.com' }],
     });
 
     expect(findByTestId('ice-server-address').length).toBe(1);
@@ -88,9 +88,9 @@ describe('AdvancedSettings', () => {
 
       expect(props).toMatchInlineSnapshot(`
         Object {
+          "customIceServers": Array [],
           "disableDefaultIceServers": false,
           "forceTurnRelay": false,
-          "iceServers": Array [],
         }
       `);
     });

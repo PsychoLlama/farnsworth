@@ -15,6 +15,6 @@ export default async function getWebrtcSettings(): Promise<RTCConfiguration> {
 
   return {
     iceTransportPolicy: settings.forceTurnRelay ? 'relay' : 'all',
-    iceServers: [].concat(settings.iceServers).concat(defaultIceServers),
+    iceServers: [].concat(settings.customIceServers).concat(defaultIceServers),
   };
 }
