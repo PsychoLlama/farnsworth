@@ -1,5 +1,5 @@
 import renderer from '../../../testing/renderer';
-import { IceServer, mapStateToProps } from '../ice-server';
+import { IceServer, mapStateToProps, ServerType } from '../ice-server';
 import initialState from '../../../reducers/initial-state';
 
 describe('IceServer', () => {
@@ -23,8 +23,12 @@ describe('IceServer', () => {
   it('saves the ICE server and closes the form when finished', async () => {
     const { findByTestId, props } = setup({ id: 1 });
 
+    findByTestId('server-type').simulate('change', {
+      currentTarget: { value: ServerType.Stun },
+    });
+
     findByTestId('url-input').simulate('change', {
-      currentTarget: { value: 'stun:stun2.example.com' },
+      currentTarget: { value: 'stun2.example.com' },
     });
 
     const { onSubmit } = findByTestId('form').props();
@@ -47,8 +51,12 @@ describe('IceServer', () => {
       ],
     });
 
+    findByTestId('server-type').simulate('change', {
+      currentTarget: { value: ServerType.Stun },
+    });
+
     findByTestId('url-input').simulate('change', {
-      currentTarget: { value: 'stun:stun3.example.com' },
+      currentTarget: { value: 'stun3.example.com' },
     });
 
     const { onSubmit } = findByTestId('form').props();

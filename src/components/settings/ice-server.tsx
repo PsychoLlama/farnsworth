@@ -2,27 +2,42 @@ import React from 'react';
 import { connect } from 'react-redux';
 import styled from 'styled-components';
 import { v4 as uuid } from 'uuid';
-import { Button, TextInput } from '../core';
+import { Button, TextInput, Dropdown } from '../core';
 import * as actions from '../../actions';
 import { State as ReduxState } from '../../reducers/initial-state';
 
 export class IceServer extends React.Component<Props, State> {
-  state = { url: '' };
-
   urlInputId = uuid();
+  state = {
+    serverType: ServerType.Stun,
+    url: '',
+  };
 
   render() {
+    const { serverType } = this.state;
+
     return (
       <Form data-test="form" onSubmit={this.submit}>
         <InputGroup>
           <InputName htmlFor={this.urlInputId}>Server URL</InputName>
 
-          <TextInput
-            data-test="url-input"
-            id={this.urlInputId}
-            placeholder="example.com:3478"
-            onChange={this.updateUrlInput}
-          />
+          <PrefixedInput>
+            <ServerTypeDropdown
+              value={serverType}
+              data-test="server-type"
+              onChange={this.updateServerType}
+            >
+              <ServerTypeOption value={ServerType.Stun}>stun</ServerTypeOption>
+              <ServerTypeOption value={ServerType.Turn}>turn</ServerTypeOption>
+            </ServerTypeDropdown>
+
+            <ServerUrlInput
+              data-test="url-input"
+              id={this.urlInputId}
+              placeholder="example.com:3478"
+              onChange={this.updateUrlInput}
+            />
+          </PrefixedInput>
         </InputGroup>
 
         <Buttons>
@@ -36,22 +51,24 @@ export class IceServer extends React.Component<Props, State> {
     );
   }
 
-  syncWithFormKey =
-    (key: keyof State) => (event: React.SyntheticEvent<HTMLInputElement>) => {
-      this.setState({ [key]: event.currentTarget.value });
-    };
+  updateUrlInput = (event: React.SyntheticEvent<HTMLInputElement>) => {
+    this.setState({ url: event.currentTarget.value });
+  };
 
-  updateUrlInput = this.syncWithFormKey('url');
+  updateServerType = (event: React.SyntheticEvent<HTMLSelectElement>) => {
+    this.setState({ serverType: event.currentTarget.value as ServerType });
+  };
 
   submit = async (event: React.SyntheticEvent<HTMLFormElement>) => {
     const { iceServers, id } = this.props;
+    const { serverType, url } = this.state;
 
     event.preventDefault();
     event.stopPropagation();
 
     const customIceServers = iceServers.slice();
     customIceServers.splice(id, 1, {
-      urls: this.state.url,
+      urls: `${serverType}:${url}`,
     });
 
     await this.props.updateSettings({ customIceServers });
@@ -68,6 +85,12 @@ interface Props {
 
 interface State {
   url: string;
+  serverType: ServerType;
+}
+
+export enum ServerType {
+  Stun = 'stun',
+  Turn = 'turn',
 }
 
 const Form = styled.form`
@@ -83,6 +106,27 @@ const InputGroup = styled.div`
 
 const InputName = styled.label`
   font-weight: bold;
+  width: max-content;
+`;
+
+const PrefixedInput = styled.div`
+  display: flex;
+`;
+
+const ServerTypeDropdown = styled(Dropdown)`
+  border-top-right-radius: 0;
+  border-bottom-right-radius: 0;
+  border-right: 0;
+`;
+
+const ServerTypeOption = styled.option`
+  text-transform: uppercase;
+`;
+
+const ServerUrlInput = styled(TextInput)`
+  border-top-left-radius: 0;
+  border-bottom-left-radius: 0;
+  flex-grow: 1;
 `;
 
 const Buttons = styled.div`
