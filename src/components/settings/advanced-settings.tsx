@@ -5,6 +5,7 @@ import * as actions from '../../actions';
 import { ICE_SERVERS } from '../../utils/constants';
 import { State, Settings } from '../../reducers/initial-state';
 import { Switch } from '../core';
+import * as css from '../../utils/css';
 
 export class AdvancedSettings extends React.Component<Props> {
   render() {
@@ -39,9 +40,27 @@ export class AdvancedSettings extends React.Component<Props> {
           Disable default ICE servers
         </Switch>
 
-        <Subtitle>ICE servers</Subtitle>
+        <IceServers>
+          <Subtitle>ICE servers</Subtitle>
+          <thead>
+            <tr>
+              <TableHeader>Address</TableHeader>
+              <TableHeader>Type</TableHeader>
+            </tr>
+          </thead>
 
-        <IceServers>{iceServers.map(this.renderIceServer)}</IceServers>
+          <tbody>
+            {iceServers.length ? (
+              iceServers.map(this.renderIceServer)
+            ) : (
+              <tr>
+                <NoIceServers colSpan={2} data-test="no-ice-servers">
+                  No ICE servers.
+                </NoIceServers>
+              </tr>
+            )}
+          </tbody>
+        </IceServers>
       </details>
     );
   }
@@ -77,12 +96,10 @@ export class AdvancedSettings extends React.Component<Props> {
     return (
       <React.Fragment key={index}>
         {servers.map((server) => (
-          <li
-            data-test="ice-server-address"
-            key={`${index}:${server.type}:${server.url}`}
-          >
-            {server.url} ({server.type})
-          </li>
+          <tr key={`${index}:${server.type}:${server.url}`}>
+            <TableCell data-test="ice-server-address">{server.url}</TableCell>
+            <IceServerType>{server.type}</IceServerType>
+          </tr>
         ))}
       </React.Fragment>
     );
@@ -98,18 +115,41 @@ const Summary = styled.summary`
   cursor: default;
 `;
 
-const Subtitle = styled.h3`
-  margin: 0;
-  margin-top: 1rem;
+const Subtitle = styled.caption`
+  text-align: left;
+  margin: 1rem 0;
+  font-weight: bold;
+  font-size: 120%;
 `;
 
-const IceServers = styled.ol`
-  display: grid;
-  grid-row-gap: 0.5rem;
-  margin: 0;
+const IceServers = styled.table`
+  width: 100%;
+  border-collapse: collapse;
+`;
+
+const TableHeader = styled.th`
+  border: 1px solid ${css.color('foreground')};
+  background-color: ${css.color('foreground')};
+  color: ${css.color('background')};
+  padding: 0.5rem;
+`;
+
+const TableCell = styled.td`
+  padding: 0.5rem;
+  border: 1px solid ${css.color('white')};
+`;
+
+const IceServerType = styled(TableCell)`
+  text-align: center;
+  text-transform: uppercase;
+`;
+
+const NoIceServers = styled(TableCell)`
+  border: 1px solid ${css.color('white')};
+  font-style: italic;
   padding: 1rem;
-  list-style-type: disc;
-  list-style-position: inside;
+  opacity: 0.5;
+  text-align: center;
 `;
 
 export function mapStateToProps(state: State) {
