@@ -16,7 +16,7 @@ export const Primary = styled(Base)`
   border-radius: ${css.radius};
   color: white;
   font-weight: bold;
-  padding: 1rem;
+  padding: 0.5rem 1rem;
 
   :focus,
   :hover {
@@ -27,5 +27,15 @@ export const Primary = styled(Base)`
 
   :active {
     filter: brightness(70%);
+  }
+`;
+
+export const Subtle = styled(Base)`
+  color: ${css.color('primary')};
+  font-size: 100%;
+
+  :focus,
+  :hover {
+    text-decoration: underline;
   }
 `;

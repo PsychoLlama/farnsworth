@@ -3,13 +3,16 @@ import React from 'react';
 import { connect } from 'react-redux';
 import styled from 'styled-components';
 import { v4 as uuid } from 'uuid';
-import { State } from '../../reducers/initial-state';
+import { State as ReduxState } from '../../reducers/initial-state';
 import * as css from '../../utils/css';
 import * as actions from '../../actions';
 import { TrackKind, MY_PARTICIPANT_ID } from '../../utils/constants';
 import AdvancedSettings from './advanced-settings';
+import IceServer from './ice-server';
+import { Dropdown } from '../core';
 
-export class SettingsPanel extends React.Component<Props> {
+export class SettingsPanel extends React.Component<Props, State> {
+  state = { activeIceServerEditId: null };
   audioInputId = uuid();
   videoInputId = uuid();
 
@@ -21,6 +24,16 @@ export class SettingsPanel extends React.Component<Props> {
       selectedAudioDeviceId,
       selectedVideoDeviceId,
     } = this.props;
+
+    if (this.state.activeIceServerEditId !== null) {
+      return (
+        <IceServer
+          onClose={this.finishEditingIceServer}
+          id={this.state.activeIceServerEditId}
+          data-test="edit-ice-server"
+        />
+      );
+    }
 
     return (
       <Container id={panelId}>
@@ -50,10 +63,21 @@ export class SettingsPanel extends React.Component<Props> {
           </Dropdown>
         </InputGroup>
 
-        <AdvancedSettings />
+        <AdvancedSettings
+          data-test="advanced-settings"
+          onEditIceServer={this.showIceServer}
+        />
       </Container>
     );
   }
+
+  showIceServer = ({ id }) => {
+    this.setState({ activeIceServerEditId: id });
+  };
+
+  finishEditingIceServer = () => {
+    this.setState({ activeIceServerEditId: null });
+  };
 
   createRenderer = (kind: TrackKind) => (device: DeviceInfo) => {
     return (
@@ -92,6 +116,10 @@ interface Props {
   panelId: string;
 }
 
+interface State {
+  activeIceServerEditId: null | number;
+}
+
 const Container = styled.div`
   display: grid;
   grid-row-gap: 2rem;
@@ -118,30 +146,7 @@ const InputTitle = styled.label`
   margin-bottom: 0.5rem;
 `;
 
-// Hold my beer.
-const Dropdown = styled.select`
-  appearance: none;
-  border-radius: ${css.radius};
-  border: 1px solid ${css.color('foreground')};
-  background-color: ${css.color('background')};
-  box-sizing: border-box;
-  padding: 0.5rem 0.25rem;
-  color: ${css.color('text')};
-  font-size: 85%;
-
-  :hover:not(:disabled),
-  :focus:not(:disabled) {
-    border-color: ${css.color('primary')};
-    outline: none;
-  }
-
-  :disabled {
-    opacity: 0.5;
-    cursor: not-allowed;
-  }
-`;
-
-export function mapStateToProps(state: State) {
+export function mapStateToProps(state: ReduxState) {
   const { audio, video } = state.sources.available;
 
   const localTracksByDeviceId = state.participants[MY_PARTICIPANT_ID].trackIds

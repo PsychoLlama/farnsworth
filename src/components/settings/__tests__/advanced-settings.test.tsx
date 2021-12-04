@@ -12,6 +12,7 @@ describe('AdvancedSettings', () => {
     getDefaultProps: () => ({
       loadSettings: jest.fn(),
       updateSettings: jest.fn(),
+      onEditIceServer: jest.fn(),
       forceTurnRelay: false,
       disableDefaultIceServers: false,
       customIceServers: [],
@@ -82,15 +83,14 @@ describe('AdvancedSettings', () => {
     });
   });
 
-  it('shows a placeholder when there are no ICE servers', () => {
-    const { output, findByTestId } = setup({
-      disableDefaultIceServers: true,
-      customIceServers: [],
+  it('starts editing the right ICE server ID when you click add', () => {
+    const { findByTestId, props } = setup({
+      customIceServers: [{ urls: 'stun:example.com' }],
     });
 
-    expect(findByTestId('no-ice-servers').exists()).toBe(true);
-    output.setProps({ customIceServers: [{ urls: 'turn:example.com' }] });
-    expect(findByTestId('no-ice-servers').exists()).toBe(false);
+    findByTestId('add-ice-server').simulate('click');
+
+    expect(props.onEditIceServer).toHaveBeenCalledWith({ id: 1 });
   });
 
   describe('mapStateToProps', () => {

@@ -44,7 +44,7 @@ describe('Settings effects', () => {
       });
 
       expect(mockedLocalforage.setItem).toHaveBeenCalledWith(
-        StorageKey.Settings,
+        StorageKey.WebrtcSettings,
         {
           forceTurnRelay: true,
           disableDefaultIceServers: true,
@@ -59,7 +59,7 @@ describe('Settings effects', () => {
       await effects.settings.reset();
 
       expect(mockedLocalforage.removeItem).toHaveBeenCalledWith(
-        StorageKey.Settings,
+        StorageKey.WebrtcSettings,
       );
     });
   });

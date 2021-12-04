@@ -4,14 +4,14 @@ import * as actions from '../actions';
 
 export default createReducer(initialState, (handleAction) => [
   handleAction(actions.settings.load, (state, settings) => {
-    state.settings = settings;
+    state.settings.webrtc = settings;
   }),
 
   handleAction(actions.settings.reset, (state) => {
-    state.settings = initialState.settings;
+    state.settings.webrtc = initialState.settings.webrtc;
   }),
 
   handleAction.optimistic(actions.settings.update, (state, overrides) => {
-    Object.assign(state.settings, overrides);
+    Object.assign(state.settings.webrtc, overrides);
   }),
 ]);

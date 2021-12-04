@@ -3,8 +3,8 @@ import { connect } from 'react-redux';
 import styled from 'styled-components';
 import * as actions from '../../actions';
 import { ICE_SERVERS } from '../../utils/constants';
-import { State, Settings } from '../../reducers/initial-state';
-import { Switch } from '../core';
+import { State, WebrtcSettings } from '../../reducers/initial-state';
+import { Switch, Button } from '../core';
 import * as css from '../../utils/css';
 
 export class AdvancedSettings extends React.Component<Props> {
@@ -20,7 +20,6 @@ export class AdvancedSettings extends React.Component<Props> {
       <Disclosure
         data-test="advanced-settings"
         onToggle={this.loadSettingsWhenOpened}
-        open
       >
         <Summary>Advanced settings</Summary>
 
@@ -51,15 +50,17 @@ export class AdvancedSettings extends React.Component<Props> {
             </thead>
 
             <tbody>
-              {iceServers.length ? (
-                iceServers.map(this.renderIceServer)
-              ) : (
-                <tr>
-                  <NoIceServers colSpan={2} data-test="no-ice-servers">
-                    No ICE servers.
-                  </NoIceServers>
-                </tr>
-              )}
+              {iceServers.map(this.renderIceServer)}
+              <tr>
+                <NoIceServers>
+                  <Button.Subtle
+                    data-test="add-ice-server"
+                    onClick={this.addIceServer}
+                  >
+                    Add server
+                  </Button.Subtle>
+                </NoIceServers>
+              </tr>
             </tbody>
           </IceServers>
         </OverflowCatch>
@@ -76,6 +77,12 @@ export class AdvancedSettings extends React.Component<Props> {
   toggleDefaultIceServers = (event: React.SyntheticEvent<HTMLInputElement>) => {
     return this.props.updateSettings({
       disableDefaultIceServers: event.currentTarget.checked,
+    });
+  };
+
+  addIceServer = () => {
+    this.props.onEditIceServer({
+      id: this.props.customIceServers.length,
     });
   };
 
@@ -108,9 +115,10 @@ export class AdvancedSettings extends React.Component<Props> {
   };
 }
 
-interface Props extends Settings {
+interface Props extends WebrtcSettings {
   loadSettings: typeof actions.settings.load;
   updateSettings: typeof actions.settings.update;
+  onEditIceServer({ id: number }): unknown;
 }
 
 const Disclosure = styled.details`
@@ -159,16 +167,12 @@ const IceServerType = styled(TableCell)`
   text-transform: uppercase;
 `;
 
-const NoIceServers = styled(TableCell)`
-  border: 1px solid ${css.color('white')};
-  font-style: italic;
-  padding: 1rem;
-  opacity: 0.5;
+const NoIceServers = styled(TableCell).attrs({ colSpan: 2 })`
   text-align: center;
 `;
 
 export function mapStateToProps(state: State) {
-  return state.settings;
+  return state.settings.webrtc;
 }
 
 const mapDispatchToProps = {

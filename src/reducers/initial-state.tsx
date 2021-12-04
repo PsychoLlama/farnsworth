@@ -25,7 +25,7 @@ export enum PanelView {
   Settings = 'settings',
 }
 
-export interface Settings {
+export interface WebrtcSettings {
   /** Only offer ICE candidates using our configured TURN relays. */
   forceTurnRelay: boolean;
 
@@ -148,7 +148,9 @@ export interface State {
   /** Manages global chat state. */
   chat: { unreadMessages: boolean };
 
-  settings: Settings;
+  settings: {
+    webrtc: WebrtcSettings;
+  };
 
   /** Manages the state of the sidebar/panel UI. */
   panel: {
@@ -188,9 +190,11 @@ const initialState: State = {
   phonebook: { open: false },
   chat: { unreadMessages: false },
   settings: {
-    forceTurnRelay: false,
-    disableDefaultIceServers: false,
-    customIceServers: [],
+    webrtc: {
+      forceTurnRelay: false,
+      disableDefaultIceServers: false,
+      customIceServers: [],
+    },
   },
   panel: {
     lastView: PanelView.Chat,
