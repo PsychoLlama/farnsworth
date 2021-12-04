@@ -49,6 +49,7 @@ export class Controls extends React.Component<Props> {
             data-test="toggle-panel"
             data-unread={unreadMessages}
             onClick={togglePanel}
+            title="Toggle panel"
           >
             <FiMoreHorizontal />
           </Control>
@@ -59,6 +60,7 @@ export class Controls extends React.Component<Props> {
             data-test="toggle-audio"
             onClick={this.toggleAudio}
             disabled={!micTrackId}
+            title={micEnabled ? 'Mute microphone' : 'Unmute microphone'}
           >
             {micEnabled ? <FiMic /> : <FiMicOff />}
           </Control>
@@ -73,6 +75,7 @@ export class Controls extends React.Component<Props> {
             data-test="toggle-video"
             onClick={this.toggleVideo}
             disabled={!camTrackId}
+            title={camEnabled ? 'Disable camera' : 'Enable camera'}
           >
             {camEnabled ? <FiVideo /> : <FiVideoOff />}
           </Control>
@@ -84,12 +87,17 @@ export class Controls extends React.Component<Props> {
               data-test="toggle-screen-share"
               data-sharing={sharingScreen}
               onClick={this.toggleScreenShare}
+              title={sharingScreen ? 'Stop sharing' : 'Share your screen'}
             >
               <FiAirplay />
             </Control>
           )}
 
-          <Control data-test="toggle-phonebook" onClick={togglePhonebook}>
+          <Control
+            data-test="toggle-phonebook"
+            onClick={togglePhonebook}
+            title="Toggle phonebook"
+          >
             <FiUsers />
           </Control>
         </ControlGroup>

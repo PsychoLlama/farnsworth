@@ -47,9 +47,9 @@ export class Panel extends React.Component<Props> {
           <Header>
             <Title>Settings</Title>
             <CloseButton
-              aria-label="Close panel"
               data-test="close-panel"
               onClick={this.props.close}
+              title="Close panel"
             >
               <FiX />
             </CloseButton>

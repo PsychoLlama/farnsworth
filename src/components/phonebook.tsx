@@ -42,6 +42,7 @@ export class Phonebook extends React.Component<Props, State> {
             data-success={showCopySuccessMessage}
             data-test="copy-invite-code"
             onClick={this.copy}
+            title="Copy to clipboard"
           >
             {showCopySuccessMessage ? (
               <FiCheck data-test="icon-success" aria-label="Copied" />
