@@ -1,11 +1,11 @@
 import { AdvancedSettings, mapStateToProps } from '../advanced-settings';
 import renderer from '../../../testing/renderer';
 import initialState from '../../../reducers/initial-state';
-import { STUN_SERVERS } from '../../../utils/constants';
+import { ICE_SERVERS } from '../../../utils/constants';
 
 describe('AdvancedSettings', () => {
   beforeEach(() => {
-    STUN_SERVERS.length = 0;
+    ICE_SERVERS.length = 0;
   });
 
   const setup = renderer(AdvancedSettings, {
@@ -19,7 +19,7 @@ describe('AdvancedSettings', () => {
   });
 
   it('renders every ice server url', () => {
-    STUN_SERVERS.push('default-stun.example.com');
+    ICE_SERVERS.push({ urls: 'default-stun.example.com' });
 
     const { findByTestId } = setup({
       customIceServers: [
@@ -29,12 +29,12 @@ describe('AdvancedSettings', () => {
     });
 
     expect(findByTestId('ice-server-address').length).toBe(
-      3 + STUN_SERVERS.length,
+      3 + ICE_SERVERS.length,
     );
   });
 
   it('hides default ice servers when they are disabled', () => {
-    STUN_SERVERS.push('default-stun.example.com');
+    ICE_SERVERS.push({ urls: 'default-stun.example.com' });
 
     const { findByTestId } = setup({
       disableDefaultIceServers: true,

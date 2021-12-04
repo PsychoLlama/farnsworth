@@ -2,7 +2,7 @@ import React from 'react';
 import { connect } from 'react-redux';
 import styled from 'styled-components';
 import * as actions from '../../actions';
-import { STUN_SERVERS } from '../../utils/constants';
+import { ICE_SERVERS } from '../../utils/constants';
 import { State, Settings } from '../../reducers/initial-state';
 import { Switch } from '../core';
 
@@ -11,9 +11,9 @@ export class AdvancedSettings extends React.Component<Props> {
     const { customIceServers, forceTurnRelay, disableDefaultIceServers } =
       this.props;
 
-    const defaultIceServers = disableDefaultIceServers
-      ? []
-      : STUN_SERVERS.map((url) => ({ urls: `stun:${url}` }));
+    const iceServers = (disableDefaultIceServers ? [] : ICE_SERVERS).concat(
+      customIceServers,
+    );
 
     return (
       <details
@@ -41,9 +41,7 @@ export class AdvancedSettings extends React.Component<Props> {
 
         <Subtitle>ICE servers</Subtitle>
 
-        <IceServers>
-          {customIceServers.concat(defaultIceServers).map(this.renderIceServer)}
-        </IceServers>
+        <IceServers>{iceServers.map(this.renderIceServer)}</IceServers>
       </details>
     );
   }

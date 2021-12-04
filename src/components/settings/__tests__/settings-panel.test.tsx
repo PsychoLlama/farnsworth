@@ -2,12 +2,12 @@ import { DeviceInfo, DeviceKind } from 'media-devices';
 import renderer from '../../../testing/renderer';
 import { SettingsPanel, mapStateToProps } from '../settings-panel';
 import initialState from '../../../reducers/initial-state';
-import { STUN_SERVERS } from '../../../utils/constants';
+import { ICE_SERVERS } from '../../../utils/constants';
 
 describe('SettingsPanel', () => {
   beforeEach(() => {
-    STUN_SERVERS.length = 0;
-    STUN_SERVERS.push('stun.example.com');
+    ICE_SERVERS.length = 0;
+    ICE_SERVERS.push({ urls: 'stun:example.com' });
   });
 
   function createSource(override?: Partial<DeviceInfo>): DeviceInfo {
