@@ -27,7 +27,7 @@ describe('IceServer', () => {
       currentTarget: { value: ServerType.Stun },
     });
 
-    findByTestId('url-input').simulate('change', {
+    findByTestId('url-input').simulate('input', {
       currentTarget: { value: 'stun2.example.com' },
     });
 
@@ -55,7 +55,7 @@ describe('IceServer', () => {
       currentTarget: { value: ServerType.Stun },
     });
 
-    findByTestId('url-input').simulate('change', {
+    findByTestId('url-input').simulate('input', {
       currentTarget: { value: 'stun3.example.com' },
     });
 
@@ -77,15 +77,15 @@ describe('IceServer', () => {
       currentTarget: { value: ServerType.Turn },
     });
 
-    findByTestId('url-input').simulate('change', {
+    findByTestId('url-input').simulate('input', {
       currentTarget: { value: 'example.com' },
     });
 
-    findByTestId('username-input').simulate('change', {
+    findByTestId('username-input').simulate('input', {
       currentTarget: { value: 'geralt' },
     });
 
-    findByTestId('password-input').simulate('change', {
+    findByTestId('password-input').simulate('input', {
       currentTarget: { value: 'let-me-pass' },
     });
 
@@ -101,6 +101,26 @@ describe('IceServer', () => {
           username: 'geralt',
         },
       ],
+    });
+  });
+
+  it('restores field state when editing an existing server', () => {
+    const server = {
+      urls: 'turn:server.farnsworth.video',
+      username: 'username',
+      credential: 'password',
+    };
+
+    const { output } = setup({
+      iceServers: [server],
+    });
+
+    // Deal with it.
+    expect(output.state()).toMatchObject({
+      url: 'server.farnsworth.video',
+      username: server.username,
+      credential: server.credential,
+      serverType: ServerType.Turn,
     });
   });
 

@@ -12,9 +12,7 @@ export class AdvancedSettings extends React.Component<Props> {
     const { customIceServers, forceTurnRelay, disableDefaultIceServers } =
       this.props;
 
-    const iceServers = (disableDefaultIceServers ? [] : ICE_SERVERS).concat(
-      customIceServers,
-    );
+    const defaultIceServers = disableDefaultIceServers ? [] : ICE_SERVERS;
 
     return (
       <Disclosure
@@ -50,16 +48,18 @@ export class AdvancedSettings extends React.Component<Props> {
             </thead>
 
             <tbody>
-              {iceServers.map(this.renderIceServer)}
+              {defaultIceServers.map(this.renderIceServer(false))}
+              {customIceServers.map(this.renderIceServer(true))}
+
               <tr>
-                <NoIceServers>
+                <WideCell>
                   <Button.Subtle
                     data-test="add-ice-server"
                     onClick={this.addIceServer}
                   >
                     Add server
                   </Button.Subtle>
-                </NoIceServers>
+                </WideCell>
               </tr>
             </tbody>
           </IceServers>
@@ -94,24 +94,45 @@ export class AdvancedSettings extends React.Component<Props> {
     }
   };
 
-  renderIceServer = (server: RTCIceServer, index: number) => {
-    // Coerce all URLs to an array.
-    const servers = [].concat(server.urls).map((addr) => {
-      const [type, ...rest] = addr.split(':');
-      const url = rest.join(':');
-      return { type, url };
-    });
+  renderIceServer =
+    (custom: boolean) => (server: RTCIceServer, index: number) => {
+      // Coerce all URLs to an array.
+      const servers = [].concat(server.urls).map((addr) => {
+        const [type, ...rest] = addr.split(':');
+        const url = rest.join(':');
+        return { type, url };
+      });
 
-    return (
-      <React.Fragment key={index}>
-        {servers.map((server) => (
-          <tr key={`${index}:${server.type}:${server.url}`}>
-            <TableCell data-test="ice-server-address">{server.url}</TableCell>
-            <IceServerType>{server.type}</IceServerType>
-          </tr>
-        ))}
-      </React.Fragment>
-    );
+      return (
+        <React.Fragment key={index}>
+          {servers.map((server) => (
+            <tr key={`${index}:${server.type}:${server.url}`}>
+              <TableCell data-test="ice-server-address">
+                {custom ? (
+                  <Button.Subtle
+                    data-test="edit-ice-server"
+                    data-id={index}
+                    onClick={this.editIceServer}
+                    title="Edit server"
+                  >
+                    {server.url}
+                  </Button.Subtle>
+                ) : (
+                  server.url
+                )}
+              </TableCell>
+
+              <IceServerType>{server.type}</IceServerType>
+            </tr>
+          ))}
+        </React.Fragment>
+      );
+    };
+
+  editIceServer = (event: React.SyntheticEvent<HTMLButtonElement>) => {
+    this.props.onEditIceServer({
+      id: Number(event.currentTarget.dataset.id),
+    });
   };
 }
 
@@ -167,7 +188,7 @@ const IceServerType = styled(TableCell)`
   text-transform: uppercase;
 `;
 
-const NoIceServers = styled(TableCell).attrs({ colSpan: 2 })`
+const WideCell = styled(TableCell).attrs({ colSpan: 2 })`
   text-align: center;
 `;
 
