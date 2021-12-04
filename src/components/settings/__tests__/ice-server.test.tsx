@@ -62,11 +62,44 @@ describe('IceServer', () => {
     const { onSubmit } = findByTestId('form').props();
     await onSubmit(new Event('click'));
 
-    expect(props.onClose).toHaveBeenCalled();
     expect(props.updateSettings).toHaveBeenCalledWith({
       customIceServers: [
         { urls: 'stun:stun1.example.com' },
         { urls: 'stun:stun3.example.com' },
+      ],
+    });
+  });
+
+  it('adds usernames and passwords, if configured', async () => {
+    const { findByTestId, props } = setup();
+
+    findByTestId('server-type').simulate('change', {
+      currentTarget: { value: ServerType.Turn },
+    });
+
+    findByTestId('url-input').simulate('change', {
+      currentTarget: { value: 'example.com' },
+    });
+
+    findByTestId('username-input').simulate('change', {
+      currentTarget: { value: 'geralt' },
+    });
+
+    findByTestId('password-input').simulate('change', {
+      currentTarget: { value: 'let-me-pass' },
+    });
+
+    const { onSubmit } = findByTestId('form').props();
+    await onSubmit(new Event('click'));
+
+    expect(props.updateSettings).toHaveBeenCalledWith({
+      customIceServers: [
+        {
+          urls: 'turn:example.com',
+          credentialType: 'password',
+          credential: 'let-me-pass',
+          username: 'geralt',
+        },
       ],
     });
   });

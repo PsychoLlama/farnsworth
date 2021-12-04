@@ -8,9 +8,13 @@ import { State as ReduxState } from '../../reducers/initial-state';
 
 export class IceServer extends React.Component<Props, State> {
   urlInputId = uuid();
+  passwordInputId = uuid();
+  usernameInputId = uuid();
   state = {
     serverType: ServerType.Stun,
     url: '',
+    username: '',
+    token: '',
   };
 
   render() {
@@ -40,6 +44,28 @@ export class IceServer extends React.Component<Props, State> {
           </PrefixedInput>
         </InputGroup>
 
+        <InputGroup>
+          <InputName htmlFor={this.usernameInputId}>Username</InputName>
+
+          <TextInput
+            placeholder="User (optional)"
+            id={this.usernameInputId}
+            data-test="username-input"
+            onChange={this.updateUsername}
+          />
+        </InputGroup>
+
+        <InputGroup>
+          <InputName htmlFor={this.passwordInputId}>Password</InputName>
+
+          <TextInput
+            placeholder="Secret (optional)"
+            id={this.passwordInputId}
+            data-test="password-input"
+            onChange={this.updateToken}
+          />
+        </InputGroup>
+
         <Buttons>
           <Button.Primary type="submit">Save</Button.Primary>
 
@@ -59,17 +85,33 @@ export class IceServer extends React.Component<Props, State> {
     this.setState({ serverType: event.currentTarget.value as ServerType });
   };
 
+  updateUsername = (event: React.SyntheticEvent<HTMLInputElement>) => {
+    this.setState({ username: event.currentTarget.value });
+  };
+
+  updateToken = (event: React.SyntheticEvent<HTMLInputElement>) => {
+    this.setState({ token: event.currentTarget.value });
+  };
+
   submit = async (event: React.SyntheticEvent<HTMLFormElement>) => {
     const { iceServers, id } = this.props;
-    const { serverType, url } = this.state;
+    const { serverType, url, username, token } = this.state;
+    const customIceServers = iceServers.slice();
 
     event.preventDefault();
     event.stopPropagation();
 
-    const customIceServers = iceServers.slice();
-    customIceServers.splice(id, 1, {
+    const server: RTCIceServer = {
       urls: `${serverType}:${url}`,
-    });
+    };
+
+    if (username || token) {
+      server.credentialType = 'password';
+      server.username = username;
+      server.credential = token;
+    }
+
+    customIceServers.splice(id, 1, server);
 
     await this.props.updateSettings({ customIceServers });
     this.props.onClose();
@@ -86,6 +128,8 @@ interface Props {
 interface State {
   url: string;
   serverType: ServerType;
+  username: string;
+  token: string;
 }
 
 export enum ServerType {
