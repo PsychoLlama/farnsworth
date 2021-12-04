@@ -5947,10 +5947,10 @@ mdn-data@2.0.14:
   resolved "https://registry.yarnpkg.com/mdn-data/-/mdn-data-2.0.14.tgz#7113fc4281917d63ce29b43446f701e68c25ba50"
   integrity sha512-dn6wd0uw5GsdswPFfsgMp5NSB0/aDe6fK94YJV/AJDYXL6HVLWBsxeq7js7Ad+mU2K9LAlwpk6kN2D5mwCPVow==
 
-media-devices@0.3.0-rc.2:
-  version "0.3.0-rc.2"
-  resolved "https://registry.yarnpkg.com/media-devices/-/media-devices-0.3.0-rc.2.tgz#0e0e8dc9af057eed5edb75c7d211fa02944bfed5"
-  integrity sha512-opLgouQZeZIzRIlrmra46P4etn56erMEDofHykwK47/qDb8sirQOQwS/SPrRpeo3cemNRLrHOAkxSPsn6f09Mg==
+media-devices@0.3.0:
+  version "0.3.0"
+  resolved "https://registry.yarnpkg.com/media-devices/-/media-devices-0.3.0.tgz#e6f73af759f8d9c404b62bdedbc95fa7995d0b2f"
+  integrity sha512-ZJqw05PgJXGMXnYAfDYBO4FsFVeYK6Ud4Hdlb6yaTJDVgHH9iufs8BR9jZVA6KzLKxMVhTWYSf8his+B5nYdLA==
 
 merge-options@^3.0.4:
   version "3.0.4"
