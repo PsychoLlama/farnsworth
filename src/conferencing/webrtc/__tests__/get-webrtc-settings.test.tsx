@@ -59,7 +59,7 @@ describe('getWebrtcSettings', () => {
   it('conditionally excludes the default ice servers', async () => {
     STUN_SERVERS.push('default-stun.example.com');
     mockedLocalforage.getItem.mockResolvedValue({
-      useDefaultIceServers: false,
+      disableDefaultIceServers: true,
       iceServers: [{ urls: 'stun:custom-stun.example.com' }],
     });
 

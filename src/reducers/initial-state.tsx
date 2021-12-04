@@ -30,7 +30,7 @@ export interface Settings {
   forceTurnRelay: boolean;
 
   /** Whether to use the application's default ICE servers. */
-  useDefaultIceServers: boolean;
+  disableDefaultIceServers: boolean;
 
   /** A list of custom user-defined TURN/STUN servers. */
   iceServers: Array<RTCIceServer>;
@@ -189,7 +189,7 @@ const initialState: State = {
   chat: { unreadMessages: false },
   settings: {
     forceTurnRelay: false,
-    useDefaultIceServers: true,
+    disableDefaultIceServers: false,
     iceServers: [],
   },
   panel: {

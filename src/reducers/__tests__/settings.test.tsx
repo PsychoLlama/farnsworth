@@ -10,7 +10,7 @@ describe('Settings reducer', () => {
   beforeEach(() => {
     mockedSettingsEffects.load.mockResolvedValue({
       forceTurnRelay: true,
-      useDefaultIceServers: false,
+      disableDefaultIceServers: true,
       iceServers: [{ urls: 'stun:stun.example.com' }],
     });
   });
@@ -23,7 +23,7 @@ describe('Settings reducer', () => {
 
       expect(store.getState().settings).toEqual({
         forceTurnRelay: true,
-        useDefaultIceServers: false,
+        disableDefaultIceServers: true,
         iceServers: [{ urls: 'stun:stun.example.com' }],
       });
     });

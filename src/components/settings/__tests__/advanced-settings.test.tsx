@@ -78,7 +78,7 @@ describe('AdvancedSettings', () => {
     findByTestId('toggle-default-ice-servers').simulate('change', event);
 
     expect(props.updateSettings).toHaveBeenCalledWith({
-      useDefaultIceServers: false,
+      disableDefaultIceServers: true,
     });
   });
 

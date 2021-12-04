@@ -9,9 +9,9 @@ import { STUN_SERVERS } from '../../utils/constants';
 export default async function getWebrtcSettings(): Promise<RTCConfiguration> {
   const settings = await effects.settings.load();
 
-  const defaultIceServers = settings.useDefaultIceServers
-    ? STUN_SERVERS.map((addr) => ({ urls: `stun:${addr}` }))
-    : [];
+  const defaultIceServers = settings.disableDefaultIceServers
+    ? []
+    : STUN_SERVERS.map((addr) => ({ urls: `stun:${addr}` }));
 
   return {
     iceTransportPolicy: settings.forceTurnRelay ? 'relay' : 'all',

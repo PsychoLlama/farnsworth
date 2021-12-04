@@ -55,7 +55,7 @@ export class AdvancedSettings extends React.Component<Props> {
 
   toggleDefaultIceServers = (event: React.SyntheticEvent<HTMLInputElement>) => {
     return this.props.updateSettings({
-      useDefaultIceServers: !event.currentTarget.checked,
+      disableDefaultIceServers: event.currentTarget.checked,
     });
   };
 
@@ -90,12 +90,9 @@ export class AdvancedSettings extends React.Component<Props> {
   };
 }
 
-interface Props {
+interface Props extends Settings {
   loadSettings: typeof actions.settings.load;
   updateSettings: typeof actions.settings.update;
-  iceServers: Settings['iceServers'];
-  forceTurnRelay: Settings['forceTurnRelay'];
-  disableDefaultIceServers: boolean;
 }
 
 const Summary = styled.summary`
@@ -117,13 +114,7 @@ const IceServers = styled.ol`
 `;
 
 export function mapStateToProps(state: State) {
-  const { iceServers, forceTurnRelay, useDefaultIceServers } = state.settings;
-
-  return {
-    iceServers,
-    forceTurnRelay,
-    disableDefaultIceServers: !useDefaultIceServers,
-  };
+  return state.settings;
 }
 
 const mapDispatchToProps = {
