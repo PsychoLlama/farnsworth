@@ -82,17 +82,6 @@ describe('AdvancedSettings', () => {
     });
   });
 
-  it('shows a placeholder when there are no ICE servers', () => {
-    const { output, findByTestId } = setup({
-      disableDefaultIceServers: true,
-      customIceServers: [],
-    });
-
-    expect(findByTestId('no-ice-servers').exists()).toBe(true);
-    output.setProps({ customIceServers: [{ urls: 'turn:example.com' }] });
-    expect(findByTestId('no-ice-servers').exists()).toBe(false);
-  });
-
   describe('mapStateToProps', () => {
     it('returns the expected props', () => {
       const props = mapStateToProps(initialState);

@@ -4,7 +4,7 @@ import styled from 'styled-components';
 import * as actions from '../../actions';
 import { ICE_SERVERS } from '../../utils/constants';
 import { State, WebrtcSettings } from '../../reducers/initial-state';
-import { Switch } from '../core';
+import { Switch, Button } from '../core';
 import * as css from '../../utils/css';
 
 export class AdvancedSettings extends React.Component<Props> {
@@ -51,15 +51,14 @@ export class AdvancedSettings extends React.Component<Props> {
             </thead>
 
             <tbody>
-              {iceServers.length ? (
-                iceServers.map(this.renderIceServer)
-              ) : (
-                <tr>
-                  <NoIceServers colSpan={2} data-test="no-ice-servers">
-                    No ICE servers.
-                  </NoIceServers>
-                </tr>
-              )}
+              {iceServers.map(this.renderIceServer)}
+              <tr>
+                <NoIceServers>
+                  <AddIceServer data-test="add-ice-server">
+                    Add server
+                  </AddIceServer>
+                </NoIceServers>
+              </tr>
             </tbody>
           </IceServers>
         </OverflowCatch>
@@ -159,12 +158,18 @@ const IceServerType = styled(TableCell)`
   text-transform: uppercase;
 `;
 
-const NoIceServers = styled(TableCell)`
-  border: 1px solid ${css.color('white')};
-  font-style: italic;
-  padding: 1rem;
-  opacity: 0.5;
+const NoIceServers = styled(TableCell).attrs({ colSpan: 2 })`
   text-align: center;
+`;
+
+const AddIceServer = styled(Button.Base)`
+  font-size: 100%;
+  color: ${css.color('primary')};
+
+  :focus,
+  :hover {
+    text-decoration: underline;
+  }
 `;
 
 export function mapStateToProps(state: State) {
