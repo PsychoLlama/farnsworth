@@ -3,13 +3,15 @@ import React from 'react';
 import { connect } from 'react-redux';
 import styled from 'styled-components';
 import { v4 as uuid } from 'uuid';
-import { State } from '../../reducers/initial-state';
+import { State as ReduxState } from '../../reducers/initial-state';
 import * as css from '../../utils/css';
 import * as actions from '../../actions';
 import { TrackKind, MY_PARTICIPANT_ID } from '../../utils/constants';
 import AdvancedSettings from './advanced-settings';
+import IceServer from './ice-server';
 
-export class SettingsPanel extends React.Component<Props> {
+export class SettingsPanel extends React.Component<Props, State> {
+  state = { activeIceServerEditId: null };
   audioInputId = uuid();
   videoInputId = uuid();
 
@@ -21,6 +23,16 @@ export class SettingsPanel extends React.Component<Props> {
       selectedAudioDeviceId,
       selectedVideoDeviceId,
     } = this.props;
+
+    if (this.state.activeIceServerEditId !== null) {
+      return (
+        <IceServer
+          onClose={this.finishEditingIceServer}
+          id={this.state.activeIceServerEditId}
+          data-test="edit-ice-server"
+        />
+      );
+    }
 
     return (
       <Container id={panelId}>
@@ -50,10 +62,21 @@ export class SettingsPanel extends React.Component<Props> {
           </Dropdown>
         </InputGroup>
 
-        <AdvancedSettings />
+        <AdvancedSettings
+          data-test="advanced-settings"
+          onEditIceServer={this.showIceServer}
+        />
       </Container>
     );
   }
+
+  showIceServer = ({ id }) => {
+    this.setState({ activeIceServerEditId: id });
+  };
+
+  finishEditingIceServer = () => {
+    this.setState({ activeIceServerEditId: null });
+  };
 
   createRenderer = (kind: TrackKind) => (device: DeviceInfo) => {
     return (
@@ -90,6 +113,10 @@ interface Props {
   selectedAudioDeviceId: string;
   selectedVideoDeviceId: string;
   panelId: string;
+}
+
+interface State {
+  activeIceServerEditId: null | number;
 }
 
 const Container = styled.div`
@@ -141,7 +168,7 @@ const Dropdown = styled.select`
   }
 `;
 
-export function mapStateToProps(state: State) {
+export function mapStateToProps(state: ReduxState) {
   const { audio, video } = state.sources.available;
 
   const localTracksByDeviceId = state.participants[MY_PARTICIPANT_ID].trackIds

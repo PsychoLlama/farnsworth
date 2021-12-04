@@ -29,3 +29,13 @@ export const Primary = styled(Base)`
     filter: brightness(70%);
   }
 `;
+
+export const Subtle = styled(Base)`
+  color: ${css.color('primary')};
+  font-size: 100%;
+
+  :focus,
+  :hover {
+    text-decoration: underline;
+  }
+`;

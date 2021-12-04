@@ -12,6 +12,7 @@ describe('AdvancedSettings', () => {
     getDefaultProps: () => ({
       loadSettings: jest.fn(),
       updateSettings: jest.fn(),
+      onEditIceServer: jest.fn(),
       forceTurnRelay: false,
       disableDefaultIceServers: false,
       customIceServers: [],
@@ -80,6 +81,16 @@ describe('AdvancedSettings', () => {
     expect(props.updateSettings).toHaveBeenCalledWith({
       disableDefaultIceServers: true,
     });
+  });
+
+  it('starts editing the right ICE server ID when you click add', () => {
+    const { findByTestId, props } = setup({
+      customIceServers: [{ urls: 'stun:example.com' }],
+    });
+
+    findByTestId('add-ice-server').simulate('click');
+
+    expect(props.onEditIceServer).toHaveBeenCalledWith({ id: 1 });
   });
 
   describe('mapStateToProps', () => {

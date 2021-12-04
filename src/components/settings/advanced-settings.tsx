@@ -54,9 +54,12 @@ export class AdvancedSettings extends React.Component<Props> {
               {iceServers.map(this.renderIceServer)}
               <tr>
                 <NoIceServers>
-                  <AddIceServer data-test="add-ice-server">
+                  <Button.Subtle
+                    data-test="add-ice-server"
+                    onClick={this.addIceServer}
+                  >
                     Add server
-                  </AddIceServer>
+                  </Button.Subtle>
                 </NoIceServers>
               </tr>
             </tbody>
@@ -75,6 +78,12 @@ export class AdvancedSettings extends React.Component<Props> {
   toggleDefaultIceServers = (event: React.SyntheticEvent<HTMLInputElement>) => {
     return this.props.updateSettings({
       disableDefaultIceServers: event.currentTarget.checked,
+    });
+  };
+
+  addIceServer = () => {
+    this.props.onEditIceServer({
+      id: this.props.customIceServers.length,
     });
   };
 
@@ -110,6 +119,7 @@ export class AdvancedSettings extends React.Component<Props> {
 interface Props extends WebrtcSettings {
   loadSettings: typeof actions.settings.load;
   updateSettings: typeof actions.settings.update;
+  onEditIceServer({ id: number }): unknown;
 }
 
 const Disclosure = styled.details`
@@ -160,16 +170,6 @@ const IceServerType = styled(TableCell)`
 
 const NoIceServers = styled(TableCell).attrs({ colSpan: 2 })`
   text-align: center;
-`;
-
-const AddIceServer = styled(Button.Base)`
-  font-size: 100%;
-  color: ${css.color('primary')};
-
-  :focus,
-  :hover {
-    text-decoration: underline;
-  }
 `;
 
 export function mapStateToProps(state: State) {

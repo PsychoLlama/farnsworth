@@ -82,6 +82,25 @@ describe('SettingsPanel', () => {
     expect(findByTestId('choose-video-source').prop('value')).toBe('v-active');
   });
 
+  it('shows the ICE server editing form when requested', () => {
+    const { findByTestId } = setup();
+
+    findByTestId('advanced-settings').simulate('editIceServer', { id: 3 });
+
+    const form = findByTestId('edit-ice-server');
+    expect(form.exists()).toBe(true);
+    expect(form.prop('id')).toBe(3);
+  });
+
+  it('hides the ICE server editing form when closed', () => {
+    const { findByTestId } = setup();
+
+    findByTestId('advanced-settings').simulate('editIceServer', { id: 3 });
+    findByTestId('edit-ice-server').simulate('close');
+
+    expect(findByTestId('edit-ice-server').exists()).toBe(false);
+  });
+
   describe('mapStateToProps', () => {
     it('returns the expected props', () => {
       const props = mapStateToProps(initialState);
