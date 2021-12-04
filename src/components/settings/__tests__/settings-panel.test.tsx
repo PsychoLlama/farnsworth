@@ -2,12 +2,12 @@ import { DeviceInfo, DeviceKind } from 'media-devices';
 import renderer from '../../../testing/renderer';
 import { SettingsPanel, mapStateToProps } from '../settings-panel';
 import initialState from '../../../reducers/initial-state';
-import { STUN_SERVERS } from '../../../utils/constants';
+import { ICE_SERVERS } from '../../../utils/constants';
 
 describe('SettingsPanel', () => {
   beforeEach(() => {
-    STUN_SERVERS.length = 0;
-    STUN_SERVERS.push('stun.example.com');
+    ICE_SERVERS.length = 0;
+    ICE_SERVERS.push({ urls: 'stun:example.com' });
   });
 
   function createSource(override?: Partial<DeviceInfo>): DeviceInfo {
@@ -24,7 +24,6 @@ describe('SettingsPanel', () => {
     getDefaultProps: () => ({
       panelId: 'settings-panel',
       changeDevice: jest.fn(),
-      loadSettings: jest.fn(),
       selectedAudioDeviceId: 'a-id',
       selectedVideoDeviceId: 'v-id',
       audioSources: [createSource({ kind: DeviceKind.AudioInput })],
@@ -32,9 +31,6 @@ describe('SettingsPanel', () => {
         createSource({ kind: DeviceKind.VideoInput }),
         createSource({ kind: DeviceKind.VideoInput }),
       ],
-      forceTurnRelay: false,
-      useDefaultIceServers: true,
-      iceServers: [],
     }),
   });
 
@@ -86,35 +82,6 @@ describe('SettingsPanel', () => {
     expect(findByTestId('choose-video-source').prop('value')).toBe('v-active');
   });
 
-  it('renders every ice server url', () => {
-    const { findByTestId } = setup({
-      iceServers: [
-        { urls: 'stun:stun.example.com' },
-        { urls: ['stun:stun1.example.com', 'stun:stun2.example.com'] },
-      ],
-    });
-
-    expect(findByTestId('ice-server-address').length).toBe(
-      3 + STUN_SERVERS.length,
-    );
-  });
-
-  it('loads app settings when you open the advanced panel', () => {
-    const { findByTestId, props } = setup();
-
-    findByTestId('advanced-settings').simulate('toggle', {
-      currentTarget: { open: false },
-    });
-
-    expect(props.loadSettings).not.toHaveBeenCalled();
-
-    findByTestId('advanced-settings').simulate('toggle', {
-      currentTarget: { open: true },
-    });
-
-    expect(props.loadSettings).toHaveBeenCalled();
-  });
-
   describe('mapStateToProps', () => {
     it('returns the expected props', () => {
       const props = mapStateToProps(initialState);
@@ -123,11 +90,8 @@ describe('SettingsPanel', () => {
         Object {
           "activeTracks": Array [],
           "audioSources": Array [],
-          "forceTurnRelay": false,
-          "iceServers": Array [],
           "selectedAudioDeviceId": "",
           "selectedVideoDeviceId": "",
-          "useDefaultIceServers": true,
           "videoSources": Array [],
         }
       `);

@@ -10,4 +10,8 @@ export default createReducer(initialState, (handleAction) => [
   handleAction(actions.settings.reset, (state) => {
     state.settings = initialState.settings;
   }),
+
+  handleAction.optimistic(actions.settings.update, (state, overrides) => {
+    Object.assign(state.settings, overrides);
+  }),
 ]);

@@ -10,8 +10,8 @@ describe('Settings reducer', () => {
   beforeEach(() => {
     mockedSettingsEffects.load.mockResolvedValue({
       forceTurnRelay: true,
-      useDefaultIceServers: false,
-      iceServers: [{ urls: 'stun:stun.example.com' }],
+      disableDefaultIceServers: true,
+      customIceServers: [{ urls: 'stun:stun.example.com' }],
     });
   });
 
@@ -23,8 +23,8 @@ describe('Settings reducer', () => {
 
       expect(store.getState().settings).toEqual({
         forceTurnRelay: true,
-        useDefaultIceServers: false,
-        iceServers: [{ urls: 'stun:stun.example.com' }],
+        disableDefaultIceServers: true,
+        customIceServers: [{ urls: 'stun:stun.example.com' }],
       });
     });
   });
@@ -38,6 +38,21 @@ describe('Settings reducer', () => {
       await sdk.settings.reset();
 
       expect(store.getState().settings).toHaveProperty('forceTurnRelay', false);
+    });
+  });
+
+  describe('settings.update()', () => {
+    it('merges the new settings', async () => {
+      const { store, sdk } = setup();
+
+      const patch = {
+        forceTurnRelay: true,
+        customIceServers: [{ urls: 'stun:example.com' }],
+      };
+
+      await sdk.settings.update(patch);
+
+      expect(store.getState().settings).toMatchObject(patch);
     });
   });
 });

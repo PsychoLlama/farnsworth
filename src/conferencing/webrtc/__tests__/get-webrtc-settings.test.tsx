@@ -1,6 +1,6 @@
 import localforage from 'localforage';
 import getWebrtcSettings from '../get-webrtc-settings';
-import { STUN_SERVERS } from '../../../utils/constants';
+import { ICE_SERVERS } from '../../../utils/constants';
 
 jest.mock('localforage');
 
@@ -8,7 +8,7 @@ const mockedLocalforage: jest.Mocked<typeof localforage> = localforage as any;
 
 describe('getWebrtcSettings', () => {
   beforeEach(() => {
-    STUN_SERVERS.length = 0;
+    ICE_SERVERS.length = 0;
     mockedLocalforage.getItem.mockResolvedValue(null);
   });
 
@@ -32,7 +32,10 @@ describe('getWebrtcSettings', () => {
   });
 
   it('adds the preconfigured ice servers', async () => {
-    STUN_SERVERS.push('stun1.example.com', 'stun2.example.com');
+    ICE_SERVERS.push(
+      { urls: 'stun:stun1.example.com' },
+      { urls: 'stun:stun2.example.com' },
+    );
 
     await expect(getWebrtcSettings()).resolves.toMatchObject({
       iceServers: [
@@ -43,9 +46,9 @@ describe('getWebrtcSettings', () => {
   });
 
   it('includes the user-defined ice servers', async () => {
-    STUN_SERVERS.push('default-stun.example.com');
+    ICE_SERVERS.push({ urls: 'stun:default-stun.example.com' });
     mockedLocalforage.getItem.mockResolvedValue({
-      iceServers: [{ urls: 'stun:custom-stun.example.com' }],
+      customIceServers: [{ urls: 'stun:custom-stun.example.com' }],
     });
 
     await expect(getWebrtcSettings()).resolves.toMatchObject({
@@ -57,10 +60,10 @@ describe('getWebrtcSettings', () => {
   });
 
   it('conditionally excludes the default ice servers', async () => {
-    STUN_SERVERS.push('default-stun.example.com');
+    ICE_SERVERS.push({ urls: 'stun:default-stun.example.com' });
     mockedLocalforage.getItem.mockResolvedValue({
-      useDefaultIceServers: false,
-      iceServers: [{ urls: 'stun:custom-stun.example.com' }],
+      disableDefaultIceServers: true,
+      customIceServers: [{ urls: 'stun:custom-stun.example.com' }],
     });
 
     await expect(getWebrtcSettings()).resolves.toMatchObject({

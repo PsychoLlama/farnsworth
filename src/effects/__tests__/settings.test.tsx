@@ -17,7 +17,7 @@ describe('Settings effects', () => {
 
       expect(settings).toMatchObject({
         forceTurnRelay: false,
-        iceServers: [],
+        customIceServers: [],
       });
     });
 
@@ -30,8 +30,8 @@ describe('Settings effects', () => {
 
       expect(settings).toEqual({
         forceTurnRelay: true,
-        useDefaultIceServers: true,
-        iceServers: [],
+        disableDefaultIceServers: false,
+        customIceServers: [],
       });
     });
   });
@@ -40,15 +40,15 @@ describe('Settings effects', () => {
     it('updates the settings', async () => {
       await effects.settings.update({
         forceTurnRelay: true,
-        useDefaultIceServers: false,
+        disableDefaultIceServers: true,
       });
 
       expect(mockedLocalforage.setItem).toHaveBeenCalledWith(
         StorageKey.Settings,
         {
           forceTurnRelay: true,
-          useDefaultIceServers: false,
-          iceServers: [],
+          disableDefaultIceServers: true,
+          customIceServers: [],
         },
       );
     });

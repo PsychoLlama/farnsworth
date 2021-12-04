@@ -6,16 +6,12 @@ import { v4 as uuid } from 'uuid';
 import { State } from '../../reducers/initial-state';
 import * as css from '../../utils/css';
 import * as actions from '../../actions';
-import {
-  TrackKind,
-  MY_PARTICIPANT_ID,
-  STUN_SERVERS,
-} from '../../utils/constants';
+import { TrackKind, MY_PARTICIPANT_ID } from '../../utils/constants';
+import AdvancedSettings from './advanced-settings';
 
 export class SettingsPanel extends React.Component<Props> {
   audioInputId = uuid();
   videoInputId = uuid();
-  forceTurnCheckboxId = uuid();
 
   render() {
     const {
@@ -24,12 +20,7 @@ export class SettingsPanel extends React.Component<Props> {
       videoSources,
       selectedAudioDeviceId,
       selectedVideoDeviceId,
-      iceServers,
     } = this.props;
-
-    const defaultIceServers = STUN_SERVERS.map((url) => ({
-      urls: `stun:${url}`,
-    }));
 
     return (
       <Container id={panelId}>
@@ -59,29 +50,10 @@ export class SettingsPanel extends React.Component<Props> {
           </Dropdown>
         </InputGroup>
 
-        <details
-          data-test="advanced-settings"
-          onToggle={this.loadSettingsWhenOpened}
-        >
-          <Summary>Advanced settings</Summary>
-
-          <Subtitle>ICE servers</Subtitle>
-
-          <IceServers>
-            {iceServers.concat(defaultIceServers).map(this.renderIceServer)}
-          </IceServers>
-        </details>
+        <AdvancedSettings />
       </Container>
     );
   }
-
-  loadSettingsWhenOpened = (
-    event: React.SyntheticEvent<HTMLDetailsElement>,
-  ) => {
-    if (event.currentTarget.open) {
-      this.props.loadSettings();
-    }
-  };
 
   createRenderer = (kind: TrackKind) => (device: DeviceInfo) => {
     return (
@@ -109,49 +81,25 @@ export class SettingsPanel extends React.Component<Props> {
 
   chooseAudioTrack = this.buildTrackQuery(TrackKind.Audio);
   chooseVideoTrack = this.buildTrackQuery(TrackKind.Video);
-
-  renderIceServer = (server: RTCIceServer, index: number) => {
-    // Coerce all URLs to an array.
-    const servers = [].concat(server.urls).map((addr) => {
-      const [type, ...rest] = addr.split(':');
-      const url = rest.join(':');
-      return { type, url };
-    });
-
-    return (
-      <React.Fragment key={index}>
-        {servers.map((server) => (
-          <li
-            data-test="ice-server-address"
-            key={`${index}:${server.type}:${server.url}`}
-          >
-            {server.url} ({server.type})
-          </li>
-        ))}
-      </React.Fragment>
-    );
-  };
 }
 
 interface Props {
   changeDevice: typeof actions.devices.requestMediaDevices;
-  loadSettings: typeof actions.settings.load;
   audioSources: Array<DeviceInfo>;
   videoSources: Array<DeviceInfo>;
   selectedAudioDeviceId: string;
   selectedVideoDeviceId: string;
   panelId: string;
-  iceServers: State['settings']['iceServers'];
-  forceTurnRelay: boolean;
-  useDefaultIceServers: boolean;
 }
 
 const Container = styled.div`
   display: grid;
   grid-row-gap: 2rem;
+  grid-auto-rows: max-content;
   max-width: 315px;
   padding: 1rem;
   box-sizing: border-box;
+  overflow: auto;
 
   @media screen and (max-width: ${css.breakpoint.mobile}) {
     max-width: none;
@@ -193,24 +141,6 @@ const Dropdown = styled.select`
   }
 `;
 
-const Summary = styled.summary`
-  cursor: default;
-`;
-
-const Subtitle = styled.h3`
-  margin: 0;
-  margin-top: 1rem;
-`;
-
-const IceServers = styled.ol`
-  display: grid;
-  grid-row-gap: 0.5rem;
-  margin: 0;
-  padding: 1rem;
-  list-style-type: disc;
-  list-style-position: inside;
-`;
-
 export function mapStateToProps(state: State) {
   const { audio, video } = state.sources.available;
 
@@ -229,23 +159,17 @@ export function mapStateToProps(state: State) {
     video.find((device) => localTracksByDeviceId.has(device.deviceId))
       ?.deviceId ?? '';
 
-  const { useDefaultIceServers, forceTurnRelay, iceServers } = state.settings;
-
   return {
     audioSources: audio,
     videoSources: video,
     activeTracks: state.participants[MY_PARTICIPANT_ID].trackIds,
     selectedAudioDeviceId,
     selectedVideoDeviceId,
-    useDefaultIceServers,
-    forceTurnRelay,
-    iceServers,
   };
 }
 
 const mapDispatchToProps = {
   changeDevice: actions.devices.requestMediaDevices,
-  loadSettings: actions.settings.load,
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(SettingsPanel);
