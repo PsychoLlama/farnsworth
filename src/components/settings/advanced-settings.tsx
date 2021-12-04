@@ -3,7 +3,7 @@ import { connect } from 'react-redux';
 import styled from 'styled-components';
 import * as actions from '../../actions';
 import { ICE_SERVERS } from '../../utils/constants';
-import { State, Settings } from '../../reducers/initial-state';
+import { State, WebrtcSettings } from '../../reducers/initial-state';
 import { Switch } from '../core';
 import * as css from '../../utils/css';
 
@@ -108,7 +108,7 @@ export class AdvancedSettings extends React.Component<Props> {
   };
 }
 
-interface Props extends Settings {
+interface Props extends WebrtcSettings {
   loadSettings: typeof actions.settings.load;
   updateSettings: typeof actions.settings.update;
 }
@@ -168,7 +168,7 @@ const NoIceServers = styled(TableCell)`
 `;
 
 export function mapStateToProps(state: State) {
-  return state.settings;
+  return state.settings.webrtc;
 }
 
 const mapDispatchToProps = {

@@ -21,7 +21,7 @@ describe('Settings reducer', () => {
 
       await sdk.settings.load();
 
-      expect(store.getState().settings).toEqual({
+      expect(store.getState().settings.webrtc).toEqual({
         forceTurnRelay: true,
         disableDefaultIceServers: true,
         customIceServers: [{ urls: 'stun:stun.example.com' }],
@@ -32,12 +32,15 @@ describe('Settings reducer', () => {
   describe('settings.reset()', () => {
     it('resets the redux state', async () => {
       const { store, sdk } = setup((state) => {
-        state.settings.forceTurnRelay = true;
+        state.settings.webrtc.forceTurnRelay = true;
       });
 
       await sdk.settings.reset();
 
-      expect(store.getState().settings).toHaveProperty('forceTurnRelay', false);
+      expect(store.getState().settings.webrtc).toHaveProperty(
+        'forceTurnRelay',
+        false,
+      );
     });
   });
 
@@ -52,7 +55,7 @@ describe('Settings reducer', () => {
 
       await sdk.settings.update(patch);
 
-      expect(store.getState().settings).toMatchObject(patch);
+      expect(store.getState().settings.webrtc).toMatchObject(patch);
     });
   });
 });
