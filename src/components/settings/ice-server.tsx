@@ -10,15 +10,10 @@ export class IceServer extends React.Component<Props, State> {
   urlInputId = uuid();
   passwordInputId = uuid();
   usernameInputId = uuid();
-  state = {
-    serverType: ServerType.Stun,
-    url: '',
-    username: '',
-    token: '',
-  };
+  state = this.loadState();
 
   render() {
-    const { serverType } = this.state;
+    const { serverType, url, username, credential } = this.state;
 
     return (
       <Form data-test="form" onSubmit={this.submit}>
@@ -39,7 +34,8 @@ export class IceServer extends React.Component<Props, State> {
               data-test="url-input"
               id={this.urlInputId}
               placeholder="example.com:3478"
-              onChange={this.updateUrlInput}
+              onInput={this.updateUrlInput}
+              value={url}
               required
             />
           </PrefixedInput>
@@ -52,7 +48,8 @@ export class IceServer extends React.Component<Props, State> {
             placeholder="User (optional)"
             id={this.usernameInputId}
             data-test="username-input"
-            onChange={this.updateUsername}
+            onInput={this.updateUsername}
+            value={username}
           />
         </InputGroup>
 
@@ -63,7 +60,8 @@ export class IceServer extends React.Component<Props, State> {
             placeholder="Secret (optional)"
             id={this.passwordInputId}
             data-test="password-input"
-            onChange={this.updateToken}
+            onInput={this.updateToken}
+            value={credential}
             type="password"
           />
         </InputGroup>
@@ -92,12 +90,12 @@ export class IceServer extends React.Component<Props, State> {
   };
 
   updateToken = (event: React.SyntheticEvent<HTMLInputElement>) => {
-    this.setState({ token: event.currentTarget.value });
+    this.setState({ credential: event.currentTarget.value });
   };
 
   submit = async (event: React.SyntheticEvent<HTMLFormElement>) => {
     const { iceServers, id } = this.props;
-    const { serverType, url, username, token } = this.state;
+    const { serverType, url, username, credential } = this.state;
     const customIceServers = iceServers.slice();
 
     event.preventDefault();
@@ -107,10 +105,10 @@ export class IceServer extends React.Component<Props, State> {
       urls: `${serverType}:${url}`,
     };
 
-    if (username || token) {
+    if (username || credential) {
       server.credentialType = 'password';
       server.username = username;
-      server.credential = token;
+      server.credential = credential;
     }
 
     customIceServers.splice(id, 1, server);
@@ -118,6 +116,20 @@ export class IceServer extends React.Component<Props, State> {
     await this.props.updateSettings({ customIceServers });
     this.props.onClose();
   };
+
+  loadState(): State {
+    const { iceServers, id } = this.props;
+    const server = iceServers[id];
+    const [protocol, ...rest] = String(server?.urls ?? '').split(':');
+    const url = rest.join(':');
+
+    return {
+      serverType: protocol === 'turn' ? ServerType.Turn : ServerType.Stun,
+      url,
+      username: server?.username ?? '',
+      credential: server?.credential ?? '',
+    };
+  }
 }
 
 interface Props {
@@ -131,7 +143,7 @@ interface State {
   url: string;
   serverType: ServerType;
   username: string;
-  token: string;
+  credential: string;
 }
 
 export enum ServerType {
