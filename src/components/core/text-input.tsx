@@ -6,6 +6,8 @@ const TextInput = styled.input`
   padding: 0.5rem;
   border-radius: ${css.radius};
   border: 1px solid ${css.color('foreground')};
+  background-color: ${css.color('background')};
+  color: ${css.color('foreground')};
 
   ::placeholder {
     font-style: italic;
