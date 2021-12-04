@@ -4,21 +4,39 @@ import styled from 'styled-components';
 import * as actions from '../../actions';
 import { STUN_SERVERS } from '../../utils/constants';
 import { State, Settings } from '../../reducers/initial-state';
+import { Switch } from '../core';
 
 export class AdvancedSettings extends React.Component<Props> {
   render() {
-    const { iceServers } = this.props;
+    const { iceServers, forceTurnRelay, disableDefaultIceServers } = this.props;
 
-    const defaultIceServers = STUN_SERVERS.map((url) => ({
-      urls: `stun:${url}`,
-    }));
+    const defaultIceServers = disableDefaultIceServers
+      ? []
+      : STUN_SERVERS.map((url) => ({ urls: `stun:${url}` }));
 
     return (
       <details
         data-test="advanced-settings"
         onToggle={this.loadSettingsWhenOpened}
+        open
       >
         <Summary>Advanced settings</Summary>
+
+        <Switch
+          data-test="toggle-turn-relay"
+          value={forceTurnRelay}
+          onChange={this.toggleTurnRelay}
+        >
+          Force TURN relay
+        </Switch>
+
+        <Switch
+          data-test="toggle-default-ice-servers"
+          value={disableDefaultIceServers}
+          onChange={this.toggleDefaultIceServers}
+        >
+          Disable default ICE servers
+        </Switch>
 
         <Subtitle>ICE servers</Subtitle>
 
@@ -28,6 +46,18 @@ export class AdvancedSettings extends React.Component<Props> {
       </details>
     );
   }
+
+  toggleTurnRelay = (event: React.SyntheticEvent<HTMLInputElement>) => {
+    return this.props.updateSettings({
+      forceTurnRelay: event.currentTarget.checked,
+    });
+  };
+
+  toggleDefaultIceServers = (event: React.SyntheticEvent<HTMLInputElement>) => {
+    return this.props.updateSettings({
+      useDefaultIceServers: !event.currentTarget.checked,
+    });
+  };
 
   loadSettingsWhenOpened = (
     event: React.SyntheticEvent<HTMLDetailsElement>,
@@ -62,7 +92,10 @@ export class AdvancedSettings extends React.Component<Props> {
 
 interface Props {
   loadSettings: typeof actions.settings.load;
+  updateSettings: typeof actions.settings.update;
   iceServers: Settings['iceServers'];
+  forceTurnRelay: Settings['forceTurnRelay'];
+  disableDefaultIceServers: boolean;
 }
 
 const Summary = styled.summary`
@@ -89,12 +122,13 @@ export function mapStateToProps(state: State) {
   return {
     iceServers,
     forceTurnRelay,
-    useDefaultIceServers,
+    disableDefaultIceServers: !useDefaultIceServers,
   };
 }
 
 const mapDispatchToProps = {
   loadSettings: actions.settings.load,
+  updateSettings: actions.settings.update,
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(AdvancedSettings);
