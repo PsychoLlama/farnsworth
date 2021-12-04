@@ -93,6 +93,18 @@ describe('AdvancedSettings', () => {
     expect(props.onEditIceServer).toHaveBeenCalledWith({ id: 1 });
   });
 
+  it('allows you to edit custom ICE servers', () => {
+    const { findByTestId, props } = setup({
+      customIceServers: [{ urls: 'stun:example.com' }],
+    });
+
+    findByTestId('edit-ice-server').simulate('click', {
+      currentTarget: { dataset: { id: '0' } },
+    });
+
+    expect(props.onEditIceServer).toHaveBeenCalledWith({ id: 0 });
+  });
+
   describe('mapStateToProps', () => {
     it('returns the expected props', () => {
       const props = mapStateToProps(initialState);
