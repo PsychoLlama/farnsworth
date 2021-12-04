@@ -102,9 +102,7 @@ const MessageBody = styled.p`
   border-radius: ${css.radius};
   white-space: pre-wrap;
   overflow-wrap: break-word;
-
-  // Should be about 2/3 the width of the containing panel.
-  max-width: 200px;
+  max-width: 75%;
 
   &[data-local='true'] {
     background-color: ${css.color('primary')};

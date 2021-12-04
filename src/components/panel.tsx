@@ -96,7 +96,9 @@ const Container = styled.aside.attrs({ role: 'complementary' })`
   display: flex;
   background-color: ${css.color('background')};
   flex-direction: column;
-  min-width: 315px;
+  min-width: 22rem;
+  max-width: 32rem;
+  width: 25%;
   box-shadow: inset 0 -4px 4px -4px rgba(0, 0, 0, 0.4);
 
   @media screen and (max-width: ${css.breakpoint.mobile}) {
@@ -107,6 +109,8 @@ const Container = styled.aside.attrs({ role: 'complementary' })`
     bottom: 0;
     background-color: ${css.color('overlay')};
     min-width: 0;
+    max-width: none;
+    width: auto;
     box-shadow: none;
   }
 `;

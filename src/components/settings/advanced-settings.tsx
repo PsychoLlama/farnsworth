@@ -17,7 +17,7 @@ export class AdvancedSettings extends React.Component<Props> {
     );
 
     return (
-      <details
+      <Disclosure
         data-test="advanced-settings"
         onToggle={this.loadSettingsWhenOpened}
         open
@@ -40,28 +40,30 @@ export class AdvancedSettings extends React.Component<Props> {
           Disable default ICE servers
         </Switch>
 
-        <IceServers>
-          <Subtitle>ICE servers</Subtitle>
-          <thead>
-            <tr>
-              <TableHeader>Address</TableHeader>
-              <TableHeader>Type</TableHeader>
-            </tr>
-          </thead>
-
-          <tbody>
-            {iceServers.length ? (
-              iceServers.map(this.renderIceServer)
-            ) : (
+        <OverflowCatch>
+          <IceServers>
+            <Subtitle>ICE servers</Subtitle>
+            <thead>
               <tr>
-                <NoIceServers colSpan={2} data-test="no-ice-servers">
-                  No ICE servers.
-                </NoIceServers>
+                <TableHeader>Address</TableHeader>
+                <TableHeader>Type</TableHeader>
               </tr>
-            )}
-          </tbody>
-        </IceServers>
-      </details>
+            </thead>
+
+            <tbody>
+              {iceServers.length ? (
+                iceServers.map(this.renderIceServer)
+              ) : (
+                <tr>
+                  <NoIceServers colSpan={2} data-test="no-ice-servers">
+                    No ICE servers.
+                  </NoIceServers>
+                </tr>
+              )}
+            </tbody>
+          </IceServers>
+        </OverflowCatch>
+      </Disclosure>
     );
   }
 
@@ -111,8 +113,25 @@ interface Props extends Settings {
   updateSettings: typeof actions.settings.update;
 }
 
+const Disclosure = styled.details`
+  width: 100%;
+  overflow: hidden;
+`;
+
 const Summary = styled.summary`
   cursor: default;
+`;
+
+// <table> elements are finicky about horizontal scroll.
+const OverflowCatch = styled.div`
+  width: 100%;
+  overflow: auto;
+`;
+
+const IceServers = styled.table`
+  width: 100%;
+  border-collapse: collapse;
+  overflow: auto;
 `;
 
 const Subtitle = styled.caption`
@@ -120,11 +139,6 @@ const Subtitle = styled.caption`
   margin: 1rem 0;
   font-weight: bold;
   font-size: 120%;
-`;
-
-const IceServers = styled.table`
-  width: 100%;
-  border-collapse: collapse;
 `;
 
 const TableHeader = styled.th`
@@ -137,6 +151,7 @@ const TableHeader = styled.th`
 const TableCell = styled.td`
   padding: 0.5rem;
   border: 1px solid ${css.color('white')};
+  background-color: ${css.color('background')};
 `;
 
 const IceServerType = styled(TableCell)`
