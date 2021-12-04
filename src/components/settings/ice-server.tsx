@@ -40,6 +40,7 @@ export class IceServer extends React.Component<Props, State> {
               id={this.urlInputId}
               placeholder="example.com:3478"
               onChange={this.updateUrlInput}
+              required
             />
           </PrefixedInput>
         </InputGroup>
@@ -63,6 +64,7 @@ export class IceServer extends React.Component<Props, State> {
             id={this.passwordInputId}
             data-test="password-input"
             onChange={this.updateToken}
+            type="password"
           />
         </InputGroup>
 
