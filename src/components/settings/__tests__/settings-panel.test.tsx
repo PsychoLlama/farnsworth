@@ -109,8 +109,8 @@ describe('SettingsPanel', () => {
         Object {
           "activeTracks": Array [],
           "audioSources": Array [],
-          "selectedAudioDeviceId": "",
-          "selectedVideoDeviceId": "",
+          "selectedAudioDeviceId": "no-device-selected",
+          "selectedVideoDeviceId": "no-device-selected",
           "videoSources": Array [],
         }
       `);

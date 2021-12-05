@@ -11,6 +11,8 @@ import AdvancedSettings from './advanced-settings';
 import IceServer from './ice-server';
 import { Dropdown } from '../core';
 
+const NO_DEVICE_SELECTED = 'no-device-selected';
+
 export class SettingsPanel extends React.Component<Props, State> {
   state = { activeIceServerEditId: null };
   audioInputId = uuid();
@@ -38,20 +40,7 @@ export class SettingsPanel extends React.Component<Props, State> {
     return (
       <Container id={panelId}>
         <InputGroup>
-          <InputTitle htmlFor={this.audioInputId}>Audio devices</InputTitle>
-          <Dropdown
-            data-test="choose-audio-source"
-            id={this.audioInputId}
-            disabled={audioSources.length === 0}
-            onChange={this.chooseAudioTrack}
-            value={selectedAudioDeviceId}
-          >
-            {this.props.audioSources.map(this.renderAudioOption)}
-          </Dropdown>
-        </InputGroup>
-
-        <InputGroup>
-          <InputTitle htmlFor={this.videoInputId}>Video devices</InputTitle>
+          <InputTitle htmlFor={this.videoInputId}>Cameras</InputTitle>
           <Dropdown
             data-test="choose-video-source"
             id={this.videoInputId}
@@ -59,7 +48,27 @@ export class SettingsPanel extends React.Component<Props, State> {
             onChange={this.chooseVideoTrack}
             value={selectedVideoDeviceId}
           >
+            <option value={NO_DEVICE_SELECTED} disabled>
+              Choose a camera
+            </option>
+
             {this.props.videoSources.map(this.renderVideoOption)}
+          </Dropdown>
+        </InputGroup>
+
+        <InputGroup>
+          <InputTitle htmlFor={this.audioInputId}>Microphones</InputTitle>
+          <Dropdown
+            data-test="choose-audio-source"
+            id={this.audioInputId}
+            disabled={audioSources.length === 0}
+            onChange={this.chooseAudioTrack}
+            value={selectedAudioDeviceId}
+          >
+            <option value={NO_DEVICE_SELECTED} disabled>
+              Choose a microphone
+            </option>
+            {this.props.audioSources.map(this.renderAudioOption)}
           </Dropdown>
         </InputGroup>
 
@@ -158,11 +167,11 @@ export function mapStateToProps(state: ReduxState) {
 
   const selectedAudioDeviceId =
     audio.find((device) => localTracksByDeviceId.has(device.deviceId))
-      ?.deviceId ?? '';
+      ?.deviceId ?? NO_DEVICE_SELECTED;
 
   const selectedVideoDeviceId =
     video.find((device) => localTracksByDeviceId.has(device.deviceId))
-      ?.deviceId ?? '';
+      ?.deviceId ?? NO_DEVICE_SELECTED;
 
   return {
     audioSources: audio,
