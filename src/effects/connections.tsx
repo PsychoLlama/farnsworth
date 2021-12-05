@@ -61,8 +61,8 @@ export async function dial(addr: string) {
 
 // Permanently close a peer connection.
 export function close(peerId: string) {
-  const conn = getConnectionById(peerId);
-  conn.close();
+  getConnectionById(peerId).close();
+  context.connections.delete(peerId);
 
   return peerId;
 }

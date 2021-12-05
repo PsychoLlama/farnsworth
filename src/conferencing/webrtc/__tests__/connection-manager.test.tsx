@@ -282,6 +282,18 @@ describe('ConnectionManager', () => {
 
       expect(pc.addTrack).toHaveBeenCalledWith(track, expect.any(MediaStream));
     });
+
+    it('ignores duplicate tracks', async () => {
+      const { mgr, pc } = await setup();
+
+      const sender = new MockRTCRtpSender();
+      sender.track = new MockMediaStreamTrack();
+
+      pc.getSenders.mockReturnValue([sender]);
+      mgr.addTrack(sender.track, TrackSource.Device);
+
+      expect(pc.addTrack).not.toHaveBeenCalled();
+    });
   });
 
   describe('removeTrack', () => {

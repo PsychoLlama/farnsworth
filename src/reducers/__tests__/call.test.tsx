@@ -1,22 +1,25 @@
-import createStore from '../../utils/create-store';
-import * as actions from '../../actions';
-import * as effects from '../../effects';
+import * as connectionEffects from '../../effects/connections';
+import setup from '../../testing/redux';
 
-jest.mock('../../effects');
+jest.mock('../../effects/connections');
+
+const mockedConnectionEffects: jest.Mocked<typeof connectionEffects> =
+  connectionEffects as any;
 
 describe('Call reducer', () => {
   beforeEach(() => {
     jest.clearAllMocks();
 
-    (effects.connections.dial as any).mockResolvedValue({
+    mockedConnectionEffects.dial.mockResolvedValue({
       peerId: 'mock-peer-id',
     });
   });
 
   describe('dial', () => {
     it('sets the active peer ID', async () => {
-      const store = createStore();
-      await store.dispatch(actions.connections.dial('peer-id'));
+      const { store, sdk } = setup();
+
+      await sdk.connections.dial('peer-id');
 
       expect(store.getState().call).toEqual({
         peerId: 'mock-peer-id',
@@ -26,8 +29,9 @@ describe('Call reducer', () => {
 
   describe('accept', () => {
     it('sets the active peer ID', async () => {
-      const store = createStore();
-      await store.dispatch(actions.connections.accept('mock-peer-id'));
+      const { store, sdk } = setup();
+
+      sdk.connections.accept('mock-peer-id');
 
       expect(store.getState().call).toEqual({
         peerId: 'mock-peer-id',
@@ -37,9 +41,10 @@ describe('Call reducer', () => {
 
   describe('leave', () => {
     it('leaves the call', async () => {
-      const store = createStore();
-      await store.dispatch(actions.connections.accept('mock-peer-id'));
-      store.dispatch(actions.call.leave('mock-peer-id'));
+      const { store, sdk } = setup();
+
+      sdk.connections.accept('mock-peer-id');
+      sdk.call.leave('mock-peer-id');
 
       expect(store.getState().call).toBeNull();
     });

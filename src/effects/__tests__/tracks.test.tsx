@@ -5,11 +5,7 @@ import { Stream } from '../../testing/mocks/libp2p';
 import Libp2pMessenger from '../../conferencing/libp2p-messenger';
 import context from '../../conferencing/global-context';
 import initialState from '../../reducers/initial-state';
-import {
-  MY_PARTICIPANT_ID,
-  TrackKind,
-  TrackSource,
-} from '../../utils/constants';
+import { TrackSource } from '../../utils/constants';
 import * as factories from '../../testing/factories';
 
 jest.mock('../../conferencing/webrtc');
@@ -18,61 +14,6 @@ describe('Track effects', () => {
   beforeEach(() => {
     context.connections.clear();
     context.tracks.clear();
-  });
-
-  describe('sendLocalTracks', () => {
-    function setup() {
-      const peerId = 'peer-id';
-
-      const mgr = new ConnectionManager({
-        remoteId: peerId,
-        localId: 'a',
-        signaler: Libp2pMessenger.from(new Stream()),
-        webrtcSettings: {},
-      });
-
-      context.connections.set(peerId, mgr);
-
-      const audioTrack = new MediaStreamTrack();
-      const videoTrack = new MediaStreamTrack();
-      context.tracks.set(audioTrack.id, audioTrack);
-      context.tracks.set(videoTrack.id, videoTrack);
-
-      return {
-        mgr: mgr as jest.Mocked<typeof mgr>,
-        peerId,
-        audioTrack,
-        videoTrack,
-        state: produce(initialState, (state) => {
-          state.participants[MY_PARTICIPANT_ID].trackIds.push(
-            audioTrack.id,
-            videoTrack.id,
-          );
-
-          state.tracks[audioTrack.id] = factories.Track({
-            kind: TrackKind.Audio,
-            source: TrackSource.Device,
-          });
-
-          state.tracks[videoTrack.id] = factories.Track({
-            kind: TrackKind.Video,
-            source: TrackSource.Display,
-          });
-        }),
-      };
-    }
-
-    it('sends all local tracks to the remote peer', () => {
-      const { mgr, peerId, state, audioTrack, videoTrack } = setup();
-
-      effects.sendLocalTracks(peerId, state);
-
-      expect(mgr.addTrack).toHaveBeenCalledWith(audioTrack, TrackSource.Device);
-      expect(mgr.addTrack).toHaveBeenCalledWith(
-        videoTrack,
-        TrackSource.Display,
-      );
-    });
   });
 
   describe('add', () => {
@@ -178,6 +119,37 @@ describe('Track effects', () => {
       expect(track.enabled).toBe(false);
       effects.toggle(track.id);
       expect(track.enabled).toBe(true);
+    });
+  });
+
+  describe('sendLocalTracks', () => {
+    it('sends your local tracks to all participants', () => {
+      const local = new MediaStreamTrack();
+      const remote = new MediaStreamTrack();
+      context.tracks.set(local.id, local);
+      context.tracks.set(remote.id, remote);
+
+      const mgr = new ConnectionManager({
+        remoteId: 'peer-id',
+        localId: 'a',
+        signaler: Libp2pMessenger.from(new Stream()),
+        webrtcSettings: {},
+      });
+
+      context.connections.set('peer-id', mgr);
+
+      const state = produce(initialState, (state) => {
+        state.tracks[remote.id] = factories.Track({ local: false });
+        state.tracks[local.id] = factories.Track({
+          local: true,
+          source: TrackSource.Device,
+        });
+      });
+
+      effects.sendLocalTracks(state);
+
+      expect(mgr.addTrack).toHaveBeenCalledWith(local, TrackSource.Device);
+      expect(mgr.addTrack).toHaveBeenCalledTimes(1);
     });
   });
 });

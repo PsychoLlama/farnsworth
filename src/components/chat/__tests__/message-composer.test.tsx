@@ -2,6 +2,8 @@ import produce from 'immer';
 import renderer from '../../../testing/renderer';
 import { MessageComposer, mapStateToProps } from '../message-composer';
 import initialState, { State } from '../../../reducers/initial-state';
+import { ConnectionState } from '../../../utils/constants';
+import * as factories from '../../../testing/factories';
 
 jest.useFakeTimers('modern');
 jest.setSystemTime(new Date('2000-06-15Z'));
@@ -12,6 +14,7 @@ describe('MessageComposer', () => {
       sendMessage: jest.fn(),
       remoteId: 'remote-peer-id',
       localId: 'local-peer-id',
+      connectionState: ConnectionState.Connected,
     }),
   });
 
@@ -80,6 +83,14 @@ describe('MessageComposer', () => {
     expect(props.sendMessage).not.toHaveBeenCalled();
   });
 
+  it('disables the input while disconnected', () => {
+    const { findByTestId } = setup({
+      connectionState: ConnectionState.Disconnected,
+    });
+
+    expect(findByTestId('chat-message-composer').prop('disabled')).toBe(true);
+  });
+
   describe('mapStateToProps', () => {
     function setup(patch: (state: State) => void | State) {
       const state = produce(initialState, patch);
@@ -94,15 +105,17 @@ describe('MessageComposer', () => {
     it('grabs the necessary state', () => {
       const { props, state } = setup((state) => {
         state.call = { peerId: 'remote-peer-id' };
+        state.participants['remote-peer-id'] = factories.Participant();
         state.relay = {
           server: '/server/maddr',
           localId: 'local-peer-id',
         };
       });
 
-      expect(props).toMatchObject({
+      expect(props).toEqual({
         remoteId: state.call.peerId,
         localId: state.relay.localId,
+        connectionState: ConnectionState.Connected,
       });
     });
   });

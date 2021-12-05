@@ -5,6 +5,7 @@ import assert from '../../utils/assert';
 import * as css from '../../utils/css';
 import * as actions from '../../actions';
 import { State as ReduxState } from '../../reducers/initial-state';
+import { ConnectionState } from '../../utils/constants';
 
 /**
  * This supports a cheap implementation of an autosized multiline input
@@ -23,11 +24,14 @@ export class MessageComposer extends React.Component<Props, State> {
   state = { message: '' };
 
   render() {
+    const { connectionState } = this.props;
+    const disconnected = connectionState !== ConnectionState.Connected;
+
     return (
       <Container>
         <Input
           data-test="chat-message-composer"
-          placeholder="Type a message"
+          placeholder={disconnected ? 'Disconnected' : 'Type a message'}
           onInput={this.autosize}
           onKeyDown={this.maybeSendMessage}
           value={this.state.message}
@@ -36,6 +40,7 @@ export class MessageComposer extends React.Component<Props, State> {
           autoFocus
           spellCheck
           autoComplete="off"
+          disabled={disconnected}
         />
       </Container>
     );
@@ -83,6 +88,7 @@ interface Props {
   sendMessage: typeof actions.chat.sendMessage;
   remoteId: string; // The remote peer ID.
   localId: string; // The local peer ID.
+  connectionState: ConnectionState;
 }
 
 interface State {
@@ -116,20 +122,31 @@ const Input = styled.textarea`
       5
   );
 
-  :hover,
-  :focus {
+  :hover:not(:disabled),
+  :focus:not(:disabled) {
     outline: none;
     border-color: ${css.color('primary')};
   }
+
+  :disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+    border-color: ${css.color('white')};
+
+    ::placeholder {
+      font-style: italic;
+    }
+  }
 `;
 
-export function mapStateToProps({ relay, call }: ReduxState) {
+export function mapStateToProps({ relay, call, participants }: ReduxState) {
   assert(relay, 'Missing local peer ID.');
   assert(call, 'We are not in a call.');
 
   return {
     localId: relay.localId,
     remoteId: call.peerId,
+    connectionState: participants[call.peerId].connection.state,
   };
 }
 

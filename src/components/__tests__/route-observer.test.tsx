@@ -8,7 +8,7 @@ import initialState, { State } from '../../reducers/initial-state';
 describe('RouteObserver', () => {
   const setup = renderer(RouteObserver, {
     getDefaultProps: () => ({
-      dial: jest.fn() as any, // Imperative action creator.
+      dial: jest.fn(),
       relayServer: '/server/multiaddr',
       hasLocalTracks: true,
       route: {

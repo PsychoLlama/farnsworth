@@ -16,7 +16,7 @@ function sortMessagesByDate(m1: ChatMessage, m2: ChatMessage) {
 }
 
 export default createReducer(initialState, (handleAction) => [
-  handleAction(actions.connections.dial.actionFactory, (state, { peerId }) => {
+  handleAction(actions.connections.dial, (state, { peerId }) => {
     state.participants[peerId] = {
       isMe: false,
       trackIds: [],
@@ -27,27 +27,23 @@ export default createReducer(initialState, (handleAction) => [
     };
   }),
 
-  handleAction(
-    actions.connections.accept.actionFactory,
-    (state, { peerId }) => {
-      // Don't wipe out state on reconnection, just update the connection
-      // state.
-      if (state.participants[peerId]) {
-        state.participants[peerId].connection.state =
-          ConnectionState.Connecting;
-        return;
-      }
+  handleAction(actions.connections.accept, (state, peerId) => {
+    // Don't wipe out state on reconnection, just update the connection
+    // state.
+    if (state.participants[peerId]) {
+      state.participants[peerId].connection.state = ConnectionState.Connecting;
+      return;
+    }
 
-      state.participants[peerId] = {
-        isMe: false,
-        trackIds: [],
-        chat: { history: [] },
-        connection: {
-          state: ConnectionState.Connecting,
-        },
-      };
-    },
-  ),
+    state.participants[peerId] = {
+      isMe: false,
+      trackIds: [],
+      chat: { history: [] },
+      connection: {
+        state: ConnectionState.Connecting,
+      },
+    };
+  }),
 
   handleAction(actions.tracks.add, (state, { peerId, track }) => {
     state.participants[peerId].trackIds.push(track.id);
