@@ -27,12 +27,6 @@ export default createReducer(initialState, (handleAction) => [
     state.panel.lastView = PanelView.Settings;
     state.panel.view = PanelView.Settings;
   }),
-
-  handleAction(actions.call.leave, (state) => {
-    if (state.panel.view === PanelView.Chat) {
-      state.panel.view = PanelView.None;
-    }
-  }),
 ]);
 
 // If you're not in a call, there aren't any chat messages to look at. Open

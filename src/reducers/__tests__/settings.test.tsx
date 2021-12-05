@@ -15,7 +15,7 @@ describe('Settings reducer', () => {
     });
   });
 
-  describe('settings.load()', () => {
+  describe('load', () => {
     it('saves the result in redux', async () => {
       const { store, sdk } = setup();
 
@@ -29,7 +29,7 @@ describe('Settings reducer', () => {
     });
   });
 
-  describe('settings.reset()', () => {
+  describe('reset', () => {
     it('resets the redux state', async () => {
       const { store, sdk } = setup((state) => {
         state.settings.webrtc.forceTurnRelay = true;
@@ -44,7 +44,7 @@ describe('Settings reducer', () => {
     });
   });
 
-  describe('settings.update()', () => {
+  describe('update', () => {
     it('merges the new settings', async () => {
       const { store, sdk } = setup();
 

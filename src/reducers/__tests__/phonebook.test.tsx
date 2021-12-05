@@ -1,20 +1,11 @@
-import createStore from '../../utils/create-store';
-import * as actions from '../../actions';
+import setup from '../../testing/redux';
 
 describe('Participants reducer', () => {
-  function setup() {
-    const store = createStore();
-
-    return {
-      store,
-    };
-  }
-
   describe('open()', () => {
     it('opens the phonebook', async () => {
-      const { store } = setup();
+      const { store, sdk } = setup();
 
-      await store.dispatch(actions.phonebook.open());
+      await sdk.phonebook.open();
       const { phonebook } = store.getState();
 
       expect(phonebook).toHaveProperty('open', true);
@@ -23,10 +14,10 @@ describe('Participants reducer', () => {
 
   describe('close()', () => {
     it('closes the phonebook', async () => {
-      const { store } = setup();
+      const { store, sdk } = setup();
 
-      await store.dispatch(actions.phonebook.open());
-      await store.dispatch(actions.phonebook.close());
+      await sdk.phonebook.open();
+      await sdk.phonebook.close();
       const { phonebook } = store.getState();
 
       expect(phonebook).toHaveProperty('open', false);
@@ -35,12 +26,12 @@ describe('Participants reducer', () => {
 
   describe('toggle()', () => {
     it('opens and closes the phonebook', async () => {
-      const { store } = setup();
+      const { store, sdk } = setup();
 
-      await store.dispatch(actions.phonebook.toggle());
+      await sdk.phonebook.toggle();
       expect(store.getState().phonebook).toHaveProperty('open', true);
 
-      await store.dispatch(actions.phonebook.toggle());
+      await sdk.phonebook.toggle();
       expect(store.getState().phonebook).toHaveProperty('open', false);
     });
   });

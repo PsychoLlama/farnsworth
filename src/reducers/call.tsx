@@ -1,17 +1,19 @@
 import { createReducer } from 'retreon';
-import initialState from './initial-state';
+import initialState, { PanelView } from './initial-state';
 import * as actions from '../actions';
 
 export default createReducer(initialState, (handleAction) => [
-  handleAction(actions.connections.dial, (state, { peerId }) => {
-    state.call = { peerId };
-  }),
+  handleAction(actions.call.leave, (state, peerId) => {
+    state.participants[peerId].trackIds.forEach((trackId) => {
+      delete state.tracks[trackId];
+    });
 
-  handleAction(actions.connections.accept, (state, peerId) => {
-    state.call = { peerId };
-  }),
+    delete state.participants[peerId];
 
-  handleAction(actions.call.leave, (state) => {
     state.call = null;
+    state.chat.unreadMessages = false;
+    if (state.panel.view === PanelView.Chat) {
+      state.panel.view = PanelView.None;
+    }
   }),
 ]);

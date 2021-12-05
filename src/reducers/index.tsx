@@ -1,6 +1,4 @@
-import participants from './participants';
 import phonebook from './phonebook';
-import relay from './relay';
 import tracks from './tracks';
 import route from './route';
 import call from './call';
@@ -9,13 +7,13 @@ import tools from './tools';
 import devices from './devices';
 import panel from './panel';
 import settings from './settings';
+import connections from './connections';
 
 export default [
-  participants,
+  connections,
   tracks,
   devices,
   call,
-  relay,
   route,
   panel,
   phonebook,

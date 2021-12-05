@@ -1,5 +1,5 @@
 import crypto from 'node:crypto';
-import { State } from '../reducers/initial-state';
+import { State, ChatMessage } from '../reducers/initial-state';
 import { TrackKind, TrackSource, ConnectionState } from '../utils/constants';
 
 type Track = State['tracks'][keyof State['tracks']];
@@ -24,6 +24,15 @@ export function Participant(override?: Partial<Participant>): Participant {
     trackIds: [],
     connection: { state: ConnectionState.Connected },
     chat: { history: [] },
+    ...override,
+  };
+}
+
+export function ChatMessage(override?: Partial<ChatMessage>): ChatMessage {
+  return {
+    sentDate: new Date('2000-06-15').toISOString(),
+    author: 'author-id',
+    body: 'Hello, world',
     ...override,
   };
 }

@@ -6,14 +6,47 @@ import MediaDevices, {
 } from 'media-devices';
 import setup from '../../testing/redux';
 import * as actions from '../../actions';
+import * as factories from '../../testing/factories';
+import * as deviceEffects from '../../effects/devices';
+import {
+  TrackSource,
+  TrackKind,
+  MY_PARTICIPANT_ID,
+} from '../../utils/constants';
 
 jest.mock('media-devices');
+jest.mock('../../effects/devices');
 
-const MockMediaDevices: jest.Mocked<typeof MediaDevices> = MediaDevices as any;
+const MockedMediaDevices: jest.Mocked<typeof MediaDevices> =
+  MediaDevices as any;
+
+const mockedDeviceEffects: jest.Mocked<typeof deviceEffects> =
+  deviceEffects as any;
 
 describe('Sources reducer', () => {
   beforeEach(() => {
-    MockMediaDevices.enumerateDevices.mockResolvedValue([]);
+    MockedMediaDevices.enumerateDevices.mockResolvedValue([]);
+  });
+
+  beforeEach(() => {
+    mockedDeviceEffects.requestMediaDevices.mockResolvedValue([
+      {
+        kind: TrackKind.Audio,
+        trackId: 'first',
+        enabled: true,
+        deviceId: 'mic',
+        groupId: 'webcam',
+        facingMode: null,
+      },
+      {
+        kind: TrackKind.Video,
+        trackId: 'second',
+        enabled: true,
+        deviceId: 'cam',
+        groupId: 'webcam',
+        facingMode: 'user',
+      },
+    ]);
   });
 
   function mockDeviceList(values: Array<Partial<DeviceInfo>>) {
@@ -25,12 +58,12 @@ describe('Sources reducer', () => {
       ...partialDevice,
     }));
 
-    MockMediaDevices.enumerateDevices.mockResolvedValue(devices);
+    MockedMediaDevices.enumerateDevices.mockResolvedValue(devices);
 
     return devices;
   }
 
-  describe('devices.list()', () => {
+  describe('list', () => {
     it('splits the list into audio and video devices', async () => {
       const { store, sdk } = setup();
 
@@ -64,7 +97,7 @@ describe('Sources reducer', () => {
     });
   });
 
-  describe('devices.observe()', () => {
+  describe('observe', () => {
     it('puts the device list', async () => {
       const { store } = setup();
 
@@ -87,6 +120,133 @@ describe('Sources reducer', () => {
       expect(store.getState().sources.available).toMatchObject({
         audio: [audio],
         video: [video],
+      });
+    });
+  });
+
+  describe('requestMediaDevices', () => {
+    it('adds the new tracks', async () => {
+      const { store, sdk } = setup();
+      await sdk.devices.requestMediaDevices({});
+
+      expect(store.getState().tracks).toMatchInlineSnapshot(`
+        Object {
+          "first": Object {
+            "deviceId": "mic",
+            "enabled": true,
+            "facingMode": null,
+            "groupId": "webcam",
+            "kind": "audio",
+            "local": true,
+            "source": "device",
+          },
+          "second": Object {
+            "deviceId": "cam",
+            "enabled": true,
+            "facingMode": "user",
+            "groupId": "webcam",
+            "kind": "video",
+            "local": true,
+            "source": "device",
+          },
+        }
+      `);
+    });
+
+    it('puts the track IDs on tha participant', async () => {
+      const { store, sdk } = setup();
+
+      await sdk.devices.requestMediaDevices({});
+
+      const { participants } = store.getState();
+      expect(participants[MY_PARTICIPANT_ID]).toMatchObject({
+        trackIds: ['first', 'second'],
+      });
+    });
+
+    it('replaces existing tracks of the same kind and source', async () => {
+      mockedDeviceEffects.requestMediaDevices.mockResolvedValue([
+        {
+          kind: TrackKind.Video,
+          trackId: 'new-video',
+          enabled: true,
+          deviceId: 'mic',
+          groupId: 'webcam',
+          facingMode: 'user',
+        },
+      ]);
+
+      const { store, sdk } = setup((state) => {
+        state.participants[MY_PARTICIPANT_ID].trackIds = [
+          'audio',
+          'video',
+          'screen',
+        ];
+
+        state.tracks = {
+          audio: factories.Track({ kind: TrackKind.Audio }),
+          video: factories.Track({ kind: TrackKind.Video }),
+          screen: factories.Track({
+            kind: TrackKind.Video,
+            source: TrackSource.Display,
+          }),
+        };
+      });
+
+      await sdk.devices.requestMediaDevices({ video: true });
+
+      expect(store.getState().tracks).toEqual({
+        'new-video': expect.anything(),
+        screen: expect.anything(),
+        audio: expect.anything(),
+      });
+    });
+  });
+
+  describe('shareScreen', () => {
+    it('stores tracks in state', async () => {
+      const { store, sdk } = setup();
+
+      const track = new MediaStreamTrack();
+      mockedDeviceEffects.shareScreen.mockResolvedValue([
+        {
+          trackId: track.id,
+          kind: track.kind as TrackKind,
+          enabled: track.enabled,
+          deviceId: track.getSettings().deviceId,
+          groupId: track.getSettings().groupId,
+          facingMode: null,
+        },
+      ]);
+
+      await sdk.devices.shareScreen();
+
+      expect(store.getState().tracks).toHaveProperty(track.id);
+      expect(store.getState().participants).toMatchObject({
+        [MY_PARTICIPANT_ID]: {
+          trackIds: [track.id],
+        },
+      });
+    });
+  });
+
+  describe('stopSharingScreen', () => {
+    it('removes local display tracks', async () => {
+      const track = new MediaStreamTrack();
+      const { store, sdk } = setup((state) => {
+        state.participants[MY_PARTICIPANT_ID].trackIds = [track.id];
+        state.tracks[track.id] = factories.Track({
+          source: TrackSource.Display,
+        });
+      });
+
+      sdk.devices.stopSharingScreen();
+
+      expect(store.getState().tracks).not.toHaveProperty(track.id);
+      expect(store.getState().participants).toMatchObject({
+        [MY_PARTICIPANT_ID]: {
+          trackIds: [],
+        },
       });
     });
   });

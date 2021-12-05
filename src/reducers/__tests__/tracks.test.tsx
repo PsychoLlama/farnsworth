@@ -1,135 +1,49 @@
-import * as actions from '../../actions';
-import * as connEffects from '../../effects/connections';
-import * as deviceEffects from '../../effects/devices';
 import {
   TrackKind,
   TrackSource,
   MY_PARTICIPANT_ID,
 } from '../../utils/constants';
+import * as trackEffects from '../../effects/tracks';
 import * as factories from '../../testing/factories';
 import setup from '../../testing/redux';
 
-jest.mock('../../effects/connections');
-jest.mock('../../effects/devices');
+jest.mock('../../effects/tracks');
 
-const mockedConnEffects: jest.Mocked<typeof connEffects> = connEffects as any;
-const mockedDeviceEffects: jest.Mocked<typeof deviceEffects> =
-  deviceEffects as any;
+const mockedTrackEffects: jest.Mocked<typeof trackEffects> =
+  trackEffects as any;
 
 describe('Tracks reducer', () => {
   beforeEach(() => {
-    mockedConnEffects.close.mockImplementation((id) => id);
-    mockedDeviceEffects.requestMediaDevices.mockResolvedValue([
-      {
-        kind: TrackKind.Audio,
-        trackId: 'first',
-        enabled: true,
-        deviceId: 'mic',
-        groupId: 'webcam',
-        facingMode: null,
+    mockedTrackEffects.pause.mockImplementation((id) => id);
+    mockedTrackEffects.resume.mockImplementation((id) => id);
+    mockedTrackEffects.toggle.mockImplementation((id) => id);
+    mockedTrackEffects.add.mockImplementation(({ track, source, peerId }) => ({
+      peerId,
+      track: {
+        id: track.id,
+        kind: track.kind as TrackKind,
+        enabled: track.enabled,
+        source,
       },
-      {
-        kind: TrackKind.Video,
-        trackId: 'second',
-        enabled: true,
-        deviceId: 'cam',
-        groupId: 'webcam',
-        facingMode: 'user',
-      },
-    ]);
+    }));
   });
 
-  describe('devices.requestMediaDevices()', () => {
-    it('adds the new tracks', async () => {
-      const { store } = setup();
-      await store.dispatch(actions.devices.requestMediaDevices({}));
-
-      expect(store.getState().tracks).toMatchInlineSnapshot(`
-        Object {
-          "first": Object {
-            "deviceId": "mic",
-            "enabled": true,
-            "facingMode": null,
-            "groupId": "webcam",
-            "kind": "audio",
-            "local": true,
-            "source": "device",
-          },
-          "second": Object {
-            "deviceId": "cam",
-            "enabled": true,
-            "facingMode": "user",
-            "groupId": "webcam",
-            "kind": "video",
-            "local": true,
-            "source": "device",
-          },
-        }
-      `);
-    });
-
-    it('puts the track IDs on tha participant', async () => {
-      const { store } = setup();
-
-      await store.dispatch(actions.devices.requestMediaDevices({}));
-
-      const { participants } = store.getState();
-      expect(participants[MY_PARTICIPANT_ID]).toMatchObject({
-        trackIds: ['first', 'second'],
-      });
-    });
-
-    it('replaces existing tracks of the same kind and source', async () => {
-      mockedDeviceEffects.requestMediaDevices.mockResolvedValue([
-        {
-          kind: TrackKind.Video,
-          trackId: 'new-video',
-          enabled: true,
-          deviceId: 'mic',
-          groupId: 'webcam',
-          facingMode: 'user',
-        },
-      ]);
-
-      const { store, sdk } = setup((state) => {
-        state.participants[MY_PARTICIPANT_ID].trackIds = [
-          'audio',
-          'video',
-          'screen',
-        ];
-
-        state.tracks = {
-          audio: factories.Track({ kind: TrackKind.Audio }),
-          video: factories.Track({ kind: TrackKind.Video }),
-          screen: factories.Track({
-            kind: TrackKind.Video,
-            source: TrackSource.Display,
-          }),
-        };
-      });
-
-      await sdk.devices.requestMediaDevices({ video: true });
-
-      expect(store.getState().tracks).toEqual({
-        'new-video': expect.anything(),
-        screen: expect.anything(),
-        audio: expect.anything(),
-      });
-    });
-  });
-
-  describe('tracks.add()', () => {
+  describe('add', () => {
     it('indexes the track with the others', () => {
-      const { store } = setup();
+      const { store, sdk } = setup();
 
       const track = new MediaStreamTrack();
-      store.dispatch(
-        actions.tracks.add({
-          track,
-          source: TrackSource.Device,
-          peerId: MY_PARTICIPANT_ID,
-        }),
-      );
+      sdk.tracks.add({
+        track,
+        source: TrackSource.Device,
+        peerId: MY_PARTICIPANT_ID,
+      });
+
+      expect(store.getState().participants).toMatchObject({
+        [MY_PARTICIPANT_ID]: {
+          trackIds: [track.id],
+        },
+      });
 
       expect(store.getState().tracks).toMatchObject({
         [track.id]: { kind: track.kind, enabled: track.enabled, local: false },
@@ -137,246 +51,100 @@ describe('Tracks reducer', () => {
     });
   });
 
-  describe('tracks.pause()', () => {
+  describe('pause', () => {
     it('marks the track disabled', () => {
-      const { store } = setup();
+      const { store, sdk } = setup((state) => {
+        state.tracks.track = factories.Track({ enabled: true });
+      });
 
-      const track = new MediaStreamTrack();
-      track.enabled = true;
-
-      store.dispatch(
-        actions.tracks.add({
-          track,
-          source: TrackSource.Device,
-          peerId: MY_PARTICIPANT_ID,
-        }),
-      );
-
-      store.dispatch(actions.tracks.pause(track.id));
+      sdk.tracks.pause('track');
 
       expect(store.getState().tracks).toMatchObject({
-        [track.id]: { enabled: false },
+        track: { enabled: false },
       });
     });
   });
 
-  describe('tracks.resume()', () => {
+  describe('resume', () => {
     it('marks the track disabled', () => {
-      const { store } = setup();
+      const { store, sdk } = setup((state) => {
+        state.tracks.track = factories.Track({ enabled: false });
+      });
 
-      const track = new MediaStreamTrack();
-      track.enabled = false;
-
-      store.dispatch(
-        actions.tracks.add({
-          track,
-          source: TrackSource.Display,
-          peerId: MY_PARTICIPANT_ID,
-        }),
-      );
-
-      store.dispatch(actions.tracks.resume(track.id));
+      sdk.tracks.resume('track');
 
       expect(store.getState().tracks).toMatchObject({
-        [track.id]: { enabled: true },
+        track: { enabled: true },
       });
     });
   });
 
-  describe('tracks.toggle()', () => {
+  describe('toggle', () => {
     it('marks the track disabled', () => {
-      const { store } = setup();
+      const { store, sdk } = setup((state) => {
+        state.tracks.track = factories.Track({ enabled: true });
+      });
 
-      const track = new MediaStreamTrack();
-      track.enabled = true;
-
-      store.dispatch(
-        actions.tracks.add({
-          track,
-          source: TrackSource.Device,
-          peerId: MY_PARTICIPANT_ID,
-        }),
-      );
-
-      store.dispatch(actions.tracks.toggle(track.id));
+      sdk.tracks.toggle('track');
 
       expect(store.getState().tracks).toMatchObject({
-        [track.id]: { enabled: false },
+        track: { enabled: false },
       });
     });
   });
 
-  describe('tracks.markPaused()', () => {
+  describe('markPaused', () => {
     it('marks all remote streams of the same kind as paused', () => {
-      const { store } = setup();
+      const { store, sdk } = setup((state) => {
+        state.tracks.track = factories.Track({
+          kind: TrackKind.Video,
+          enabled: true,
+          local: false,
+        });
+      });
 
-      const track = new MediaStreamTrack();
-      track.enabled = true;
-
-      store.dispatch(
-        actions.tracks.add({
-          track,
-          source: TrackSource.Device,
-          peerId: MY_PARTICIPANT_ID,
-        }),
-      );
-
-      store.dispatch(actions.tracks.markPaused(track.kind as TrackKind));
+      sdk.tracks.markPaused(TrackKind.Video);
 
       expect(store.getState().tracks).toMatchObject({
-        [track.id]: { enabled: false },
+        track: { enabled: false },
       });
     });
   });
 
-  describe('tracks.markResumed()', () => {
+  describe('markResumed', () => {
     it('marks all remote streams of the same kind as enabled', () => {
-      const { store } = setup();
+      const { store, sdk } = setup((state) => {
+        state.tracks.track = factories.Track({
+          kind: TrackKind.Audio,
+          enabled: false,
+          local: false,
+        });
+      });
 
-      const track = new MediaStreamTrack();
-      track.enabled = false;
-
-      store.dispatch(
-        actions.tracks.add({
-          track,
-          source: TrackSource.Device,
-          peerId: MY_PARTICIPANT_ID,
-        }),
-      );
-
-      store.dispatch(actions.tracks.markResumed(track.kind as TrackKind));
+      sdk.tracks.markResumed(TrackKind.Audio);
 
       expect(store.getState().tracks).toMatchObject({
-        [track.id]: { enabled: true },
+        track: { enabled: true },
       });
     });
   });
 
-  describe('tracks.remove()', () => {
+  describe('remove', () => {
     it('removes the track', () => {
-      const { store } = setup();
+      const { store, sdk } = setup((state) => {
+        state.participants[MY_PARTICIPANT_ID].trackIds = ['video-id'];
+        state.tracks['video-id'] = factories.Track({
+          kind: TrackKind.Video,
+          source: TrackSource.Device,
+        });
+      });
 
-      store.dispatch(
-        actions.tools.patch((state) => {
-          state.participants[MY_PARTICIPANT_ID].trackIds = ['video-id'];
-          state.tracks['video-id'] = factories.Track({
-            kind: TrackKind.Video,
-            source: TrackSource.Device,
-          });
-        }),
-      );
-
-      store.dispatch(
-        actions.tracks.remove({
-          trackId: 'video-id',
-          peerId: MY_PARTICIPANT_ID,
-        }),
-      );
+      sdk.tracks.remove({ trackId: 'video-id', peerId: MY_PARTICIPANT_ID });
 
       expect(store.getState().tracks).toEqual({});
       expect(store.getState().participants[MY_PARTICIPANT_ID].trackIds).toEqual(
         [],
       );
-    });
-  });
-
-  describe('connections.close()', () => {
-    it('deletes the corresponding tracks', () => {
-      const { store } = setup();
-
-      const track = new MediaStreamTrack();
-      store.dispatch(
-        actions.tracks.add({
-          track,
-          source: TrackSource.Device,
-          peerId: MY_PARTICIPANT_ID,
-        }),
-      );
-
-      // This never happens in practice, I'm just lazy.
-      store.dispatch(actions.connections.close(MY_PARTICIPANT_ID));
-
-      expect(store.getState().tracks).toEqual({});
-      expect(store.getState().participants).toMatchObject({
-        [MY_PARTICIPANT_ID]: {
-          trackIds: [],
-        },
-      });
-    });
-  });
-
-  describe('call.leave()', () => {
-    it('deletes the corresponding participant and all tracks', async () => {
-      const { store } = setup();
-
-      const track = new MediaStreamTrack();
-      store.dispatch(
-        actions.tracks.add({
-          track,
-          peerId: MY_PARTICIPANT_ID,
-          source: TrackSource.Display,
-        }),
-      );
-
-      store.dispatch(actions.call.leave(MY_PARTICIPANT_ID));
-
-      expect(store.getState().tracks).toEqual({});
-      expect(store.getState().participants).not.toHaveProperty(
-        MY_PARTICIPANT_ID,
-      );
-    });
-  });
-
-  describe('devices.shareScreen()', () => {
-    it('stores tracks in state', async () => {
-      const { store } = setup();
-      const track = new MediaStreamTrack();
-      mockedDeviceEffects.shareScreen.mockResolvedValue([
-        {
-          trackId: track.id,
-          kind: track.kind as TrackKind,
-          enabled: track.enabled,
-          deviceId: track.getSettings().deviceId,
-          groupId: track.getSettings().groupId,
-          facingMode: null,
-        },
-      ]);
-
-      await store.dispatch(actions.devices.shareScreen());
-
-      expect(store.getState().tracks).toHaveProperty(track.id);
-      expect(store.getState().participants).toMatchObject({
-        [MY_PARTICIPANT_ID]: {
-          trackIds: [track.id],
-        },
-      });
-    });
-  });
-
-  describe('devices.stopSharingScreen()', () => {
-    it('removes local display tracks', async () => {
-      const { store } = setup();
-      const track = new MediaStreamTrack();
-      mockedDeviceEffects.shareScreen.mockResolvedValue([
-        {
-          trackId: track.id,
-          kind: track.kind as TrackKind,
-          enabled: track.enabled,
-          deviceId: track.getSettings().deviceId,
-          groupId: track.getSettings().groupId,
-          facingMode: null,
-        },
-      ]);
-
-      await store.dispatch(actions.devices.shareScreen());
-      store.dispatch(actions.devices.stopSharingScreen());
-
-      expect(store.getState().tracks).not.toHaveProperty(track.id);
-      expect(store.getState().participants).toMatchObject({
-        [MY_PARTICIPANT_ID]: {
-          trackIds: [],
-        },
-      });
     });
   });
 });
