@@ -23,8 +23,6 @@ describe('Send Track Middleware', () => {
 
     store.dispatch({ type: 'unknown' });
 
-    expect(trackEffects.sendLocalTracksToAllParticipants).toHaveBeenCalledWith(
-      store.getState(),
-    );
+    expect(trackEffects.sendLocalTracks).toHaveBeenCalledWith(store.getState());
   });
 });

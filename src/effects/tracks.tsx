@@ -1,37 +1,14 @@
 import assert from '../utils/assert';
 import { State } from '../reducers/initial-state';
 import context from '../conferencing/global-context';
-import {
-  MY_PARTICIPANT_ID,
-  TrackKind,
-  TrackSource,
-  EventType,
-} from '../utils/constants';
+import { TrackKind, TrackSource, EventType } from '../utils/constants';
 import { broadcastEvent } from './events';
-
-export function sendLocalTracks(peerId: string, state: State) {
-  const { trackIds } = state.participants[MY_PARTICIPANT_ID];
-  const conn = getConnectionById(peerId);
-
-  trackIds.forEach((trackId) => {
-    const track = getTrackById(trackId);
-    const { source } = state.tracks[trackId];
-    conn.addTrack(track, source);
-  });
-}
 
 function getTrackById(id: string) {
   const track = context.tracks.get(id);
   assert(track, `No such track (id="${id}")`);
 
   return track;
-}
-
-function getConnectionById(peerId: string) {
-  const conn = context.connections.get(peerId);
-  assert(conn, `No such connection '${peerId}'`);
-
-  return conn;
 }
 
 // Adds a new track to the global context. Used to hold onto remote tracks.
@@ -88,7 +65,7 @@ export function toggle(trackId: string) {
   return act(trackId);
 }
 
-export function sendLocalTracksToAllParticipants(state: State) {
+export function sendLocalTracks(state: State) {
   Object.entries(state.tracks)
     .filter(([id]) => context.tracks.has(id))
     .filter(([, meta]) => meta.local)

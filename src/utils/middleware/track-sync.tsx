@@ -10,7 +10,7 @@ export function middleware(store: Store) {
     const dispatchReturnValue = next(action);
 
     const state = store.getState();
-    effects.tracks.sendLocalTracksToAllParticipants(state);
+    effects.tracks.sendLocalTracks(state);
 
     return dispatchReturnValue;
   };
