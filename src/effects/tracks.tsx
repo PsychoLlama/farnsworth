@@ -87,3 +87,7 @@ export function toggle(trackId: string) {
 
   return act(trackId);
 }
+
+export function sendLocalTracksToAllParticipants(state: State) {
+  // TODO
+}
