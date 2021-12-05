@@ -180,4 +180,35 @@ describe('Track effects', () => {
       expect(track.enabled).toBe(true);
     });
   });
+
+  describe('sendLocalTracksToAllParticipants', () => {
+    it('sends your local tracks to all participants', () => {
+      const local = new MediaStreamTrack();
+      const remote = new MediaStreamTrack();
+      context.tracks.set(local.id, local);
+      context.tracks.set(remote.id, remote);
+
+      const mgr = new ConnectionManager({
+        remoteId: 'peer-id',
+        localId: 'a',
+        signaler: Libp2pMessenger.from(new Stream()),
+        webrtcSettings: {},
+      });
+
+      context.connections.set('peer-id', mgr);
+
+      const state = produce(initialState, (state) => {
+        state.tracks[remote.id] = factories.Track({ local: false });
+        state.tracks[local.id] = factories.Track({
+          local: true,
+          source: TrackSource.Device,
+        });
+      });
+
+      effects.sendLocalTracksToAllParticipants(state);
+
+      expect(mgr.addTrack).toHaveBeenCalledWith(local, TrackSource.Device);
+      expect(mgr.addTrack).toHaveBeenCalledTimes(1);
+    });
+  });
 });

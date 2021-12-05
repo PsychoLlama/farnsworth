@@ -89,5 +89,14 @@ export function toggle(trackId: string) {
 }
 
 export function sendLocalTracksToAllParticipants(state: State) {
-  // TODO
+  Object.entries(state.tracks)
+    .filter(([id]) => context.tracks.has(id))
+    .filter(([, meta]) => meta.local)
+    .forEach(([id, meta]) => {
+      const track = getTrackById(id);
+
+      Array.from(context.connections.values()).forEach((conn) => {
+        conn.addTrack(track, meta.source);
+      });
+    });
 }
