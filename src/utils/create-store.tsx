@@ -1,6 +1,5 @@
 import { createStore, compose, applyMiddleware } from 'redux';
 import { middleware as retreonMiddleware } from 'retreon';
-import { middleware as stateMiddleware } from './middleware/get-state';
 import { middleware as gcMiddleware } from './middleware/garbage-collection';
 import { middleware as trackSyncMiddleware } from './middleware/track-sync';
 import reducers from '../reducers';
@@ -13,12 +12,7 @@ export default function initialize(state: State = initialState) {
   const reducer = composeReducers(reducers);
   const composeEnhancers = window[DEVTOOLS_KEY] || compose;
   const enhancer = composeEnhancers(
-    applyMiddleware(
-      stateMiddleware,
-      retreonMiddleware,
-      trackSyncMiddleware,
-      gcMiddleware,
-    ),
+    applyMiddleware(retreonMiddleware, trackSyncMiddleware, gcMiddleware),
   );
 
   return createStore(reducer, state, enhancer);
