@@ -12,7 +12,7 @@ export default function initialize(state: State = initialState) {
   const reducer = composeReducers(reducers);
   const composeEnhancers = window[DEVTOOLS_KEY] || compose;
   const enhancer = composeEnhancers(
-    applyMiddleware(retreonMiddleware, trackSyncMiddleware, gcMiddleware),
+    applyMiddleware(retreonMiddleware, gcMiddleware, trackSyncMiddleware),
   );
 
   return createStore(reducer, state, enhancer);

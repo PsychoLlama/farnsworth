@@ -1,10 +1,7 @@
 import { State } from '../../reducers/initial-state';
 import * as effects from '../../effects';
 
-/**
- * Runs the garbage collector after every action. IMPORTANT: This should be
- * the last function in the middleware pipeline.
- */
+/** Runs the garbage collector after every action. */
 export function middleware(store: Store) {
   return (next: Next) => (action: unknown) => {
     const dispatchReturnValue = next(action);
