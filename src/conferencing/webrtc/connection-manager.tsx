@@ -74,6 +74,15 @@ export default class ConnectionManager {
    * `pc.ontrack`.
    */
   addTrack(track: MediaStreamTrack, source: TrackSource) {
+    const sender = this.pc
+      .getSenders()
+      .find((sender) => sender.track === track);
+
+    // The track is already shared.
+    if (sender) {
+      return;
+    }
+
     logger.debug(`Adding ${track.kind} track`);
 
     // Let me explain my genius. Since there isn't a way to communicate
