@@ -42,6 +42,8 @@ export class MediaView extends React.Component<Props, State> {
           onPause={this.syncPlayState}
           data-test="video-stream"
           tabIndex={-1}
+          playsInline
+          autoPlay
         />
         <Overlay>{this.renderOverlay()}</Overlay>
       </Container>
