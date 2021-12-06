@@ -5777,10 +5777,10 @@ libp2p-websockets@0.16.2:
     p-defer "^3.0.0"
     p-timeout "^4.1.0"
 
-libp2p@0.35.1:
-  version "0.35.1"
-  resolved "https://registry.yarnpkg.com/libp2p/-/libp2p-0.35.1.tgz#718832fed2a51be6b06cc813f6fa9878e0cd4aec"
-  integrity sha512-n/YRQHDHOLZ9oQtPmnlM2mFSud4+HAAkREirHU3GjUHsPk+7XmnO7iiFFsz7TxY0KDnolitP/xEvwATPObv4Gg==
+libp2p@0.35.2:
+  version "0.35.2"
+  resolved "https://registry.yarnpkg.com/libp2p/-/libp2p-0.35.2.tgz#57270457be3f24c191321b2714ef1969086e86cd"
+  integrity sha512-2ldWJHEDh3jASfjTU00YoGcaODBWjWcSJ8a/pKNFOdBZdk40FqqgiR6Gc34UsWltLRjIJ3nUueDbfVN4irxkdA==
   dependencies:
     "@motrix/nat-api" "^0.3.1"
     "@vascosantos/moving-average" "^1.1.0"
