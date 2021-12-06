@@ -11,6 +11,7 @@ import * as deviceEffects from '../../effects/devices';
 import {
   TrackSource,
   TrackKind,
+  DeviceError,
   MY_PARTICIPANT_ID,
 } from '../../utils/constants';
 
@@ -200,6 +201,23 @@ describe('Sources reducer', () => {
         screen: expect.anything(),
         audio: expect.anything(),
       });
+    });
+
+    it('stores the error code in redux', async () => {
+      const { store, sdk } = setup();
+
+      const error = new deviceEffects.GumError(
+        new DOMException('Testing GUM errors', 'NotAllowedError'),
+      );
+
+      error.type = DeviceError.NotAllowed;
+      mockedDeviceEffects.requestMediaDevices.mockRejectedValue(error);
+
+      await expect(
+        sdk.devices.requestMediaDevices({ video: true }),
+      ).rejects.toBeDefined();
+
+      expect(store.getState().sources.error).toBe(DeviceError.NotAllowed);
     });
   });
 

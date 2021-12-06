@@ -2,6 +2,7 @@ import { DeviceInfo, DeviceChange } from 'media-devices';
 import {
   TrackKind,
   TrackSource,
+  DeviceError,
   ConnectionState,
   MY_PARTICIPANT_ID,
 } from '../utils/constants';
@@ -132,6 +133,9 @@ export interface State {
 
   /** Manages the set of available audio/video devices. */
   sources: {
+    /** Failure type returned when grabbing media devices. */
+    error: null | DeviceError;
+
     /** A list of ways the device list changed since the last query. */
     changes: Array<DeviceChange>;
 
@@ -181,6 +185,7 @@ const initialState: State = {
   },
   tracks: {},
   sources: {
+    error: null,
     changes: [],
     available: {
       audio: [],

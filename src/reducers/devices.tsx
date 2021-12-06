@@ -3,6 +3,7 @@ import { createReducer } from 'retreon';
 import initialState, { State } from './initial-state';
 import * as actions from '../actions';
 import { MY_PARTICIPANT_ID, TrackSource, TrackKind } from '../utils/constants';
+import { GumError } from '../effects/devices';
 
 export default createReducer(initialState, (handleAction) => [
   // Some platforms have strict limits on concurrent tracks. For example,
@@ -24,6 +25,12 @@ export default createReducer(initialState, (handleAction) => [
       }
     },
   ),
+
+  handleAction.error(actions.devices.requestMediaDevices, (state, error) => {
+    if (error instanceof GumError) {
+      state.sources.error = error.type;
+    }
+  }),
 
   handleAction(actions.devices.requestMediaDevices, (state, newTracks) => {
     newTracks.forEach((track) => {
