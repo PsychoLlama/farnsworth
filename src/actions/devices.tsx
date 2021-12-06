@@ -29,3 +29,5 @@ export async function* observe() {
 
 observe.actionFactory =
   createAction.factory<effects.devices.DeviceChangeset>('devices/observe');
+
+export const closeErrorModal = createAction('devices/close-error-modal');

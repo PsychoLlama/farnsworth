@@ -6,6 +6,7 @@ import { DeviceError } from '../../utils/constants';
 describe('DeviceErrorModal', () => {
   const setup = renderer(DeviceErrorModal, {
     getDefaultProps: () => ({
+      close: jest.fn(),
       deviceError: DeviceError.NotAllowed,
     }),
   });
@@ -23,6 +24,14 @@ describe('DeviceErrorModal', () => {
 
     output.setProps({ deviceError: DeviceError.Unknown });
     expect(findByTestId('error-text').text()).toMatch(/went wrong/);
+  });
+
+  it('closes the modal when you click the close button', () => {
+    const { findByTestId, props } = setup();
+
+    findByTestId('close-button').simulate('click');
+
+    expect(props.close).toHaveBeenCalled();
   });
 
   describe('mapStateToProps', () => {

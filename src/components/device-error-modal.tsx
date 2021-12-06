@@ -6,6 +6,7 @@ import { State } from '../reducers/initial-state';
 import { DeviceError } from '../utils/constants';
 import * as css from '../utils/css';
 import { Button } from './core';
+import * as actions from '../actions';
 
 export class DeviceErrorModal extends React.Component<Props> {
   render() {
@@ -24,7 +25,9 @@ export class DeviceErrorModal extends React.Component<Props> {
 
           <Content>
             {this.renderErrorText()}
-            <CloseButton>Close</CloseButton>
+            <CloseButton data-test="close-button" onClick={this.props.close}>
+              Close
+            </CloseButton>
           </Content>
         </Dialog>
       </Backdrop>
@@ -53,6 +56,7 @@ export class DeviceErrorModal extends React.Component<Props> {
 
 interface Props {
   deviceError: null | DeviceError;
+  close: typeof actions.devices.closeErrorModal;
 }
 
 const Backdrop = styled.div`
@@ -111,4 +115,8 @@ export function mapStateToProps(state: State) {
   };
 }
 
-export default connect(mapStateToProps)(DeviceErrorModal);
+const mapDispatchToProps = {
+  close: actions.devices.closeErrorModal,
+};
+
+export default connect(mapStateToProps, mapDispatchToProps)(DeviceErrorModal);

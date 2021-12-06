@@ -268,4 +268,16 @@ describe('Sources reducer', () => {
       });
     });
   });
+
+  describe('closeErrorModal', () => {
+    it('clears the corresponding error', () => {
+      const { store, sdk } = setup((state) => {
+        state.sources.error = DeviceError.NotAllowed;
+      });
+
+      sdk.devices.closeErrorModal();
+
+      expect(store.getState().sources).toHaveProperty('error', null);
+    });
+  });
 });

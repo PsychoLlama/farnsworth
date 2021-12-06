@@ -47,6 +47,10 @@ export default createReducer(initialState, (handleAction) => [
     });
   }),
 
+  handleAction(actions.devices.closeErrorModal, (state) => {
+    state.sources.error = null;
+  }),
+
   handleAction(actions.devices.list, (state, devices) => {
     const kind = createFilter(devices);
     state.sources.available.audio = kind(DeviceKind.AudioInput);
