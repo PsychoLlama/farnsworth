@@ -32,7 +32,11 @@ export class DeviceErrorModal extends React.Component<Props> {
 
             <Content>
               {this.renderErrorText()}
-              <CloseButton data-test="close-button" onClick={this.props.close}>
+              <CloseButton
+                autoFocus
+                data-test="close-button"
+                onClick={this.props.close}
+              >
                 Close
               </CloseButton>
             </Content>
