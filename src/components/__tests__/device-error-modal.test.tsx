@@ -34,6 +34,23 @@ describe('DeviceErrorModal', () => {
     expect(props.close).toHaveBeenCalled();
   });
 
+  it('closes the modal on escape key', () => {
+    const { findByTestId, props } = setup();
+
+    findByTestId('event-observer').simulate(
+      'event',
+      new KeyboardEvent('keydown', { key: 'a' }),
+    );
+
+    expect(props.close).not.toHaveBeenCalled();
+    findByTestId('event-observer').simulate(
+      'event',
+      new KeyboardEvent('keydown', { key: 'Escape' }),
+    );
+
+    expect(props.close).toHaveBeenCalled();
+  });
+
   describe('mapStateToProps', () => {
     it('returns the expected fields', () => {
       const props = mapStateToProps(initialState);

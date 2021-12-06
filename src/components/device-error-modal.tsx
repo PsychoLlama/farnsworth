@@ -7,6 +7,7 @@ import { DeviceError } from '../utils/constants';
 import * as css from '../utils/css';
 import { Button } from './core';
 import * as actions from '../actions';
+import EventObserver from './event-observer';
 
 export class DeviceErrorModal extends React.Component<Props> {
   render() {
@@ -17,20 +18,27 @@ export class DeviceErrorModal extends React.Component<Props> {
     }
 
     return (
-      <Backdrop>
-        <Dialog>
-          <Title>
-            Media Error <FiAlertTriangle />
-          </Title>
+      <EventObserver
+        eventName="keydown"
+        onEvent={this.detectEscape}
+        target={document.body}
+        data-test="event-observer"
+      >
+        <Backdrop>
+          <Dialog>
+            <Title>
+              Media Error <FiAlertTriangle />
+            </Title>
 
-          <Content>
-            {this.renderErrorText()}
-            <CloseButton data-test="close-button" onClick={this.props.close}>
-              Close
-            </CloseButton>
-          </Content>
-        </Dialog>
-      </Backdrop>
+            <Content>
+              {this.renderErrorText()}
+              <CloseButton data-test="close-button" onClick={this.props.close}>
+                Close
+              </CloseButton>
+            </Content>
+          </Dialog>
+        </Backdrop>
+      </EventObserver>
     );
   }
 
@@ -52,6 +60,10 @@ export class DeviceErrorModal extends React.Component<Props> {
         );
     }
   }
+
+  detectEscape = (event: KeyboardEvent) => {
+    if (event.key === 'Escape') this.props.close();
+  };
 }
 
 interface Props {
