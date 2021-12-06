@@ -7,6 +7,7 @@ import { SERVER_ADDRESS } from '../utils/constants';
 import RouteObserver from './route-observer';
 import KeyboardObserver from './keyboard-observer';
 import { State } from '../reducers/initial-state';
+import DeviceErrorModal from './device-error-modal';
 
 export class App extends React.Component<Props> {
   async componentDidMount() {
@@ -45,6 +46,7 @@ export class App extends React.Component<Props> {
         <RouteObserver>
           <Container>
             <VideoRoomLayout />
+            <DeviceErrorModal />
           </Container>
         </RouteObserver>
       </KeyboardObserver>

@@ -11,6 +11,7 @@ import * as deviceEffects from '../../effects/devices';
 import {
   TrackSource,
   TrackKind,
+  DeviceError,
   MY_PARTICIPANT_ID,
 } from '../../utils/constants';
 
@@ -201,6 +202,23 @@ describe('Sources reducer', () => {
         audio: expect.anything(),
       });
     });
+
+    it('stores the error code in redux', async () => {
+      const { store, sdk } = setup();
+
+      const error = new deviceEffects.GumError(
+        new DOMException('Testing GUM errors', 'NotAllowedError'),
+      );
+
+      error.type = DeviceError.NotAllowed;
+      mockedDeviceEffects.requestMediaDevices.mockRejectedValue(error);
+
+      await expect(
+        sdk.devices.requestMediaDevices({ video: true }),
+      ).rejects.toBeDefined();
+
+      expect(store.getState().sources.error).toBe(DeviceError.NotAllowed);
+    });
   });
 
   describe('shareScreen', () => {
@@ -248,6 +266,18 @@ describe('Sources reducer', () => {
           trackIds: [],
         },
       });
+    });
+  });
+
+  describe('closeErrorModal', () => {
+    it('clears the corresponding error', () => {
+      const { store, sdk } = setup((state) => {
+        state.sources.error = DeviceError.NotAllowed;
+      });
+
+      sdk.devices.closeErrorModal();
+
+      expect(store.getState().sources).toHaveProperty('error', null);
     });
   });
 });

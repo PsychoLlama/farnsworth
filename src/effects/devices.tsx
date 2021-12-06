@@ -1,6 +1,11 @@
 import MediaDevices, { DeviceInfo, DeviceChange } from 'media-devices';
 import context from '../conferencing/global-context';
-import { TrackKind, TrackSource, MY_PARTICIPANT_ID } from '../utils/constants';
+import {
+  TrackKind,
+  TrackSource,
+  DeviceError,
+  MY_PARTICIPANT_ID,
+} from '../utils/constants';
 import Logger from '../utils/logger';
 
 const logger = new Logger('devices');
@@ -57,7 +62,15 @@ export async function requestMediaDevices(query: MediaStreamConstraints) {
   }
 
   logger.debug('Requesting new tracks:', constraints);
-  const stream = await MediaDevices.getUserMedia(constraints);
+  let stream: MediaStream;
+
+  try {
+    // TODO: Handle cases where users don't have both audio & video.
+    stream = await MediaDevices.getUserMedia(constraints);
+  } catch (error) {
+    logger.error('Media access denied:', error?.name, error);
+    throw new GumError(error);
+  }
 
   const tracks = stream.getTracks();
   tracks.forEach(removeTrackWhenEnded);
@@ -125,4 +138,21 @@ export async function* observe() {
   }
 
   while (true) yield waitForChange();
+}
+
+export class GumError extends Error {
+  type: DeviceError;
+
+  constructor(error: DOMException) {
+    super(error?.message);
+
+    switch (error?.name) {
+      case 'NotAllowedError':
+        this.type = DeviceError.NotAllowed;
+        break;
+      default:
+        this.type = DeviceError.Unknown;
+        break;
+    }
+  }
 }

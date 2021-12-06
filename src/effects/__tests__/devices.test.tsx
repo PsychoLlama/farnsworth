@@ -1,6 +1,10 @@
 import MediaDevices from 'media-devices';
 import * as effects from '../';
-import { TrackKind, MY_PARTICIPANT_ID } from '../../utils/constants';
+import {
+  TrackKind,
+  MY_PARTICIPANT_ID,
+  DeviceError,
+} from '../../utils/constants';
 import context from '../../conferencing/global-context';
 import ConnectionManager from '../../conferencing/webrtc';
 import sdk from '../../utils/sdk';
@@ -128,6 +132,24 @@ describe('Device effects', () => {
         // No 'audio' field.
         video: expect.anything(),
       });
+    });
+
+    it('detects common error types', async () => {
+      const mockFailure = (name: string) => {
+        const error = new Error('Testing GUM errors');
+        error.name = name;
+        MockMediaDevices.getUserMedia.mockRejectedValue(error);
+      };
+
+      mockFailure('NotAllowedError');
+      await expect(
+        effects.devices.requestMediaDevices({ video: true }),
+      ).rejects.toMatchObject({ type: DeviceError.NotAllowed });
+
+      mockFailure('EncabulatorUnengaged');
+      await expect(
+        effects.devices.requestMediaDevices({ video: true }),
+      ).rejects.toMatchObject({ type: DeviceError.Unknown });
     });
   });
 

@@ -93,3 +93,12 @@ export enum EventType {
   /** Send a chat message. */
   ChatMessage = 'chat-message',
 }
+
+/** Every way a request for device streams can fail. */
+export enum DeviceError {
+  /** The user, browser, or operating system won't allow us access. */
+  NotAllowed = 'not-allowed',
+
+  /** We don't know what went wrong. */
+  Unknown = 'unknown',
+}
