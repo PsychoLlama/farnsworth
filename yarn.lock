@@ -5667,10 +5667,10 @@ libp2p-websockets@0.16.2:
     p-defer "^3.0.0"
     p-timeout "^4.1.0"
 
-libp2p@0.35.7:
-  version "0.35.7"
-  resolved "https://registry.yarnpkg.com/libp2p/-/libp2p-0.35.7.tgz#4def57b4e8ab19437f0252b4dc09e63338bac431"
-  integrity sha512-97h5bfjEaZ6TnPHXRllGD7dhJjDHZo5EW0lW/SgvN4oauY2wkvt0IqfuxEF/NuHFI1u/17T4Cy6/n3RQq4Op0Q==
+libp2p@0.35.8:
+  version "0.35.8"
+  resolved "https://registry.yarnpkg.com/libp2p/-/libp2p-0.35.8.tgz#cb0141791033b7417b5617647b86293488f0368d"
+  integrity sha512-1Vkm7+v6bXwjlBeuiKNLtRxPIDBWFe+dt17tye0XF1BeMOY8UFUN0QeEAYrOBs6Ses+sO4oZ6OwPtcNr3zrkMw==
   dependencies:
     "@vascosantos/moving-average" "^1.1.0"
     abort-controller "^3.0.0"
