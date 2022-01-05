@@ -114,7 +114,7 @@
     "eslint-plugin-react": "7.28.0",
     "husky": "7.0.4",
     "immer": "9.0.7",
-    "jest": "27.4.6",
+    "jest": "27.4.7",
     "lint-staged": "12.1.5",
     "parcel": "2.0.1",
     "prettier": "2.5.1",
