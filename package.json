@@ -119,7 +119,7 @@
     "parcel": "2.2.1",
     "prettier": "2.5.1",
     "ts-jest": "27.1.3",
-    "typescript": "4.5.4"
+    "typescript": "4.5.5"
   },
   "dependencies": {
     "@msgpack/msgpack": "2.7.1",
