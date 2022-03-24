@@ -139,7 +139,7 @@
     "react-redux": "7.2.6",
     "redux": "4.1.2",
     "retreon": "0.7.0",
-    "styled-components": "5.3.3",
+    "styled-components": "5.3.5",
     "uuid": "8.3.2"
   }
 }
