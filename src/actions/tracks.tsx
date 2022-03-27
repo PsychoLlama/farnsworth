@@ -8,5 +8,6 @@ export const resume = createAction('tracks/resume', effects.tracks.resume);
 export const toggle = createAction('tracks/toggle', effects.tracks.toggle);
 export const markPaused = createAction<TrackKind>('tracks/mark-paused');
 export const markResumed = createAction<TrackKind>('tracks/mark-resumed');
-export const remove =
-  createAction<{ trackId: string; peerId: string }>('tracks/mark-ended');
+export const remove = createAction<{ trackId: string; peerId: string }>(
+  'tracks/mark-ended',
+);
