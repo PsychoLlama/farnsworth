@@ -137,7 +137,7 @@
     "react-dom": "18.1.0",
     "react-icons": "4.3.1",
     "react-redux": "7.2.8",
-    "redux": "4.1.2",
+    "redux": "4.2.0",
     "retreon": "0.7.0",
     "styled-components": "5.3.5",
     "uuid": "8.3.2"
