@@ -1,6 +1,6 @@
 import Enzyme from 'enzyme';
 import Adapter from 'enzyme-adapter-react-16';
-import { TextEncoder, TextDecoder } from '@zxing/text-encoding';
+import { TextEncoder, TextDecoder } from 'util';
 import {
   MockMediaStream,
   MockMediaStreamTrack,
