@@ -1,4 +1,4 @@
-import DOM from 'react-dom';
+import { createRoot } from 'react-dom/client';
 import React from 'react';
 import styled from 'styled-components';
 import { Provider as ReduxProvider } from 'react-redux';
@@ -44,7 +44,7 @@ const Viewport = styled.div`
   color: var(--color-text);
 `;
 
-DOM.render(
+createRoot(document.getElementById('root')).render(
   <React.StrictMode>
     <ReduxProvider store={store}>
       <Viewport>
@@ -52,5 +52,4 @@ DOM.render(
       </Viewport>
     </ReduxProvider>
   </React.StrictMode>,
-  document.getElementById('root'),
 );
