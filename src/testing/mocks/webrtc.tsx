@@ -48,6 +48,7 @@ export class MockRTCPeerConnection
   currentRemoteDescription = null;
   pendingLocalDescription = null;
   pendingRemoteDescription = null;
+  sctp = null;
 
   addTransceiver = jest.fn();
   createOffer = jest.fn();
@@ -93,6 +94,7 @@ export class MockRTCDataChannel extends EventEmitter implements RTCDataChannel {
   removeEventListener = this.off;
 
   onerror = null;
+  onclosing = null;
   onclose = null;
   onopen = null;
   onmessage = null;
