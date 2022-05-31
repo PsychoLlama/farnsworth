@@ -129,7 +129,7 @@
     "libp2p-noise": "4.0.0",
     "libp2p-websockets": "0.16.2",
     "localforage": "1.10.0",
-    "media-devices": "0.3.0",
+    "media-devices": "0.4.0",
     "multiaddr": "10.0.1",
     "peer-id": "0.16.0",
     "react": "18.1.0",
