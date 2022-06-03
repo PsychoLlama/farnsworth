@@ -109,7 +109,7 @@
     "concurrently": "7.2.1",
     "enzyme": "3.11.0",
     "enzyme-adapter-react-16": "1.15.6",
-    "eslint": "8.16.0",
+    "eslint": "8.17.0",
     "eslint-plugin-react": "7.30.0",
     "husky": "8.0.1",
     "immer": "9.0.14",
