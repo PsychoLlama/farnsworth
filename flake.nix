@@ -1,14 +1,20 @@
 {
   description = "Farnsworth Development Environment";
-  inputs = { flake-utils.url = "github:numtide/flake-utils"; };
 
   # Use `nix develop` to enter the dev environment.
   outputs = { self, nixpkgs, flake-utils }:
-    flake-utils.lib.eachDefaultSystem (system: {
-      devShell = with nixpkgs.legacyPackages.${system};
-        mkShell {
-          nativeBuildInputs =
-            [ python3 nodejs-16_x (yarn.override { nodejs = nodejs-16_x; }) ];
-        };
-    });
+    let inherit (nixpkgs) lib;
+
+    in {
+      devShell = lib.genAttrs lib.systems.flakeExposed (system:
+        let pkgs = import nixpkgs { inherit system; };
+
+        in pkgs.mkShell {
+          nativeBuildInputs = with pkgs; [
+            python3
+            nodejs-16_x
+            (yarn.override { nodejs = nodejs-16_x; })
+          ];
+        });
+    };
 }
