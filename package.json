@@ -103,7 +103,7 @@
     "@types/react-dom": "18.0.11",
     "@types/react-redux": "7.1.25",
     "@types/styled-components": "5.1.26",
-    "@types/uuid": "9.0.0",
+    "@types/uuid": "9.0.1",
     "@typescript-eslint/eslint-plugin": "5.53.0",
     "@typescript-eslint/parser": "5.53.0",
     "concurrently": "7.6.0",
