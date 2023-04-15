@@ -96,7 +96,7 @@
   ],
   "devDependencies": {
     "@types/debug": "4.1.7",
-    "@types/enzyme": "3.10.12",
+    "@types/enzyme": "3.10.13",
     "@types/enzyme-adapter-react-16": "1.0.6",
     "@types/jest": "27.5.2",
     "@types/react": "18.0.35",
