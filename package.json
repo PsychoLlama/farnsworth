@@ -113,7 +113,7 @@
     "eslint": "8.47.0",
     "eslint-plugin-react": "7.31.10",
     "husky": "8.0.3",
-    "immer": "9.0.21",
+    "immer": "10.0.2",
     "jest": "27.5.1",
     "lint-staged": "14.0.1",
     "parcel": "2.9.3",
