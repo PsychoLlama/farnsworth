@@ -7,9 +7,6 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
-      - uses: actions/setup-node@v3
-        with:
-          node-version: 18
-      - uses: bahmutov/npm-install@v1
-      - name: Test
-        run: yarn -s test
+      - uses: DeterminateSystems/nix-installer-action@main
+      - run: nix develop --command yarn install
+      - run: nix develop --command yarn -s test
