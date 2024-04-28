@@ -1,1 +1,1 @@
-export { default, Route } from './redux-router';
+export { default, type Route } from './redux-router';
