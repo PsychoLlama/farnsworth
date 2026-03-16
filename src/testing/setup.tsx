@@ -16,5 +16,4 @@ Object.assign(global, {
   MediaStreamTrack: MockMediaStreamTrack,
   MediaStreamTrackEvent: MockMediaStreamTrackEvent,
   RTCPeerConnection: MockRTCPeerConnection,
-
 });

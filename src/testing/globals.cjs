@@ -1,5 +1,9 @@
 const { TextEncoder, TextDecoder } = require('util');
-const { ReadableStream, WritableStream, TransformStream } = require('stream/web');
+const {
+  ReadableStream,
+  WritableStream,
+  TransformStream,
+} = require('stream/web');
 const { MessagePort } = require('worker_threads');
 
 Object.assign(global, {
