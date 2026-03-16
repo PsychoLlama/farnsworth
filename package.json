@@ -85,6 +85,7 @@
     "preset": "ts-jest",
     "testEnvironment": "jsdom",
     "setupFiles": [
+      "./src/testing/globals.cjs",
       "./src/testing/setup.tsx"
     ]
   },

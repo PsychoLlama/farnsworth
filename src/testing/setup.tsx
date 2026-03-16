@@ -1,6 +1,5 @@
 import Enzyme from 'enzyme';
 import Adapter from 'enzyme-adapter-react-16';
-import { TextEncoder, TextDecoder } from 'util';
 import {
   MockMediaStream,
   MockMediaStreamTrack,
@@ -18,7 +17,4 @@ Object.assign(global, {
   MediaStreamTrackEvent: MockMediaStreamTrackEvent,
   RTCPeerConnection: MockRTCPeerConnection,
 
-  // Necessary for `multiaddr`. Can remove once Node v14 is dead.
-  TextEncoder,
-  TextDecoder,
 });

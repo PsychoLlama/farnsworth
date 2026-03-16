@@ -20,7 +20,7 @@ export class Stream<T> implements MuxedStream {
     }
   }
 
-  sink = async (source: Uint8Array) => {
+  sink = async (source: AsyncIterable<Uint8Array>) => {
     for await (const value of source) {
       this.observer(value);
     }
