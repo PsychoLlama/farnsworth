@@ -2,6 +2,10 @@ overrides:
   # enzyme 3.x deep-imports `cheerio/lib/utils`, removed in cheerio 1.0.0
   # final. Pin to the last release that still ships the CommonJS layout.
   cheerio: 1.0.0-rc.12
+  # @types/enzyme pulls its own @types/react@16, so enzyme's `shallow` is
+  # typed against React 16 elements while our JSX is React 18. Collapse to
+  # one @types/react so the element types match.
+  '@types/react': 18.2.20
 
 allowBuilds:
   '@parcel/watcher': true
