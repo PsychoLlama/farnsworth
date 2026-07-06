@@ -1,0 +1,18 @@
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "farnsworth",
+  "compatibility_date": "2026-07-01",
+  "assets": {
+    "directory": "./dist",
+    // The client uses hash-based routing, so every real route lives
+    // under `/#...` and the server only ever needs to hand back the
+    // app shell. Serve `index.html` for any unmatched path.
+    "not_found_handling": "single-page-application"
+  },
+  "routes": [
+    {
+      "pattern": "farnsworth.video",
+      "custom_domain": true
+    }
+  ]
+}

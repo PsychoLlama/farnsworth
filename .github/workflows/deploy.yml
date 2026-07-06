@@ -1,0 +1,26 @@
+name: Deploy
+on:
+  push:
+    branches: [main]
+
+jobs:
+  deploy:
+    name: Deploy
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: DeterminateSystems/nix-installer-action@main
+      - run: nix develop --command pnpm install
+      - name: Build
+        # Parcel inlines these at build time. None are secret.
+        env:
+          ENABLE_DEBUGGING: 'true'
+          ICE_SERVERS: stun:stun.l.google.com:19302
+          NODE_VERSION: '16'
+          RELAY_SERVER_ADDRESS: /dns4/bootstrap.farnsworth.video/tcp/30000/wss/p2p/bafzbeiaxrhr2wl2ur2uyzxxjyzm3azoa2bsgntuddc5t7x3g777owz5dvi
+        run: nix develop --command pnpm -s build
+      - name: Deploy
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+        run: nix develop --command pnpm run deploy
