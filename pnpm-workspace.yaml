@@ -1,0 +1,13 @@
+overrides:
+  # enzyme 3.x deep-imports `cheerio/lib/utils`, removed in cheerio 1.0.0
+  # final. Pin to the last release that still ships the CommonJS layout.
+  cheerio: 1.0.0-rc.12
+
+allowBuilds:
+  '@parcel/watcher': true
+  '@swc/core': true
+  lmdb: true
+  msgpackr-extract: true
+  protobufjs: true
+  secp256k1: true
+  ursa-optional: false
