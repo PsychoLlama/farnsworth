@@ -20,4 +20,4 @@ If you plan to make a big change, please open an issue first.
 - WebRTC state is kept in `./src/conferencing/global-context`.
 - WebRTC utilities are kept in `./src/conferencing`.
 - All IO is kept in `./src/effects`.
-- Redux is managed by [retreon](https://retreon.archetype.foundation/).
+- Redux is managed by [retreon](https://retreon.github.io/).
