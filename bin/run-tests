@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
-yarn test:unit || fail=1
-yarn test:lint || fail=1
-yarn test:fmt || fail=1
+pnpm test:unit || fail=1
+pnpm test:lint || fail=1
+pnpm test:fmt || fail=1
 
 if [[ -n "$fail" ]]; then
   exit 1

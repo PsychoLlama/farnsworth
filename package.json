@@ -8,7 +8,7 @@
   "license": "AGPL-3.0-or-later",
   "private": true,
   "scripts": {
-    "start": "concurrently 'yarn -s start:web' 'yarn -s start:server'",
+    "start": "concurrently 'pnpm -s start:web' 'pnpm -s start:server'",
     "start:web": "parcel",
     "start:server": "DEBUG=farnsworth node server",
     "build": "parcel build",
@@ -121,6 +121,7 @@
     "prettier": "2.8.8",
     "process": "0.11.10",
     "ts-jest": "27.1.5",
+    "tslib": "2.8.1",
     "typescript": "4.7.4"
   },
   "dependencies": {
