@@ -8,5 +8,5 @@ jobs:
     steps:
       - uses: actions/checkout@v3
       - uses: DeterminateSystems/nix-installer-action@main
-      - run: nix develop --command yarn install
-      - run: nix develop --command yarn -s test
+      - run: nix develop --command pnpm install
+      - run: nix develop --command pnpm -s test
