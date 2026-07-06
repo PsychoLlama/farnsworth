@@ -1,0 +1,24 @@
+[global]
+excludes = ["dist/**", "pnpm-lock.yaml"]
+
+[formatter.prettier]
+command = "pnpm"
+options = ["exec", "prettier", "--write"]
+includes = [
+  "*.js",
+  "*.mjs",
+  "*.cjs",
+  "*.jsx",
+  "*.ts",
+  "*.tsx",
+  "*.json",
+  "*.md",
+  "*.yaml",
+  "*.yml",
+  "*.css",
+  "*.html",
+]
+
+[formatter.nix]
+command = "nixfmt"
+includes = ["*.nix"]
